@@ -140,17 +140,21 @@ export default function ProfilePage() {
 
   return (
     <main aria-label="Profile">
-      <CoverImage
-        src={COVER_IMAGES.profileCover}
-        alt=""
-        height={140}
-        priority
-        overlayOpacity={0.2}
-      />
+      <div style={{ position: 'relative', zIndex: 0 }}>
+        <CoverImage
+          src={COVER_IMAGES.profileCover}
+          alt=""
+          height={140}
+          priority
+          overlayOpacity={0.2}
+        />
+      </div>
 
       <div
         className="profile-header-card"
         style={{
+          position: 'relative',
+          zIndex: 1,
           background: 'var(--color-surface)',
           border: '1px solid var(--color-border-default)',
           borderRadius: '14px',
@@ -164,7 +168,7 @@ export default function ProfilePage() {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-          <div style={{ position: 'relative', width: '56px', height: '56px', flexShrink: 0 }}>
+          <div style={{ position: 'relative', zIndex: 2, width: '56px', height: '56px', flexShrink: 0 }}>
             <input
               ref={fileInputRef}
               type="file"
