@@ -2,9 +2,10 @@ export interface AvatarProps {
   initials: string
   color: string
   size?: number
+  textColor?: string
 }
 
-export function Avatar({ initials, color, size = 36 }: AvatarProps) {
+export function Avatar({ initials, color, size = 36, textColor = 'var(--color-text-inverse)' }: AvatarProps) {
   return (
     <div
       style={{
@@ -12,7 +13,7 @@ export function Avatar({ initials, color, size = 36 }: AvatarProps) {
         height: `${size}px`,
         borderRadius: 'var(--radius-full)',
         backgroundColor: color,
-        color: 'var(--color-text-inverse)',
+        color: textColor,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

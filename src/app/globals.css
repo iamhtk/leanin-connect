@@ -1,72 +1,93 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap');
 
 @import "tailwindcss";
 
 @theme {
-  /* Fonts */
-  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "Geist Mono", "Fira Code", monospace;
+  /* Fonts - matching their system */
+  --font-sans: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Newsreader", Georgia, serif;
 
-  /* Brand colors */
-  --color-brand: #CC3D55;
-  --color-brand-hover: #B02D45;
-  --color-brand-active: #8E1F33;
-  --color-brand-subtle: #FDF2F4;
-  --color-brand-muted: #FBDDE2;
+  /* === COLORS: matching their oklch values converted to hex === */
 
-  /* Backgrounds */
-  --color-background: #FAF7F4;
+  /* Backgrounds - their oklch(.98 .005 60) = warm near-white */
+  --color-background: #FAF9F7;
+  /* Card - pure white */
   --color-surface: #FFFFFF;
-  --color-subtle: #F0EBE5;
-  --color-muted: #E4DDD5;
+  /* Secondary/muted bg - their oklch(.95 .012 60) */
+  --color-subtle: #F3EFE9;
+  /* Accent bg - their oklch(.91 .018 55) */
+  --color-muted: #EAE3DA;
 
-  /* Text */
-  --color-text-default: #1A1514;
-  --color-text-secondary: #6B5F5A;
-  --color-text-muted: #B0A49A;
+  /* Text - their oklch(.18 .008 40) = warm near-black */
+  --color-text-default: #2B2118;
+  /* Muted foreground - their oklch(.5 .012 45) */
+  --color-text-secondary: #7A6E65;
+  /* Further muted */
+  --color-text-muted: #9C9089;
   --color-text-inverse: #FFFFFF;
-  --color-text-brand: #CC3D55;
+  --color-text-brand: #7B2335;
 
-  /* Borders */
-  --color-border-default: #E4DDD5;
-  --color-border-strong: #CEC4BA;
-  --color-border-brand: #EC8D9E;
-  --color-border-focus: #CC3D55;
+  /* Brand - their primary oklch(.42 .13 17) = burgundy */
+  --color-brand: #7B2335;
+  --color-brand-hover: #6A1D2C;
+  --color-brand-active: #581827;
+  --color-brand-subtle: #F5ECED;
+  --color-brand-muted: #EDD5D8;
+
+  /* Borders - their oklch(.84 .018 50) = warm light gray */
+  --color-border-default: #D6CEC5;
+  --color-border-strong: #C4BAB0;
+  --color-border-brand: #E8C4C9;
+  --color-border-focus: #7B2335;
 
   /* Status */
-  --color-status-success: #22C55E;
-  --color-status-success-bg: #F0FDF4;
-  --color-status-warning: #F59E0B;
-  --color-status-warning-bg: #FFFBEB;
-  --color-status-error: #CC3D55;
-  --color-status-error-bg: #FDF2F4;
-  --color-status-info: #3B82F6;
-  --color-status-info-bg: #EFF6FF;
+  --color-status-success: #2D7A4F;
+  --color-status-success-bg: #EBF5EF;
+  --color-status-warning: #B85C00;
+  --color-status-warning-bg: #FDF3E8;
+  --color-status-error: #7B2335;
+  --color-status-error-bg: #F5ECED;
+  --color-status-info: #1E4A8C;
+  --color-status-info-bg: #EBF0F9;
 
-  /* Border radius */
+  /* Sidebar - their oklch(.95 .012 60) */
+  --color-sidebar: #F3EFE9;
+  --color-sidebar-border: #D6CEC5;
+
+  /* === RADIUS: matching their exact values === */
   --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-card: 0 1px 2px rgba(26, 21, 20, 0.06);
-  --shadow-card-hover: 0 2px 8px rgba(26, 21, 20, 0.08);
-  --shadow-modal: 0 8px 32px rgba(26, 21, 20, 0.12);
-  --shadow-dropdown: 0 4px 16px rgba(26, 21, 20, 0.10);
+  /* === SHADOWS: they use NONE - border-only separation === */
+  --shadow-card: none;
+  --shadow-card-hover: none;
+  --shadow-modal: 0 4px 24px rgba(43, 33, 24, 0.12);
+  --shadow-dropdown: 0 2px 12px rgba(43, 33, 24, 0.08);
 
-  /* Font sizes */
-  --text-xs: 11px;
-  --text-sm: 12px;
-  --text-base: 13px;
-  --text-md: 14px;
+  /* === TYPOGRAPHY: matching their type scale === */
+  /* Their body: 0.9375rem = 15px */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 15px;
   --text-lg: 16px;
   --text-xl: 18px;
   --text-2xl: 22px;
   --text-3xl: 28px;
   --text-4xl: 36px;
+
+  /* === SPACING: their exact scale === */
+  /* xs=4px sm=8px md=12px lg=16px xl=24px 2xl=32px */
+
+  /* === MOTION: their exact values === */
+  --motion-fast: 0.12s;
+  --motion-normal: 0.2s;
+  --motion-slow: 0.32s;
+  --motion-standard: cubic-bezier(.2, 0, 0, 1);
+  --motion-emphasized: cubic-bezier(.05, .7, .1, 1);
 }
 
 * {
@@ -75,18 +96,23 @@
   margin: 0;
 }
 
-html,
-body {
-  max-width: 100vw;
+html, body {
   background-color: var(--color-background);
   color: var(--color-text-default);
   font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button {
+  font-family: inherit;
 }
 
 @keyframes career-pulse-loading {

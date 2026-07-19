@@ -57,15 +57,16 @@ export function SuggestedMembers() {
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border-default)',
         borderRadius: 'var(--radius-lg)',
-        padding: '20px',
-        marginBottom: '16px',
+        padding: '16px',
+        marginBottom: '12px',
       }}
     >
       <p
         style={{
           fontSize: '11px',
           fontWeight: '600',
-          letterSpacing: '0.06em',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
           color: 'var(--color-text-muted)',
           marginBottom: '12px',
         }}
@@ -100,15 +101,17 @@ export function SuggestedMembers() {
               <button
                 type="button"
                 onClick={() => toggleFollow(member.id)}
+                className="hover:[border-color:var(--color-brand)] hover:[color:var(--color-brand)]"
                 style={{
-                  backgroundColor: isFollowing ? 'var(--color-subtle)' : 'var(--color-brand-subtle)',
-                  color: isFollowing ? 'var(--color-text-muted)' : 'var(--color-text-brand)',
-                  border: 'none',
+                  backgroundColor: isFollowing ? 'var(--color-brand-subtle)' : 'transparent',
+                  color: isFollowing ? 'var(--color-brand)' : 'var(--color-text-secondary)',
+                  border: `1px solid ${isFollowing ? 'var(--color-brand-muted)' : 'var(--color-border-default)'}`,
                   borderRadius: 'var(--radius-full)',
                   padding: '4px 12px',
-                  fontSize: '11px',
+                  fontSize: '12px',
                   fontWeight: '500',
                   cursor: 'pointer',
+                  marginLeft: 'auto',
                 }}
               >
                 {isFollowing ? 'Following' : 'Follow'}

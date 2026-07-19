@@ -116,16 +116,18 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
     <>
       <div
         onClick={() => setIsOpen(true)}
+        className="hover:[border-color:var(--color-border-strong)]"
         style={{
           display: 'flex',
-          gap: '12px',
+          gap: '10px',
           alignItems: 'center',
           backgroundColor: 'var(--color-surface)',
           border: '1px solid var(--color-border-default)',
           borderRadius: 'var(--radius-lg)',
-          padding: '12px 16px',
+          padding: '10px 14px',
           cursor: 'pointer',
-          marginBottom: '16px',
+          marginBottom: '12px',
+          transition: 'border-color 0.12s',
         }}
       >
         <Avatar initials={AUTHOR_INITIALS} color={AUTHOR_COLOR} size={36} />

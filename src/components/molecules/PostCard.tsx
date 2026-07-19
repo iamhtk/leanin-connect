@@ -18,14 +18,15 @@ export function PostCard({ post, index }: PostCardProps) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut', delay: index * 0.06 }}
-      whileHover={{ y: -2, transition: { duration: 0.15 } }}
+      className="hover:[border-color:var(--color-border-strong)]"
       style={{
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border-default)',
         borderRadius: 'var(--radius-lg)',
-        padding: '20px',
-        marginBottom: '12px',
-        boxShadow: 'var(--shadow-card)',
+        padding: '16px',
+        marginBottom: '8px',
+        cursor: 'pointer',
+        transition: 'border-color 0.12s',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -34,7 +35,7 @@ export function PostCard({ post, index }: PostCardProps) {
           <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
             {post.author_name}
           </p>
-          <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+          <p style={{ fontSize: '13px', fontWeight: '400', color: 'var(--color-text-muted)' }}>
             {post.author_role} · {post.author_company}
           </p>
         </div>
@@ -47,26 +48,43 @@ export function PostCard({ post, index }: PostCardProps) {
 
       <p
         style={{
-          fontSize: '14px',
+          fontSize: '15px',
           color: 'var(--color-text-default)',
-          lineHeight: '1.65',
-          marginTop: '12px',
+          lineHeight: '1.5',
+          marginTop: '10px',
           whiteSpace: 'pre-wrap',
         }}
       >
         {post.content}
       </p>
 
-      <div style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--color-text-muted)' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '16px',
+          marginTop: '12px',
+          paddingTop: '10px',
+          borderTop: '1px solid var(--color-border-default)',
+        }}
+      >
+        <span
+          className="hover:text-[var(--color-text-default)]"
+          style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: 'var(--color-text-muted)', cursor: 'pointer' }}
+        >
           <Heart size={15} />
           {post.likes_count}
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--color-text-muted)' }}>
+        <span
+          className="hover:text-[var(--color-text-default)]"
+          style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: 'var(--color-text-muted)', cursor: 'pointer' }}
+        >
           <MessageCircle size={15} />
           {post.replies_count}
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--color-text-muted)' }}>
+        <span
+          className="hover:text-[var(--color-text-default)]"
+          style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: 'var(--color-text-muted)', cursor: 'pointer' }}
+        >
           <Bookmark size={15} />
         </span>
       </div>

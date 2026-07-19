@@ -29,15 +29,16 @@ export function TrendingTopics() {
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border-default)',
         borderRadius: 'var(--radius-lg)',
-        padding: '20px',
-        marginBottom: '16px',
+        padding: '16px',
+        marginBottom: '12px',
       }}
     >
       <p
         style={{
           fontSize: '11px',
           fontWeight: '600',
-          letterSpacing: '0.06em',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
           color: 'var(--color-text-muted)',
           marginBottom: '12px',
         }}
@@ -50,18 +51,23 @@ export function TrendingTopics() {
           <div
             key={item.topic}
             onClick={() => handleTopicClick(item.topic)}
+            className="group"
             style={{
               display: 'flex',
               justifyContent: 'space-between',
-              padding: '6px 0',
+              alignItems: 'center',
+              padding: '8px 0',
               borderBottom: index === TRENDING_TOPICS.length - 1 ? 'none' : '1px solid var(--color-border-default)',
               cursor: 'pointer',
             }}
           >
-            <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+            <span
+              className="group-hover:text-[var(--color-brand)]"
+              style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-text-default)' }}
+            >
               {item.topic}
             </span>
-            <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{item.count}</span>
+            <span style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>{item.count}</span>
           </div>
         ))}
       </div>

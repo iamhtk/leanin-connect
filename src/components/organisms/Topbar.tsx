@@ -17,20 +17,23 @@ export function Topbar() {
       }}
     >
       {/* Search */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        backgroundColor: 'var(--color-subtle)',
-        border: '1px solid var(--color-border-default)',
-        borderRadius: '8px',
-        padding: '6px 12px',
-        width: '320px',
-        cursor: 'text',
-      }}>
+      <div
+        className="hover:[border-color:var(--color-border-strong)]"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          backgroundColor: 'var(--color-subtle)',
+          border: '1px solid var(--color-border-default)',
+          borderRadius: 'var(--radius-full)',
+          padding: '7px 14px',
+          width: '340px',
+          cursor: 'text',
+        }}
+      >
         <Search size={14} style={{ color: 'var(--color-text-muted)' }} />
         <span style={{
-          fontSize: '13px',
+          fontSize: '14px',
           color: 'var(--color-text-muted)',
         }}>
           Search topics, members, Circles...
@@ -41,7 +44,7 @@ export function Topbar() {
           color: 'var(--color-text-muted)',
           backgroundColor: 'var(--color-surface)',
           border: '1px solid var(--color-border-default)',
-          borderRadius: '4px',
+          borderRadius: 'var(--radius-sm)',
           padding: '1px 5px',
         }}>
           ⌘K
@@ -54,7 +57,7 @@ export function Topbar() {
           style={{
             width: '32px',
             height: '32px',
-            borderRadius: '8px',
+            borderRadius: 'var(--radius-md)',
             border: 'none',
             backgroundColor: 'transparent',
             display: 'flex',
@@ -72,7 +75,7 @@ export function Topbar() {
           style={{
             width: '32px',
             height: '32px',
-            borderRadius: '8px',
+            borderRadius: 'var(--radius-md)',
             border: 'none',
             backgroundColor: 'transparent',
             display: 'flex',
@@ -90,15 +93,14 @@ export function Topbar() {
         <div style={{
           width: '32px',
           height: '32px',
-          borderRadius: '9999px',
-          backgroundColor: 'var(--color-brand-subtle)',
-          border: '1px solid var(--color-border-brand)',
+          borderRadius: 'var(--radius-full)',
+          backgroundColor: 'var(--color-brand)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: '12px',
           fontWeight: '600',
-          color: 'var(--color-brand)',
+          color: 'var(--color-text-inverse)',
           cursor: 'pointer',
         }}>
           H

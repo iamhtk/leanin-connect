@@ -10,12 +10,13 @@ export interface TopicFilterProps {
 
 export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
   return (
-    <div style={{ position: 'relative', marginBottom: '20px' }}>
+    <div style={{ position: 'relative', marginBottom: '12px' }}>
       <div
         style={{
           display: 'flex',
           gap: '8px',
           overflowX: 'auto',
+          paddingBottom: '1px',
           scrollbarWidth: 'none',
         }}
         className="[&::-webkit-scrollbar]:hidden"
@@ -29,17 +30,23 @@ export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
               type="button"
               whileTap={{ scale: 0.97 }}
               onClick={() => onTagChange(tag.value)}
+              className={
+                isActive
+                  ? undefined
+                  : 'hover:bg-[var(--color-subtle)] hover:[border-color:var(--color-border-strong)]'
+              }
               style={{
-                backgroundColor: isActive ? 'var(--color-brand)' : 'var(--color-brand-subtle)',
-                color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-brand)',
-                fontSize: '12px',
+                backgroundColor: isActive ? 'var(--color-text-default)' : 'transparent',
+                color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
+                border: isActive ? '1px solid transparent' : '1px solid var(--color-border-default)',
+                fontSize: '13px',
                 fontWeight: '500',
-                padding: '6px 14px',
+                padding: '5px 14px',
                 borderRadius: 'var(--radius-full)',
-                border: 'none',
                 whiteSpace: 'nowrap',
                 cursor: 'pointer',
                 flexShrink: 0,
+                transition: 'all 0.12s',
               }}
             >
               {tag.label}

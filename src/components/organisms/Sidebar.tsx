@@ -13,6 +13,7 @@ import {
   Briefcase,
   Circle,
 } from 'lucide-react'
+import { Avatar } from '@/components/atoms/Avatar'
 
 interface NavItem {
   label: string
@@ -68,15 +69,14 @@ function NavLink({ item, isActive }: NavLinkProps) {
   const linkStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
+    gap: '8px',
     padding: '6px 10px',
-    borderRadius: '8px',
-    fontSize: '13px',
+    borderRadius: 'var(--radius-md)',
+    fontSize: '14px',
     fontWeight: isActive ? '500' : '400',
     textDecoration: 'none',
-    transition: 'all 0.15s ease',
-    backgroundColor: isActive ? 'var(--color-brand-subtle)' : 'transparent',
-    color: isActive ? 'var(--color-brand)' : 'var(--color-text-secondary)',
+    backgroundColor: isActive ? 'var(--color-muted)' : 'transparent',
+    color: isActive ? 'var(--color-text-default)' : 'var(--color-text-secondary)',
     cursor: 'pointer',
   }
 
@@ -87,7 +87,7 @@ function NavLink({ item, isActive }: NavLinkProps) {
       target={item.external ? '_blank' : undefined}
       rel={item.external ? 'noopener noreferrer' : undefined}
     >
-      <Icon size={16} strokeWidth={1.75} />
+      <Icon size={16} strokeWidth={1.5} color={isActive ? 'var(--color-brand)' : 'var(--color-text-muted)'} />
       <span>{item.label}</span>
     </Link>
   )
@@ -99,38 +99,38 @@ export function Sidebar() {
   return (
     <aside
       style={{
-        width: '220px',
-        minWidth: '220px',
-        backgroundColor: 'var(--color-surface)',
-        borderRight: '1px solid var(--color-border-default)',
+        width: '208px',
+        minWidth: '208px',
+        backgroundColor: 'var(--color-sidebar)',
+        borderRight: '1px solid var(--color-sidebar-border)',
         display: 'flex',
         flexDirection: 'column',
         padding: '16px 12px',
         overflowY: 'auto',
       }}
     >
-      <div style={{ marginBottom: '24px', padding: '4px 10px' }}>
-        <span style={{
-          fontSize: '13px',
-          fontWeight: '700',
-          letterSpacing: '0.08em',
-          color: 'var(--color-text-default)',
-        }}>
-          LEAN IN CONNECT
+      <div style={{ marginBottom: '20px', padding: '0 10px' }}>
+        <span style={{ fontSize: '13px', color: 'var(--color-text-default)' }}>
+          <span style={{ fontWeight: 400, letterSpacing: '0.06em' }}>LEAN </span>
+          <span style={{ fontWeight: 700 }}>IN</span>
+          <span style={{ fontWeight: 400, letterSpacing: '0.06em' }}> CONNECT</span>
         </span>
       </div>
 
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {NAV_SECTIONS.map((section) => (
           <div key={section.title}>
-            <p style={{
-              fontSize: '10px',
-              fontWeight: '600',
-              letterSpacing: '0.1em',
-              color: 'var(--color-text-muted)',
-              marginBottom: '6px',
-              padding: '0 10px',
-            }}>
+            <p
+              style={{
+                fontSize: '11px',
+                fontWeight: '600',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: 'var(--color-text-muted)',
+                padding: '0 10px',
+                marginBottom: '4px',
+              }}
+            >
               {section.title}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -145,6 +145,22 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
+
+      <div
+        style={{
+          marginTop: 'auto',
+          paddingTop: '16px',
+          borderTop: '1px solid var(--color-sidebar-border)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px' }}>
+          <Avatar initials="HS" color="var(--color-brand-subtle)" textColor="var(--color-brand)" size={32} />
+          <div style={{ minWidth: 0 }}>
+            <p style={{ fontSize: '13px', fontWeight: '500', color: 'var(--color-text-default)' }}>Hrithik Sanyal</p>
+            <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>Design Engineer</p>
+          </div>
+        </div>
+      </div>
     </aside>
   )
 }

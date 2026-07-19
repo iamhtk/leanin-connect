@@ -8,12 +8,12 @@ export function Tag({ label }: TagProps) {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        backgroundColor: 'var(--color-brand-subtle)',
-        color: 'var(--color-text-brand)',
-        fontSize: '11px',
-        fontWeight: '500',
-        padding: '2px 8px',
-        borderRadius: 'var(--radius-full)',
+        backgroundColor: 'transparent',
+        color: 'var(--color-brand)',
+        fontSize: '12px',
+        fontWeight: '600',
+        padding: 0,
+        cursor: 'pointer',
       }}
     >
       {label}
