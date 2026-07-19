@@ -1318,3 +1318,596 @@ a, button {
   border-top: 1px solid var(--color-border-default);
   margin: 10px 0;
 }
+/* ============================================
+   COMPONENT INTERACTION STATES
+   Hover, Active/Pressed, Focus, Disabled
+   for all interactive elements — desktop + mobile
+   ============================================ */
+
+/* ─── PRIMARY BUTTON (brand filled) ─── */
+.btn-primary {
+  transition:
+    background-color 0.12s ease,
+    box-shadow 0.12s ease,
+    transform 0.08s ease,
+    opacity 0.12s ease;
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-brand-hover) !important;
+  box-shadow: 0 2px 10px rgba(123, 35, 53, 0.28);
+}
+.btn-primary:active:not(:disabled) {
+  background-color: var(--color-brand-active) !important;
+  transform: scale(0.97);
+  box-shadow: none;
+}
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px var(--color-brand-muted);
+}
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ─── SECONDARY BUTTON (outlined) ─── */
+.btn-secondary {
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease,
+    transform 0.08s ease;
+}
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-subtle) !important;
+  border-color: var(--color-border-strong) !important;
+}
+.btn-secondary:active:not(:disabled) {
+  background-color: var(--color-muted) !important;
+  transform: scale(0.97);
+}
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+}
+.btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ─── GHOST BUTTON (no border, no bg) ─── */
+.btn-ghost {
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease,
+    transform 0.08s ease;
+}
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--color-subtle) !important;
+}
+.btn-ghost:active:not(:disabled) {
+  background-color: var(--color-muted) !important;
+  transform: scale(0.96);
+}
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+.btn-ghost:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ─── FOLLOW / CONNECT BUTTON ─── */
+.btn-follow {
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.08s ease;
+}
+.btn-follow:hover:not(:disabled) {
+  background-color: var(--color-brand) !important;
+  color: white !important;
+  border-color: var(--color-brand) !important;
+}
+.btn-follow:active:not(:disabled) {
+  background-color: var(--color-brand-active) !important;
+  transform: scale(0.97);
+}
+.btn-follow:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+}
+
+/* ─── DANGER / DESTRUCTIVE BUTTON ─── */
+.btn-danger {
+  transition:
+    background-color 0.12s ease,
+    transform 0.08s ease;
+}
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+.btn-danger:active:not(:disabled) {
+  transform: scale(0.97);
+  filter: brightness(0.9);
+}
+.btn-danger:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ─── INPUT FIELDS ─── */
+.input-field {
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease,
+    background-color 0.12s ease;
+}
+.input-field:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-border-strong) !important;
+}
+.input-field:focus {
+  border-color: var(--color-brand) !important;
+  box-shadow: 0 0 0 3px var(--color-brand-muted) !important;
+  outline: none;
+}
+.input-field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-subtle) !important;
+}
+
+/* ─── SEARCH BAR / SEARCH CONTAINER ─── */
+.search-bar {
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.search-bar:hover {
+  border-color: var(--color-border-strong) !important;
+}
+.search-bar:focus-within {
+  border-color: var(--color-brand) !important;
+  box-shadow: 0 0 0 3px var(--color-brand-muted) !important;
+}
+
+/* ─── SELECT / DROPDOWN ─── */
+.select-field {
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+  cursor: pointer;
+}
+.select-field:hover:not(:disabled) {
+  border-color: var(--color-border-strong) !important;
+}
+.select-field:focus {
+  border-color: var(--color-brand) !important;
+  box-shadow: 0 0 0 3px var(--color-brand-muted) !important;
+  outline: none;
+}
+
+/* ─── SIDEBAR NAV ITEMS ─── */
+.nav-item {
+  transition:
+    background-color 0.1s ease,
+    color 0.1s ease,
+    transform 0.08s ease;
+  cursor: pointer;
+}
+.nav-item:hover:not([aria-current="page"]) {
+  background-color: var(--color-subtle) !important;
+  color: var(--color-text-default) !important;
+}
+.nav-item:active {
+  background-color: var(--color-muted) !important;
+  transform: scale(0.98);
+}
+.nav-item:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
+  border-radius: 9px;
+}
+
+/* ─── MOBILE NAV ITEMS ─── */
+.mobile-nav-item {
+  transition:
+    opacity 0.1s ease,
+    transform 0.08s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-nav-item:active {
+  opacity: 0.6;
+  transform: scale(0.88);
+}
+.mobile-nav-item:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: -4px;
+  border-radius: 8px;
+}
+
+/* ─── TOPIC PILLS / FILTER CHIPS ─── */
+.pill-filter {
+  transition:
+    background-color 0.1s ease,
+    color 0.1s ease,
+    border-color 0.1s ease,
+    transform 0.08s ease,
+    box-shadow 0.1s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.pill-filter:hover:not([aria-selected="true"]):not(.is-active) {
+  background-color: var(--color-subtle) !important;
+  border-color: var(--color-border-strong) !important;
+  color: var(--color-text-default) !important;
+}
+.pill-filter:active {
+  transform: scale(0.94);
+}
+.pill-filter:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+.pill-filter.is-active,
+.pill-filter[aria-selected="true"] {
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* ─── SCOPE TABS (All / Your Network / Your Circle / Saved) ─── */
+.tab-item {
+  transition:
+    color 0.1s ease,
+    background-color 0.1s ease,
+    border-color 0.1s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab-item:hover:not([aria-selected="true"]) {
+  color: var(--color-text-default) !important;
+  background-color: var(--color-subtle) !important;
+}
+.tab-item:active {
+  transform: scale(0.96);
+}
+.tab-item:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* ─── POST ACTION BUTTONS (like, reply, bookmark, share) ─── */
+.action-btn {
+  transition:
+    background-color 0.1s ease,
+    color 0.1s ease,
+    transform 0.08s ease;
+  border-radius: 8px;
+}
+.action-btn:hover {
+  background-color: var(--color-subtle) !important;
+}
+.action-btn:active {
+  transform: scale(0.88) !important;
+}
+.action-btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+.action-btn.is-liked {
+  color: var(--color-brand) !important;
+  background-color: var(--color-brand-subtle) !important;
+}
+.action-btn.is-saved {
+  color: var(--color-brand) !important;
+}
+
+/* ─── CLICKABLE CARDS ─── */
+.card-hover {
+  transition:
+    border-color 0.12s ease,
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+  cursor: pointer;
+}
+.card-hover:hover {
+  border-color: var(--color-border-strong) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(43, 33, 24, 0.08);
+}
+.card-hover:active {
+  transform: translateY(0) scale(0.99) !important;
+  box-shadow: none !important;
+  border-color: var(--color-border-default) !important;
+}
+.card-hover:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* ─── CONVERSATION LIST ROWS (Messages) ─── */
+.conv-item {
+  transition:
+    background-color 0.1s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.conv-item:hover:not(.is-selected) {
+  background-color: var(--color-subtle) !important;
+}
+.conv-item:active {
+  background-color: var(--color-muted) !important;
+}
+.conv-item:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
+}
+
+/* ─── NOTIFICATION ROWS ─── */
+.notif-item {
+  transition:
+    background-color 0.1s ease;
+  cursor: pointer;
+}
+.notif-item:hover {
+  background-color: var(--color-subtle) !important;
+}
+.notif-item:active {
+  background-color: var(--color-muted) !important;
+}
+
+/* ─── MEMBER / DIRECTORY ROW ITEMS ─── */
+.member-item {
+  transition:
+    background-color 0.1s ease,
+    transform 0.08s ease;
+  cursor: pointer;
+}
+.member-item:hover {
+  background-color: var(--color-subtle) !important;
+}
+.member-item:active {
+  transform: scale(0.99);
+}
+
+/* ─── TOGGLE SWITCH (Settings) ─── */
+.toggle-switch {
+  transition:
+    background-color 0.2s ease,
+    opacity 0.12s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.toggle-switch:hover {
+  opacity: 0.85;
+}
+.toggle-switch:active {
+  transform: scale(0.94);
+}
+.toggle-switch:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+  border-radius: 9999px;
+}
+
+/* ─── SETTINGS ROW ITEMS ─── */
+.settings-row {
+  transition:
+    background-color 0.1s ease;
+  cursor: pointer;
+}
+.settings-row:hover {
+  background-color: var(--color-subtle) !important;
+}
+.settings-row:active {
+  background-color: var(--color-muted) !important;
+}
+
+/* ─── ICON BUTTONS (close, theme, bell, avatar, sparkles) ─── */
+.icon-btn {
+  transition:
+    background-color 0.1s ease,
+    color 0.1s ease,
+    transform 0.08s ease;
+  border-radius: 8px;
+}
+.icon-btn:hover {
+  background-color: var(--color-subtle) !important;
+  color: var(--color-text-default) !important;
+}
+.icon-btn:active {
+  background-color: var(--color-muted) !important;
+  transform: scale(0.88);
+}
+.icon-btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ─── CIRCLE RECOMMENDATION CARDS (horizontal scroll) ─── */
+.rec-card {
+  transition:
+    border-color 0.12s ease,
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+  cursor: pointer;
+}
+.rec-card:hover {
+  border-color: var(--color-brand) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(123, 35, 53, 0.12);
+}
+.rec-card:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ─── RESOURCE / ARTICLE CARDS ─── */
+.resource-card {
+  transition:
+    border-color 0.12s ease,
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+  cursor: pointer;
+}
+.resource-card:hover {
+  border-color: var(--color-border-strong) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(43, 33, 24, 0.07);
+}
+.resource-card:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: none;
+}
+
+/* ─── JOB CARDS ─── */
+.job-card {
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.job-card:hover {
+  border-color: var(--color-border-strong) !important;
+  box-shadow: 0 2px 10px rgba(43, 33, 24, 0.06);
+}
+
+/* ─── POST COMPOSER COLLAPSED STATE ─── */
+.composer-trigger {
+  transition:
+    border-color 0.12s ease,
+    background-color 0.12s ease,
+    box-shadow 0.12s ease;
+  cursor: pointer;
+}
+.composer-trigger:hover {
+  border-color: var(--color-border-strong) !important;
+  background-color: var(--color-subtle) !important;
+  box-shadow: 0 1px 6px rgba(43, 33, 24, 0.06);
+}
+
+/* ─── AI SUGGESTION CHIPS ─── */
+.ai-suggestion-chip {
+  transition:
+    background-color 0.1s ease,
+    border-color 0.1s ease,
+    transform 0.08s ease;
+  cursor: pointer;
+}
+.ai-suggestion-chip:hover {
+  background-color: var(--color-subtle) !important;
+  border-color: var(--color-border-strong) !important;
+}
+.ai-suggestion-chip:active {
+  transform: scale(0.97);
+  background-color: var(--color-muted) !important;
+}
+
+/* ─── SIDEBAR COLLAPSE / TOGGLE ─── */
+.sidebar-toggle {
+  transition:
+    background-color 0.1s ease,
+    transform 0.1s ease;
+}
+.sidebar-toggle:hover {
+  background-color: var(--color-muted) !important;
+}
+.sidebar-toggle:active {
+  transform: scale(0.9);
+}
+
+/* ─── TOPBAR SEARCH CONTAINER ─── */
+.topbar-search {
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease,
+    background-color 0.12s ease;
+}
+.topbar-search:hover {
+  border-color: var(--color-border-strong) !important;
+  background-color: var(--color-surface) !important;
+}
+.topbar-search:focus-within {
+  border-color: var(--color-brand) !important;
+  box-shadow: 0 0 0 3px var(--color-brand-muted) !important;
+  background-color: var(--color-surface) !important;
+}
+
+/* ─── CHECKBOX / RADIO ─── */
+.checkbox-field {
+  transition:
+    background-color 0.1s ease,
+    border-color 0.1s ease,
+    transform 0.08s ease;
+  cursor: pointer;
+}
+.checkbox-field:hover {
+  border-color: var(--color-brand) !important;
+}
+.checkbox-field:active {
+  transform: scale(0.9);
+}
+.checkbox-field:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* ─── TIPTAP TOOLBAR BUTTONS ─── */
+.rich-text-tool {
+  transition:
+    background-color 0.1s ease,
+    color 0.1s ease,
+    transform 0.08s ease;
+}
+.rich-text-tool:hover:not([aria-pressed="true"]) {
+  background-color: var(--color-subtle) !important;
+  color: var(--color-text-default) !important;
+}
+.rich-text-tool:active {
+  transform: scale(0.9);
+}
+
+/* ─── GLOBAL LINK HOVER ─── */
+.link-interactive {
+  transition: color 0.1s ease;
+  cursor: pointer;
+}
+.link-interactive:hover {
+  color: var(--color-brand) !important;
+  text-decoration: underline;
+}
+.link-interactive:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ─── MOBILE: tap highlight removal for all custom interactive ─── */
+.btn-primary,
+.btn-secondary,
+.btn-ghost,
+.btn-follow,
+.btn-danger,
+.icon-btn,
+.nav-item,
+.mobile-nav-item,
+.pill-filter,
+.tab-item,
+.action-btn,
+.card-hover,
+.rec-card,
+.resource-card,
+.conv-item,
+.notif-item,
+.member-item,
+.settings-row,
+.composer-trigger,
+.ai-suggestion-chip {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
