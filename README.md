@@ -1,46 +1,87 @@
-# Lean In Connect — Design Engineer Assessment
+<p align="center">
+  <img src="./public/icon.svg" alt="Lean In Connect" width="92" height="92" />
+</p>
 
-A full-stack redesign of Lean In Connect built as a Design
-Engineer take-home assessment for Sandberg Goldberg Bernthal
-Family Foundation.
+<h1 align="center">Lean In Connect</h1>
 
-Live: https://leanin-connect.vercel.app/feed
-GitHub: https://github.com/iamhtk/leanin-connect
-Built by: Hrithik Sanyal
+<p align="center">
+  <strong>A full-stack community platform helping women grow their careers together.</strong>
+</p>
 
----
+<p align="center">
+  Design Engineer take-home assessment for the<br />
+  Sandberg Goldberg Bernthal Family Foundation.
+</p>
 
-## Stack
+<p align="center">
+  <a href="https://leanin-connect.vercel.app/feed"><strong>View live app</strong></a>
+  ·
+  <a href="https://github.com/iamhtk/leanin-connect">GitHub</a>
+  ·
+  Built by <a href="https://github.com/iamhtk">Hrithik Sanyal</a>
+</p>
 
-Next.js 14 App Router, TypeScript strict, Tailwind CSS v4,
-Supabase (Auth, Database, Storage, Realtime), Anthropic Claude,
-Framer Motion, Tiptap, shadcn/ui, Vercel
-
----
-
-## What Is Real vs Mocked
-
-Real: Supabase Auth, posts table and all writes, likes table,
-notifications table, circle_messages table, profiles table,
-Storage avatar uploads, all AI API calls via Anthropic,
-Row Level Security, database triggers, Realtime subscriptions.
-
-Mocked: Job listings, conversations, member directory, circles,
-networks, groups, events, resources. All mocked data lives in
-typed TypeScript files in src/data/.
-
----
-
-## Pages (15)
-
-Feed, Jobs, Messages, Circles, Circle Detail (/circles/[id]),
-Networks, Groups, Directory, Events, Resources,
-Resource Detail (/resources/[id]), Notifications, Profile,
-Settings, Auth (/auth/login)
+<p align="center">
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-000000?style=flat-square&logo=nextdotjs" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat-square&logo=typescript&logoColor=white" />
+  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Realtime-3FCF8E?style=flat-square&logo=supabase&logoColor=white" />
+  <img alt="Anthropic" src="https://img.shields.io/badge/AI-Claude-D97757?style=flat-square&logo=anthropic&logoColor=white" />
+  <img alt="Vercel" src="https://img.shields.io/badge/Deployed-Vercel-000000?style=flat-square&logo=vercel" />
+</p>
 
 ---
 
-## Authentication
+## ✨ At a Glance
+
+- **15 product pages** across community, career, messaging, and account experiences
+- **11 AI features** powered by Claude, including streaming and multi-agent workflows
+- **Realtime collaboration** through live notifications and Circle messages
+- **Production-minded frontend** with optimistic UI, cursor pagination, PWA support, and WCAG 2.1 AA
+
+## 🧭 Contents
+
+- [Stack](#-stack)
+- [What Is Real vs Mocked](#-what-is-real-vs-mocked)
+- [Pages](#-pages-15)
+- [Authentication](#-authentication)
+- [Backend Engineering](#-backend-engineering)
+- [AI Features](#-ai-features-11)
+- [Frontend Engineering](#-frontend-engineering)
+- [Design System Architecture](#-design-system-architecture)
+- [Running Locally](#-running-locally)
+
+---
+
+## 🧰 Stack
+
+`Next.js 14` · `TypeScript` · `Tailwind CSS v4` · `Supabase` ·
+`Anthropic Claude` · `Framer Motion` · `Tiptap` · `shadcn/ui` · `Vercel`
+
+> Supabase powers authentication, PostgreSQL, Storage, and Realtime. Claude powers every AI workflow through server-only API routes.
+
+---
+
+## ✅ What Is Real vs Mocked
+
+> **Real**
+> Supabase Auth; posts, likes, notifications, Circle messages, and profiles; avatar uploads; all Anthropic calls; Row Level Security; database triggers; and Realtime subscriptions.
+
+> **Mocked**
+> Job listings, conversations, member directory, Circles, Networks, Groups, Events, and Resources. Mock data remains typed and centralized in `src/data/`.
+
+---
+
+## 🗺️ Pages (15)
+
+`Feed` · `Jobs` · `Messages` · `Circles` · `Circle Detail` · `Networks` ·
+`Groups` · `Directory` · `Events` · `Resources` · `Resource Detail` ·
+`Notifications` · `Profile` · `Settings` · `Auth`
+
+Dynamic routes: `/circles/[id]` and `/resources/[id]`
+
+---
+
+## 🔐 Authentication
 
 Email and password sign up and sign in via Supabase Auth.
 A Next.js middleware protects all 13 app routes — unauthenticated
@@ -51,46 +92,36 @@ initials from the user's full name without any client-side code.
 
 ---
 
-## Backend Engineering
+## 🗄️ Backend Engineering
 
-### Row Level Security
+### 🛡️ Row Level Security
 
 Every table has RLS enabled with explicit policies:
 
-posts: SELECT is public. INSERT requires auth. UPDATE and DELETE
-require auth.uid() = user_id.
+- **`posts`** — Public reads; authenticated inserts; owner-only updates and deletes
+- **`likes`** — Public reads; authenticated, user-scoped inserts and deletes
+- **`profiles`** — Public reads; user-scoped inserts and updates
+- **`notifications`** — Every operation is scoped to the recipient
+- **`circle_messages`** — Public reads; authenticated inserts
+- **`storage.objects`** — Public avatar reads; authenticated writes scoped to the user's UUID
 
-likes: SELECT is public. INSERT requires auth.uid() = user_id.
-DELETE requires auth.uid() = user_id.
+### ⚙️ Database Triggers and Functions
 
-profiles: SELECT is public. INSERT and UPDATE require
-auth.uid() = id.
-
-notifications: All operations require auth.uid() = user_id.
-
-circle_messages: SELECT is public. INSERT requires authentication.
-
-storage.objects (avatars): SELECT is public. INSERT requires
-authentication. UPDATE and DELETE require the folder name to
-match the user's UUID.
-
-### Database Triggers and Functions
-
-handle_new_user: Fires on INSERT to auth.users. Reads
+**`handle_new_user`** — Fires on `INSERT` to `auth.users`. Reads
 raw_user_meta_data.full_name, generates initials, and inserts
 into public.profiles. Profile creation is never client-side.
 
-update_post_likes_count: Fires on INSERT and DELETE to the likes
+**`update_post_likes_count`** — Fires on `INSERT` and `DELETE` to the likes
 table. Atomically increments or decrements likes_count on the
 corresponding post row. The client never writes to likes_count
 directly.
 
-create_like_notification: Fires on INSERT to likes. Looks up the
+**`create_like_notification`** — Fires on `INSERT` to likes. Looks up the
 post author and the liker's profile. If the liker is not the
 post author, inserts a notification row for the author. All
 notification creation is handled at the database layer.
 
-### Supabase Realtime
+### ⚡ Supabase Realtime
 
 Two tables are published to the Realtime channel:
 notifications and circle_messages.
@@ -104,7 +135,7 @@ The useCircleMessages hook subscribes to circle_messages
 filtered by circle_id. Messages posted by any member appear
 for all circle viewers instantly.
 
-### Supabase Storage
+### 📦 Supabase Storage
 
 A public "avatars" bucket stores profile photos at the path
 {userId}/avatar.{ext}. The API route validates file type
@@ -112,7 +143,7 @@ A public "avatars" bucket stores profile photos at the path
 with upsert so re-uploads replace the previous file, and updates
 the profiles table with the cache-busted public URL.
 
-### Cursor-based Pagination
+### ♾️ Cursor-based Pagination
 
 The GET /api/posts endpoint accepts cursor (an ISO timestamp)
 and limit (default 10). It fetches limit + 1 rows older than
@@ -122,27 +153,27 @@ pointing to the last post's timestamp. An IntersectionObserver
 in useInfiniteScroll fires the next fetch when the sentinel
 div enters the viewport.
 
-### API Routes (13)
+### 🔌 API Routes (13)
 
-/api/posts — GET (cursor pagination) + POST (authenticated)
-/api/profile-photo — POST (multipart, Storage upload)
-/api/ai/career-pulse — 3-agent sequential Claude chain
-/api/ai/voice-coach — Streaming Claude response
-/api/ai/job-match — Profile to listing matching
-/api/ai/salary-coach — Role-specific negotiation tips
-/api/ai/conversation-starter — Personalized openers
-/api/ai/chat-reply — Conversation-aware AI replies
-/api/ai/circle-recommend — Profile to circle matching
-/api/ai/profile-strength — Completeness analysis
-/api/ai/search — Semantic search across platform data
-/api/ai/classify-topic — Single-call topic classification
-/api/ai/assistant — Platform navigation AI with history
+- **`/api/posts`** — Cursor-paginated reads and authenticated writes
+- **`/api/profile-photo`** — Multipart validation and Storage upload
+- **`/api/ai/career-pulse`** — Three-agent sequential Claude chain
+- **`/api/ai/voice-coach`** — Streaming post-draft generation
+- **`/api/ai/job-match`** — Profile-to-listing matching
+- **`/api/ai/salary-coach`** — Role-specific negotiation guidance
+- **`/api/ai/conversation-starter`** — Personalized openers
+- **`/api/ai/chat-reply`** — Conversation-aware replies
+- **`/api/ai/circle-recommend`** — Profile-to-Circle matching
+- **`/api/ai/profile-strength`** — Profile completeness analysis
+- **`/api/ai/search`** — Semantic platform search
+- **`/api/ai/classify-topic`** — Single-call topic classification
+- **`/api/ai/assistant`** — Platform assistant with session history
 
 ---
 
-## AI Features (11)
+## 🤖 AI Features (11)
 
-### AI Career Pulse (Agentic)
+### AI Career Pulse · Agentic
 Three sequential Claude calls on feed load. Agent 1 identifies
 the dominant career theme from current post tags. Agent 2
 matches that theme to a real Lean In Women in the Workplace
@@ -150,7 +181,7 @@ research statistic. Agent 3 synthesizes an insight paragraph and
 three discussion questions. Each agent's output feeds the next.
 Clicking a question opens the post composer pre-filled with it.
 
-### AI Voice Coach (Streaming)
+### AI Voice Coach · Streaming
 Transforms rough notes into a polished community post using
 the Anthropic streaming API. The response streams character by
 character into the Tiptap editor. After the stream completes,
@@ -210,9 +241,9 @@ questions.
 
 ---
 
-## Frontend Engineering
+## 🎨 Frontend Engineering
 
-### Design System
+### 🧩 Design System
 Three-tier token architecture in src/tokens/:
 primitives.ts holds raw values with no semantic meaning.
 semantic.ts maps purpose-named tokens that reference
@@ -221,7 +252,7 @@ mapped.ts holds component-context tokens that reference
 semantic only. Zero hardcoded color, spacing, or radius values
 exist in any component file.
 
-### Dark Mode
+### 🌙 Dark Mode
 A ThemeContext wraps the app and writes a data-theme attribute
 to the document root. CSS custom properties in globals.css
 define a complete [data-theme="dark"] token override set.
@@ -229,21 +260,21 @@ An inline script in the document head reads localStorage and
 sets data-theme before React hydrates, preventing the white
 flash entirely. The user's preference persists across sessions.
 
-### CMD+K Command Palette
+### ⌨️ CMD+K Command Palette
 Full keyboard-accessible command palette with 20 commands
 across five groups: Navigation, Actions, Topics, Account, and
 a real-time filtered view. Arrow keys navigate, Enter selects,
 Escape closes. The active item scrolls into view automatically.
 A KBD hint is visible in the topbar search bar.
 
-### Optimistic UI
+### 🚀 Optimistic UI
 Post likes update instantly in the UI before the Supabase
 INSERT resolves. On server error, the count reverts to its
 previous value. Bookmarks write synchronously to localStorage
 and update state immediately. Both patterns eliminate perceived
 latency.
 
-### Tiptap Rich Text Editor
+### ✍️ Tiptap Rich Text Editor
 The post composer uses Tiptap with StarterKit, Placeholder,
 and CharacterCount extensions. The toolbar supports bold,
 italic, bullet lists, numbered lists, and horizontal rules.
@@ -251,7 +282,7 @@ A character counter turns amber at 80% and red at the 500
 character limit. Posted HTML renders safely in the feed via a
 sanitize function that strips scripts and event attributes.
 
-### Framer Motion
+### 🎬 Framer Motion
 Page transitions use AnimatePresence with a 180ms ease-out
 enter and 120ms ease-in exit. The sidebar active indicator
 uses layoutId so the active pill slides between nav items with
@@ -259,14 +290,14 @@ a spring animation. Post cards animate in on load. The command
 palette scales in from 96% with a custom cubic bezier. The
 notification badge scales in with a spring on first appearance.
 
-### PWA
+### 📱 Progressive Web App
 A manifest.json registers the app as installable with a name,
 short name, start URL at /feed, standalone display, theme color,
 and three home screen shortcuts for Feed, Messages, and Jobs.
 The app is installable from Chrome on Android, iOS Safari, and
 desktop Chrome.
 
-### Responsive Design
+### 📐 Responsive Design
 Four token scales defined as CSS custom properties:
 Mobile (default, 0-767px), Tablet (768px), Desktop (1024px),
 Large (1440px). Mobile shows a bottom tab bar with five items
@@ -274,7 +305,7 @@ and hides the desktop sidebar. The messages layout switches to
 full-screen conversation view on mobile. Post grids collapse to
 single column. Touch targets are 44px minimum throughout.
 
-### WCAG 2.1 AA
+### ♿ WCAG 2.1 AA
 All interactive elements have visible focus indicators (2px
 brand color, 2px offset). Every page has a main landmark with
 aria-label. All buttons, tabs, and form controls have aria-label
@@ -285,35 +316,63 @@ motion is respected via prefers-reduced-motion.
 
 ---
 
-## Design System Architecture
+## 🏗️ Design System Architecture
 
-src/tokens/primitives.ts — Raw oklch() values, no context
-src/tokens/semantic.ts — Purpose tokens, references primitives
-src/tokens/mapped.ts — Component tokens, references semantic
-src/tokens/index.ts — Re-exports all three
+```text
+src/
+├── app/                    # Pages, layouts, and API routes
+├── components/
+│   ├── atoms/              # Avatar, Tag, FadeIn
+│   ├── molecules/          # Cards, filters, editors
+│   └── organisms/          # Navigation, feed, composer, assistant
+├── contexts/               # AuthContext, ThemeContext
+├── data/                   # Typed mock data
+├── hooks/                  # Realtime and infinite-scroll hooks
+├── lib/                    # Supabase clients, types, utilities
+└── tokens/
+    ├── primitives.ts       # Raw values, no context
+    ├── semantic.ts         # Purpose tokens
+    ├── mapped.ts           # Component-context tokens
+    └── index.ts            # Public token exports
+```
 
-src/components/atoms/ — Avatar, Tag, FadeIn
-src/components/molecules/ — PostCard, TopicFilter, CareerPulseCard,
-  TrendingTopics, SuggestedMembers, RichTextEditor
-src/components/organisms/ — Sidebar, Topbar, FeedList,
-  PostComposer, MobileNav, AIAssistant, CommandPalette
-src/contexts/ — AuthContext, ThemeContext
-src/hooks/ — useRealtimeNotifications, useCircleMessages,
-  useInfiniteScroll
+The token dependency direction is deliberately one-way:
+
+```text
+primitives → semantic → mapped → components
+```
 
 ---
 
-## Running Locally
+## 🧑‍💻 Running Locally
 
-Clone the repo and run npm install.
+**1. Clone and install**
 
-Create .env.local:
+```bash
+git clone https://github.com/iamhtk/leanin-connect.git
+cd leanin-connect
+npm install
+```
+
+**2. Add `.env.local`**
+
+```bash
 NEXT_PUBLIC_SUPABASE_URL=your_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
 SUPABASE_SERVICE_ROLE_KEY=your_secret
 ANTHROPIC_API_KEY=your_key
+```
 
-Run npm run dev and open http://localhost:3000.
-You land on /auth/login. Create an account to explore the app.
+**3. Start the app**
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). You will land on `/auth/login`; create an account to explore the app.
 
 ---
+
+<p align="center">
+  Built with care for women navigating ambitious careers.
+</p>
