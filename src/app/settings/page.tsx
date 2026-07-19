@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, type CSSProperties } from 'react'
-import { User, Bell, Mail, Lock, Shield, Link, Download, Globe, ChevronRight, ChevronDown } from 'lucide-react'
+import { User, Bell, Mail, Lock, Shield, Link, Download, Globe, ChevronRight, ChevronDown, Moon } from 'lucide-react'
 import { showToast } from '@/lib/utils'
+import { useTheme } from '@/contexts/ThemeContext'
 
 const COMING_SOON = 'This feature is available in the full product.'
 
@@ -70,6 +71,7 @@ function ToggleSwitch({ checked, onChange }: ToggleSwitchProps) {
 }
 
 export default function SettingsPage() {
+  const { theme, toggleTheme } = useTheme()
   const [expanded, setExpanded] = useState<ExpandedSection>(null)
   const [name, setName] = useState('Hrithik Sanyal')
   const [jobTitle, setJobTitle] = useState('Design Engineer')
@@ -640,6 +642,53 @@ export default function SettingsPage() {
             </button>
           )
         })}
+      </div>
+
+      <div
+        style={{
+          background: 'var(--color-surface)',
+          border: '1px solid var(--color-border-default)',
+          borderRadius: '14px',
+          overflow: 'hidden',
+          marginTop: '12px',
+          boxShadow: 'none',
+        }}
+      >
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '16px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '9999px',
+                background: 'var(--color-brand-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Moon size={16} style={{ color: 'var(--color-brand)' }} aria-hidden="true" />
+            </div>
+            <div>
+              <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+                Appearance
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                Use dark mode across Lean In Connect.
+              </p>
+            </div>
+          </div>
+          <ToggleSwitch checked={theme === 'dark'} onChange={() => toggleTheme()} />
+        </div>
       </div>
 
       <div

@@ -73,7 +73,7 @@ function LoginForm() {
     <div
       style={{
         minHeight: '100vh',
-        background: 'oklch(.98 .005 60)',
+        background: 'var(--color-background)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -100,7 +100,7 @@ function LoginForm() {
               style={{
                 width: '32px',
                 height: '32px',
-                background: 'oklch(.42 .13 17)',
+                background: 'var(--color-brand)',
                 borderRadius: '8px',
                 display: 'flex',
                 alignItems: 'center',
@@ -111,7 +111,7 @@ function LoginForm() {
                 style={{
                   fontSize: '14px',
                   fontWeight: '800',
-                  color: 'white',
+                  color: 'var(--color-text-inverse)',
                   letterSpacing: '-0.02em',
                 }}
               >
@@ -123,7 +123,7 @@ function LoginForm() {
                 fontSize: '14px',
                 fontWeight: '700',
                 letterSpacing: '0.06em',
-                color: 'oklch(.15 .01 17)',
+                color: 'var(--color-text-default)',
               }}
             >
               LEAN IN CONNECT
@@ -133,7 +133,7 @@ function LoginForm() {
             style={{
               fontSize: '22px',
               fontWeight: '700',
-              color: 'oklch(.15 .01 17)',
+              color: 'var(--color-text-default)',
               marginBottom: '6px',
             }}
           >
@@ -142,7 +142,7 @@ function LoginForm() {
           <p
             style={{
               fontSize: '14px',
-              color: 'oklch(.45 .01 17)',
+              color: 'var(--color-text-muted)',
             }}
           >
             {mode === 'login' ? 'Sign in to your Lean In community' : 'Join the Lean In community today'}
@@ -151,8 +151,8 @@ function LoginForm() {
 
         <div
           style={{
-            background: 'white',
-            border: '1px solid oklch(.92 .005 17)',
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-border-default)',
             borderRadius: '16px',
             padding: '28px',
           }}
@@ -160,13 +160,13 @@ function LoginForm() {
           {error && (
             <div
               style={{
-                background: 'oklch(.97 .02 17)',
-                border: '1px solid oklch(.90 .04 17)',
+                background: 'var(--color-brand-subtle)',
+                border: '1px solid var(--color-border-brand)',
                 borderRadius: '10px',
                 padding: '12px 14px',
                 marginBottom: '16px',
                 fontSize: '13px',
-                color: 'oklch(.42 .13 17)',
+                color: 'var(--color-brand)',
               }}
             >
               {error}
@@ -176,13 +176,13 @@ function LoginForm() {
           {successMessage && (
             <div
               style={{
-                background: 'oklch(.97 .05 150)',
-                border: '1px solid oklch(.88 .08 150)',
+                background: 'var(--color-status-success-bg)',
+                border: '1px solid var(--color-status-success)',
                 borderRadius: '10px',
                 padding: '12px 14px',
                 marginBottom: '16px',
                 fontSize: '13px',
-                color: 'oklch(.35 .10 150)',
+                color: 'var(--color-status-success)',
               }}
             >
               {successMessage}
@@ -198,7 +198,7 @@ function LoginForm() {
                     display: 'block',
                     fontSize: '12px',
                     fontWeight: '600',
-                    color: 'oklch(.45 .01 17)',
+                    color: 'var(--color-text-muted)',
                     marginBottom: '6px',
                     letterSpacing: '0.04em',
                     textTransform: 'uppercase',
@@ -216,14 +216,14 @@ function LoginForm() {
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    border: '1px solid oklch(.92 .005 17)',
+                    border: '1px solid var(--color-border-default)',
                     borderRadius: '10px',
                     fontSize: '14px',
-                    color: 'oklch(.15 .01 17)',
+                    color: 'var(--color-text-default)',
                     outline: 'none',
                     fontFamily: 'inherit',
                     boxSizing: 'border-box',
-                    background: 'white',
+                    background: 'var(--color-surface)',
                   }}
                 />
               </div>
@@ -236,7 +236,7 @@ function LoginForm() {
                   display: 'block',
                   fontSize: '12px',
                   fontWeight: '600',
-                  color: 'oklch(.45 .01 17)',
+                  color: 'var(--color-text-muted)',
                   marginBottom: '6px',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
@@ -255,14 +255,14 @@ function LoginForm() {
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  border: '1px solid oklch(.92 .005 17)',
+                  border: '1px solid var(--color-border-default)',
                   borderRadius: '10px',
                   fontSize: '14px',
-                  color: 'oklch(.15 .01 17)',
+                  color: 'var(--color-text-default)',
                   outline: 'none',
                   fontFamily: 'inherit',
                   boxSizing: 'border-box',
-                  background: 'white',
+                  background: 'var(--color-surface)',
                 }}
               />
             </div>
@@ -274,7 +274,7 @@ function LoginForm() {
                   display: 'block',
                   fontSize: '12px',
                   fontWeight: '600',
-                  color: 'oklch(.45 .01 17)',
+                  color: 'var(--color-text-muted)',
                   marginBottom: '6px',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
@@ -295,14 +295,14 @@ function LoginForm() {
                   style={{
                     width: '100%',
                     padding: '10px 40px 10px 12px',
-                    border: '1px solid oklch(.92 .005 17)',
+                    border: '1px solid var(--color-border-default)',
                     borderRadius: '10px',
                     fontSize: '14px',
-                    color: 'oklch(.15 .01 17)',
+                    color: 'var(--color-text-default)',
                     outline: 'none',
                     fontFamily: 'inherit',
                     boxSizing: 'border-box',
-                    background: 'white',
+                    background: 'var(--color-surface)',
                   }}
                 />
                 <button
@@ -317,7 +317,7 @@ function LoginForm() {
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
-                    color: 'oklch(.55 .01 17)',
+                    color: 'var(--color-text-muted)',
                     display: 'flex',
                     padding: '4px',
                   }}
@@ -337,8 +337,8 @@ function LoginForm() {
               style={{
                 width: '100%',
                 padding: '11px',
-                background: isLoading ? 'oklch(.70 .08 17)' : 'oklch(.42 .13 17)',
-                color: 'white',
+                background: isLoading ? 'var(--color-brand-muted)' : 'var(--color-brand)',
+                color: 'var(--color-text-inverse)',
                 border: 'none',
                 borderRadius: '10px',
                 fontSize: '14px',
@@ -367,7 +367,7 @@ function LoginForm() {
               marginTop: '20px',
               textAlign: 'center',
               fontSize: '13px',
-              color: 'oklch(.45 .01 17)',
+              color: 'var(--color-text-muted)',
             }}
           >
             {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
@@ -382,7 +382,7 @@ function LoginForm() {
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                color: 'oklch(.42 .13 17)',
+                color: 'var(--color-brand)',
                 fontWeight: '600',
                 fontSize: '13px',
                 fontFamily: 'inherit',
@@ -407,12 +407,12 @@ export default function LoginPage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'oklch(.98 .005 60)',
+            background: 'var(--color-background)',
           }}
         >
           <Loader2
             size={20}
-            style={{ color: 'oklch(.42 .13 17)', animation: 'spin 1s linear infinite' }}
+            style={{ color: 'var(--color-brand)', animation: 'spin 1s linear infinite' }}
             aria-hidden="true"
           />
         </div>

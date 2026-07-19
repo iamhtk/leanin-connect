@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, Bell, Sparkles, User, Settings, LogOut, Loader2, X } from 'lucide-react'
+import { Search, Bell, Sparkles, User, Settings, LogOut, Loader2, X, Moon, Sun } from 'lucide-react'
 import { showToast } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface SearchResultsData {
   results: {
@@ -19,6 +20,7 @@ interface SearchResultsData {
 export function Topbar() {
   const router = useRouter()
   const { user, profile, signOut } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -323,6 +325,32 @@ export function Topbar() {
           }}
         >
           <Sparkles size={16} />
+        </button>
+
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          className="hover:bg-subtle"
+          style={{
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '8px',
+            border: 'none',
+            background: 'transparent',
+            color: 'var(--color-text-muted)',
+            cursor: 'pointer',
+            transition: 'background-color 0.12s',
+          }}
+        >
+          {theme === 'dark' ? (
+            <Sun size={16} aria-hidden="true" />
+          ) : (
+            <Moon size={16} aria-hidden="true" />
+          )}
         </button>
 
         <button

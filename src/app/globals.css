@@ -90,6 +90,86 @@
   --motion-emphasized: cubic-bezier(.05, .7, .1, 1);
 }
 
+[data-theme="dark"] {
+  --color-background: oklch(.10 .005 17);
+  --color-surface: oklch(.14 .005 17);
+  --color-surface-elevated: oklch(.17 .005 17);
+  --color-subtle: oklch(.17 .005 17);
+  --color-muted: oklch(.20 .005 17);
+
+  --color-text-default: oklch(.94 .005 60);
+  --color-text-muted: oklch(.62 .01 17);
+  --color-text-faint: oklch(.40 .01 17);
+  --color-text-secondary: oklch(.62 .01 17);
+  --color-text-inverse: oklch(.98 .005 60);
+  --color-text-brand: oklch(.72 .12 17);
+
+  --color-border-default: oklch(.22 .005 17);
+  --color-border-strong: oklch(.30 .005 17);
+  --color-border-brand: oklch(.32 .08 17);
+  --color-border-focus: oklch(.60 .13 17);
+
+  --color-brand: oklch(.60 .13 17);
+  --color-brand-hover: oklch(.66 .13 17);
+  --color-brand-active: oklch(.54 .13 17);
+  --color-brand-subtle: oklch(.16 .06 17);
+  --color-brand-muted: oklch(.20 .08 17);
+
+  --color-success: oklch(.65 .15 150);
+  --color-success-subtle: oklch(.15 .06 150);
+  --color-warning: oklch(.70 .15 70);
+  --color-warning-subtle: oklch(.16 .06 70);
+  --color-error: oklch(.65 .18 20);
+  --color-error-subtle: oklch(.16 .07 20);
+
+  --color-status-success: oklch(.65 .15 150);
+  --color-status-success-bg: oklch(.15 .06 150);
+  --color-status-warning: oklch(.70 .15 70);
+  --color-status-warning-bg: oklch(.16 .06 70);
+  --color-status-error: oklch(.65 .18 20);
+  --color-status-error-bg: oklch(.16 .07 20);
+  --color-status-info: oklch(.60 .12 230);
+  --color-status-info-bg: oklch(.14 .04 230);
+
+  --color-sky-subtle: oklch(.14 .04 230);
+  --color-sky: oklch(.60 .12 230);
+  --color-teal-subtle: oklch(.14 .05 180);
+  --color-teal: oklch(.58 .12 180);
+  --color-amber-subtle: oklch(.16 .06 70);
+  --color-amber: oklch(.68 .15 70);
+
+  --color-sidebar: oklch(.12 .005 17);
+  --color-sidebar-border: oklch(.22 .005 17);
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .skeleton {
+  background: linear-gradient(
+    90deg,
+    oklch(.17 .005 17) 25%,
+    oklch(.22 .005 17) 50%,
+    oklch(.17 .005 17) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] textarea {
+  background: oklch(.14 .005 17);
+  color: oklch(.94 .005 60);
+  border-color: oklch(.22 .005 17);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: oklch(.40 .01 17);
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
