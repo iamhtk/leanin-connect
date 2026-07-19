@@ -1361,8 +1361,9 @@ a, button {
     transform 0.08s ease;
 }
 .btn-secondary:hover:not(:disabled) {
-  background-color: var(--color-subtle) !important;
-  border-color: var(--color-border-strong) !important;
+  background-color: var(--color-muted) !important;
+  border-color: var(--color-text-muted) !important;
+  color: var(--color-text-default) !important;
 }
 .btn-secondary:active:not(:disabled) {
   background-color: var(--color-muted) !important;
@@ -1386,7 +1387,8 @@ a, button {
     transform 0.08s ease;
 }
 .btn-ghost:hover:not(:disabled) {
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
+  color: var(--color-text-default) !important;
 }
 .btn-ghost:active:not(:disabled) {
   background-color: var(--color-muted) !important;
@@ -1502,7 +1504,7 @@ a, button {
   cursor: pointer;
 }
 .nav-item:hover:not([aria-current="page"]) {
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
   color: var(--color-text-default) !important;
 }
 .nav-item:active {
@@ -1544,8 +1546,8 @@ a, button {
   -webkit-tap-highlight-color: transparent;
 }
 .pill-filter:hover:not([aria-selected="true"]):not(.is-active) {
-  background-color: var(--color-subtle) !important;
-  border-color: var(--color-border-strong) !important;
+  background-color: var(--color-muted) !important;
+  border-color: var(--color-text-muted) !important;
   color: var(--color-text-default) !important;
 }
 .pill-filter:active {
@@ -1571,7 +1573,7 @@ a, button {
 }
 .tab-item:hover:not([aria-selected="true"]) {
   color: var(--color-text-default) !important;
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
 }
 .tab-item:active {
   transform: scale(0.96);
@@ -1591,7 +1593,8 @@ a, button {
   border-radius: 8px;
 }
 .action-btn:hover {
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
+  color: var(--color-text-default) !important;
 }
 .action-btn:active {
   transform: scale(0.88) !important;
@@ -1639,7 +1642,7 @@ a, button {
   -webkit-tap-highlight-color: transparent;
 }
 .conv-item:hover:not(.is-selected) {
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
 }
 .conv-item:active {
   background-color: var(--color-muted) !important;
@@ -1656,7 +1659,7 @@ a, button {
   cursor: pointer;
 }
 .notif-item:hover {
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
 }
 .notif-item:active {
   background-color: var(--color-muted) !important;
@@ -1670,7 +1673,7 @@ a, button {
   cursor: pointer;
 }
 .member-item:hover {
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
 }
 .member-item:active {
   transform: scale(0.99);
@@ -1703,7 +1706,7 @@ a, button {
   cursor: pointer;
 }
 .settings-row:hover {
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
 }
 .settings-row:active {
   background-color: var(--color-muted) !important;
@@ -1718,7 +1721,7 @@ a, button {
   border-radius: 8px;
 }
 .icon-btn:hover {
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
   color: var(--color-text-default) !important;
 }
 .icon-btn:active {
@@ -1786,9 +1789,9 @@ a, button {
   cursor: pointer;
 }
 .composer-trigger:hover {
-  border-color: var(--color-border-strong) !important;
+  border-color: var(--color-text-muted) !important;
   background-color: var(--color-subtle) !important;
-  box-shadow: 0 1px 6px rgba(43, 33, 24, 0.06);
+  box-shadow: 0 2px 8px rgba(43, 33, 24, 0.10);
 }
 
 /* ─── AI SUGGESTION CHIPS ─── */
@@ -1800,8 +1803,9 @@ a, button {
   cursor: pointer;
 }
 .ai-suggestion-chip:hover {
-  background-color: var(--color-subtle) !important;
-  border-color: var(--color-border-strong) !important;
+  background-color: var(--color-muted) !important;
+  border-color: var(--color-text-muted) !important;
+  color: var(--color-text-default) !important;
 }
 .ai-suggestion-chip:active {
   transform: scale(0.97);
@@ -1865,7 +1869,7 @@ a, button {
     transform 0.08s ease;
 }
 .rich-text-tool:hover:not([aria-pressed="true"]) {
-  background-color: var(--color-subtle) !important;
+  background-color: var(--color-muted) !important;
   color: var(--color-text-default) !important;
 }
 .rich-text-tool:active {
