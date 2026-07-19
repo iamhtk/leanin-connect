@@ -270,27 +270,62 @@ button {
    ============================================ */
 .feed-layout {
   display: flex;
+  max-width: 1440px;
+  margin: 0 auto;
   width: 100%;
-  align-items: flex-start;
+  min-height: calc(100vh - 52px);
 }
 
 .feed-left-column {
-  width: 1025px;
-  min-width: 840px;
+  width: 840px;
+  min-width: 0;
   flex-shrink: 0;
-  padding: 20px 32px 48px 32px;
+  border-right: 1px solid var(--color-border-default);
+  padding: 0;
 }
 
 .feed-right-column {
-  flex: 1;
-  min-width: 0;
-  padding: 20px 20px 20px 20px;
+  width: 360px;
+  min-width: 360px;
+  max-width: 360px;
+  flex-shrink: 0;
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: 52px;
+  height: calc(100vh - 52px);
   overflow-y: auto;
   border-left: 1px solid var(--color-border-default);
-  background-color: var(--color-background);
+}
+
+@media (min-width: 1600px) {
+  .feed-layout {
+    max-width: 1600px;
+  }
+
+  .feed-left-column {
+    width: 960px;
+  }
+
+  .feed-right-column {
+    width: 400px;
+    min-width: 400px;
+    max-width: 400px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .feed-layout {
+    max-width: 1720px;
+  }
+
+  .feed-left-column {
+    width: 1060px;
+  }
+
+  .feed-right-column {
+    width: 420px;
+    min-width: 420px;
+    max-width: 420px;
+  }
 }
 
 /* Full-width greeting banner above feed columns */
