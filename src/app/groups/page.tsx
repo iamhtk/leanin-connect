@@ -139,31 +139,44 @@ export default function GroupsPage() {
           return (
             <div
               key={group.id}
+              className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
               style={{
                 background: 'var(--color-surface)',
                 border: '1px solid var(--color-border-default)',
                 borderRadius: '14px',
                 overflow: 'hidden',
                 boxShadow: 'none',
+                transition: 'border-color 0.12s, transform 0.12s',
+                cursor: 'pointer',
               }}
             >
               <div
                 style={{
-                  height: '140px',
+                  height: '160px',
                   background: group.color,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px',
+                  position: 'relative',
                 }}
               >
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'rgba(0,0,0,0.15)',
+                  }}
+                />
                 <p
                   style={{
                     color: 'white',
-                    fontSize: '18px',
-                    fontWeight: '600',
+                    fontSize: '20px',
+                    fontWeight: '700',
                     textAlign: 'center',
                     lineHeight: '1.3',
+                    position: 'relative',
+                    zIndex: 1,
                   }}
                 >
                   {group.name}

@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Search, Filter, UserPlus, MapPin } from 'lucide-react'
-import { Avatar } from '@/components/atoms/Avatar'
 
 const MOCK_MEMBERS = [
   {
@@ -249,6 +248,7 @@ export default function DirectoryPage() {
         {members.map((member) => (
           <div
             key={member.id}
+            className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
             style={{
               background: 'var(--color-surface)',
               border: '1px solid var(--color-border-default)',
@@ -259,14 +259,32 @@ export default function DirectoryPage() {
               alignItems: 'center',
               gap: '12px',
               boxShadow: 'none',
+              transition: 'border-color 0.12s, transform 0.12s',
+              cursor: 'pointer',
             }}
           >
-            <Avatar initials={member.initials} color={member.color} size={40} />
-            <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '9999px',
+                background: member.color,
+                color: 'white',
+                fontSize: '15px',
+                fontWeight: '700',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              {member.initials}
+            </div>
+            <div style={{ minWidth: 0, flex: 1 }}>
               <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
                 {member.name}
               </p>
-              <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+              <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
                 {member.role} · {member.company}
               </p>
               <p
@@ -283,6 +301,25 @@ export default function DirectoryPage() {
                 {member.location}
               </p>
             </div>
+            <button
+              type="button"
+              style={{
+                marginLeft: 'auto',
+                alignSelf: 'flex-start',
+                border: '1px solid var(--color-border-default)',
+                borderRadius: '9999px',
+                padding: '4px 12px',
+                fontSize: '12px',
+                color: 'var(--color-text-secondary)',
+                background: 'transparent',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
+            >
+              Connect
+            </button>
           </div>
         ))}
       </div>

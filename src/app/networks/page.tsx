@@ -191,15 +191,46 @@ export default function NetworksPage() {
         {networks.map((network) => (
           <div
             key={network.id}
+            className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
             style={{
               background: 'var(--color-surface)',
               border: '1px solid var(--color-border-default)',
               borderRadius: '14px',
               overflow: 'hidden',
               boxShadow: 'none',
+              transition: 'border-color 0.12s, transform 0.12s',
+              cursor: 'pointer',
             }}
           >
-            <div style={{ height: '100px', background: network.color }} />
+            <div
+              style={{
+                height: '160px',
+                background: network.color,
+                position: 'relative',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 60%)',
+                }}
+              />
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: '12px',
+                  left: '16px',
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  letterSpacing: '0.12em',
+                  color: 'rgba(255,255,255,0.9)',
+                  textTransform: 'uppercase',
+                }}
+              >
+                LEAN IN NETWORK
+              </span>
+            </div>
             <div style={{ padding: '16px' }}>
               <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
                 {network.name}

@@ -189,25 +189,45 @@ export default function CirclesPage() {
         {circles.map((circle) => (
           <div
             key={circle.id}
+            className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
             style={{
               background: 'var(--color-surface)',
               border: '1px solid var(--color-border-default)',
               borderRadius: '14px',
               overflow: 'hidden',
               boxShadow: 'none',
+              transition: 'border-color 0.12s, transform 0.12s',
+              cursor: 'pointer',
             }}
           >
-            <div style={{ height: '100px', background: circle.color, position: 'relative' }}>
+            <div
+              style={{
+                height: '160px',
+                background: circle.color,
+                position: 'relative',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%)',
+                }}
+              />
               <span
                 style={{
                   position: 'absolute',
-                  top: 0,
-                  left: 0,
+                  top: '10px',
+                  left: '10px',
+                  background: 'rgba(255,255,255,0.2)',
+                  color: 'white',
                   fontSize: '10px',
                   fontWeight: '600',
-                  color: 'white',
+                  letterSpacing: '0.08em',
+                  padding: '3px 8px',
+                  borderRadius: '9999px',
                   textTransform: 'uppercase',
-                  padding: '8px 10px',
+                  backdropFilter: 'blur(4px)',
                 }}
               >
                 {circle.category}
@@ -237,9 +257,29 @@ export default function CirclesPage() {
                   alignItems: 'center',
                 }}
               >
-                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                  {circle.members} {circle.members === 1 ? 'member' : 'members'}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {['var(--color-brand)', 'var(--color-brand-muted)', 'var(--color-muted)'].map(
+                      (avatarColor, index) => (
+                        <div
+                          key={avatarColor}
+                          style={{
+                            width: '20px',
+                            height: '20px',
+                            borderRadius: '9999px',
+                            background: avatarColor === 'var(--color-muted)' ? 'var(--color-brand-subtle)' : avatarColor,
+                            border: '1.5px solid var(--color-surface)',
+                            marginLeft: index === 0 ? 0 : '-6px',
+                            zIndex: 3 - index,
+                          }}
+                        />
+                      )
+                    )}
+                  </div>
+                  <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                    {circle.members} {circle.members === 1 ? 'member' : 'members'}
+                  </span>
+                </div>
                 <button
                   type="button"
                   style={{
