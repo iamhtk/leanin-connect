@@ -30,3 +30,24 @@ export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
   return text.slice(0, maxLength).trim() + '...'
 }
+
+export function showToast(message: string) {
+  const toast = document.createElement('div')
+  toast.style.cssText = `
+    position: fixed; bottom: 24px; left: 50%; 
+    transform: translateX(-50%);
+    background: oklch(.18 .008 40); color: white;
+    padding: 10px 20px; border-radius: 9999px;
+    font-size: 13px; font-weight: 500;
+    z-index: 9999; font-family: inherit;
+    animation: fadeInUp 0.2s ease-out;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  `
+  toast.textContent = message
+  document.body.appendChild(toast)
+  setTimeout(() => {
+    toast.style.opacity = '0'
+    toast.style.transition = 'opacity 0.2s'
+    setTimeout(() => document.body.removeChild(toast), 200)
+  }, 2500)
+}

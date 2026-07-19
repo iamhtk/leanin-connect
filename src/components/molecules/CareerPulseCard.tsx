@@ -20,7 +20,7 @@ const CONTAINER_STYLE: CSSProperties = {
 
 export function CareerPulseCard({ data }: CareerPulseCardProps) {
   const handleQuestionClick = (question: string) => {
-    window.alert(question)
+    window.dispatchEvent(new CustomEvent('open-composer', { detail: { prefill: question } }))
   }
 
   if (!data) {

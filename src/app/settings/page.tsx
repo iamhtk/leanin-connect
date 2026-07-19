@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties } from 'react'
 import { User, Bell, Mail, Lock, Shield, Link, Download, Globe, ChevronRight, ChevronDown } from 'lucide-react'
+import { showToast } from '@/lib/utils'
 
 const COMING_SOON = 'This feature is available in the full product.'
 
@@ -220,6 +221,7 @@ export default function SettingsPage() {
                     setName(draftName)
                     setJobTitle(draftJobTitle)
                     setLocation(draftLocation)
+                    showToast('Changes saved!')
                     setExpanded(null)
                   }}
                   style={{
@@ -557,7 +559,7 @@ export default function SettingsPage() {
             <button
               key={row.title}
               type="button"
-              onClick={() => window.alert(COMING_SOON)}
+              onClick={() => showToast(COMING_SOON)}
               className="hover:bg-subtle"
               style={{
                 width: '100%',
@@ -666,7 +668,7 @@ export default function SettingsPage() {
           type="button"
           onClick={() => {
             if (window.confirm('Are you sure you want to sign out?')) {
-              window.alert('You have been signed out.')
+              showToast('You have been signed out.')
             }
           }}
           style={{

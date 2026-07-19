@@ -1,11 +1,59 @@
 'use client'
 
+import { useState } from 'react'
 import { MessageSquare, Edit, Globe } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
 import { useRouter } from 'next/navigation'
+import { showToast } from '@/lib/utils'
+
+const DEFAULT_NAME = 'Hrithik Sanyal'
+const DEFAULT_TITLE = 'Design Engineer'
+const DEFAULT_LOCATION = 'San Francisco, CA, USA'
 
 export default function ProfilePage() {
   const router = useRouter()
+  const [isEditing, setIsEditing] = useState(false)
+  const [name, setName] = useState(DEFAULT_NAME)
+  const [title, setTitle] = useState(DEFAULT_TITLE)
+  const [location, setLocation] = useState(DEFAULT_LOCATION)
+  const [draftName, setDraftName] = useState(name)
+  const [draftTitle, setDraftTitle] = useState(title)
+  const [draftLocation, setDraftLocation] = useState(location)
+
+  const startEditing = () => {
+    setDraftName(name)
+    setDraftTitle(title)
+    setDraftLocation(location)
+    setIsEditing(true)
+  }
+
+  const handleSave = () => {
+    setName(draftName)
+    setTitle(draftTitle)
+    setLocation(draftLocation)
+    setIsEditing(false)
+    showToast('Profile updated!')
+  }
+
+  const handleCancel = () => {
+    setDraftName(name)
+    setDraftTitle(title)
+    setDraftLocation(location)
+    setIsEditing(false)
+  }
+
+  const inputStyle = {
+    width: '100%',
+    border: '1px solid var(--color-border-default)',
+    borderRadius: '8px',
+    padding: '6px 10px',
+    fontSize: '14px',
+    fontFamily: 'inherit',
+    outline: 'none',
+    background: 'var(--color-surface)',
+    color: 'var(--color-text-default)',
+    boxSizing: 'border-box' as const,
+  }
 
   return (
     <div>
@@ -32,25 +80,50 @@ export default function ProfilePage() {
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
           <Avatar initials="HS" color="#7B2335" size={56} />
           <div>
-            <p style={{ fontSize: '20px', fontWeight: '700', color: 'var(--color-text-default)' }}>
-              Hrithik Sanyal
-            </p>
-            <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
-              Design Engineer
-            </p>
-            <p
-              style={{
-                fontSize: '13px',
-                color: 'var(--color-text-muted)',
-                marginTop: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}
-            >
-              <Globe size={13} />
-              San Francisco, CA, USA
-            </p>
+            {isEditing ? (
+              <>
+                <input
+                  value={draftName}
+                  onChange={(event) => setDraftName(event.target.value)}
+                  style={{ ...inputStyle, fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}
+                />
+                <input
+                  value={draftTitle}
+                  onChange={(event) => setDraftTitle(event.target.value)}
+                  style={{ ...inputStyle, fontSize: '14px', marginTop: '2px' }}
+                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                  <Globe size={13} />
+                  <input
+                    value={draftLocation}
+                    onChange={(event) => setDraftLocation(event.target.value)}
+                    style={{ ...inputStyle, fontSize: '13px' }}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: '20px', fontWeight: '700', color: 'var(--color-text-default)' }}>
+                  {name}
+                </p>
+                <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                  {title}
+                </p>
+                <p
+                  style={{
+                    fontSize: '13px',
+                    color: 'var(--color-text-muted)',
+                    marginTop: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <Globe size={13} />
+                  {location}
+                </p>
+              </>
+            )}
           </div>
         </div>
 
@@ -75,27 +148,71 @@ export default function ProfilePage() {
             <MessageSquare size={14} />
             Messages
           </button>
-          <button
-            type="button"
-            onClick={() => router.push('/settings')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: 'var(--color-brand)',
-              color: 'white',
-              borderRadius: '9999px',
-              padding: '8px 20px',
-              fontSize: '13px',
-              fontWeight: '600',
-              border: 'none',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            <Edit size={14} />
-            Edit profile
-          </button>
+          {isEditing ? (
+            <>
+              <button
+                type="button"
+                onClick={handleSave}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'var(--color-brand)',
+                  color: 'white',
+                  borderRadius: '9999px',
+                  padding: '8px 20px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'transparent',
+                  border: '1px solid var(--color-border-default)',
+                  borderRadius: '9999px',
+                  padding: '8px 20px',
+                  fontSize: '13px',
+                  color: 'var(--color-text-default)',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={startEditing}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'var(--color-brand)',
+                color: 'white',
+                borderRadius: '9999px',
+                padding: '8px 20px',
+                fontSize: '13px',
+                fontWeight: '600',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              <Edit size={14} />
+              Edit profile
+            </button>
+          )}
         </div>
       </div>
 
@@ -123,7 +240,7 @@ export default function ProfilePage() {
               No posts yet.
             </p>
             <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-              Hrithik hasn&apos;t posted anything yet.
+              {name.split(' ')[0]} hasn&apos;t posted anything yet.
             </p>
           </div>
         </div>
@@ -152,9 +269,9 @@ export default function ProfilePage() {
             </p>
             {(
               [
-                { label: 'JOB TITLE', value: 'Design Engineer' },
+                { label: 'JOB TITLE', value: title },
                 { label: 'INDUSTRY', value: 'Technology' },
-                { label: 'LOCATION', value: 'San Francisco, CA, USA' },
+                { label: 'LOCATION', value: location },
               ] as const
             ).map((row, index, rows) => (
               <div

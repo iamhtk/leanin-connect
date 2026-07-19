@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { PostComposer } from '@/components/organisms/PostComposer'
 import { TopicFilter } from '@/components/molecules/TopicFilter'
 import { FeedList } from '@/components/organisms/FeedList'
@@ -64,13 +65,21 @@ function SkeletonCard() {
   )
 }
 
-export default function FeedPage() {
+function FeedPageContent() {
+  const searchParams = useSearchParams()
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState('all')
   const [scopeTab, setScopeTab] = useState<ScopeTab>('all')
   const [savedPostIds, setSavedPostIds] = useState<string[]>([])
   const [careerPulseData, setCareerPulseData] = useState<CareerPulseData | null>(null)
+
+  useEffect(() => {
+    const topic = searchParams.get('topic')
+    if (topic) {
+      setSelectedTag(topic)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     try {
@@ -231,5 +240,13 @@ export default function FeedPage() {
         <SuggestedMembers />
       </div>
     </div>
+  )
+}
+
+export default function FeedPage() {
+  return (
+    <Suspense fallback={null}>
+      <FeedPageContent />
+    </Suspense>
   )
 }

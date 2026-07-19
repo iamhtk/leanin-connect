@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, Sparkles, Loader2 } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
@@ -28,6 +28,18 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
   const [isVoiceCoachOpen, setIsVoiceCoachOpen] = useState(false)
   const [voiceCoachNotes, setVoiceCoachNotes] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const customEvent = event as CustomEvent<{ prefill: string }>
+      if (customEvent.detail?.prefill) {
+        setContent(customEvent.detail.prefill.slice(0, MAX_LENGTH))
+        setIsOpen(true)
+      }
+    }
+    window.addEventListener('open-composer', handler)
+    return () => window.removeEventListener('open-composer', handler)
+  }, [])
 
   const resetForm = () => {
     setContent('')

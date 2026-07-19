@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 interface TrendingTopic {
@@ -16,8 +17,10 @@ const TRENDING_TOPICS: TrendingTopic[] = [
 ]
 
 export function TrendingTopics() {
+  const router = useRouter()
+
   const handleTopicClick = (topic: string) => {
-    window.alert(topic)
+    router.push('/feed?topic=' + encodeURIComponent(topic))
   }
 
   return (

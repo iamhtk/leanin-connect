@@ -163,3 +163,8 @@ button {
 .typing-dot:nth-child(3) {
   animation-delay: 0.3s;
 }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}

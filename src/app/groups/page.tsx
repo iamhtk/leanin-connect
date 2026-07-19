@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Search } from 'lucide-react'
+import { showToast } from '@/lib/utils'
 
 const MOCK_GROUPS = [
   {
@@ -40,22 +41,30 @@ const MOCK_GROUPS = [
 
 export default function GroupsPage() {
   const [activeTab, setActiveTab] = useState<'my' | 'all'>('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const [joinedIds, setJoinedIds] = useState<Set<number>>(new Set())
 
-  const toggleJoined = (id: number) => {
+  const filteredGroups = MOCK_GROUPS.filter((group) =>
+    group.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const myGroups = filteredGroups.filter((group) => joinedIds.has(group.id))
+
+  const handleJoinToggle = (group: (typeof MOCK_GROUPS)[number], event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+
     setJoinedIds((previous) => {
       const next = new Set(previous)
-      if (next.has(id)) {
-        next.delete(id)
+      if (next.has(group.id)) {
+        next.delete(group.id)
+        showToast(`Left ${group.name}`)
       } else {
-        next.add(id)
+        next.add(group.id)
+        showToast(`Joined ${group.name}!`)
       }
       return next
     })
   }
-
-  const groups =
-    activeTab === 'my' ? MOCK_GROUPS.filter((group) => joinedIds.has(group.id)) : MOCK_GROUPS
 
   return (
     <div style={{ padding: '24px 32px 48px 32px' }}>
@@ -83,6 +92,8 @@ export default function GroupsPage() {
         <input
           type="text"
           placeholder="Search Groups..."
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
           style={{
             flex: 1,
             border: 'none',
@@ -126,124 +137,160 @@ export default function GroupsPage() {
         })}
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '16px',
-          marginTop: '20px',
-        }}
-      >
-        {groups.map((group) => {
-          const isJoined = joinedIds.has(group.id)
-          return (
-            <div
-              key={group.id}
-              className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
-              style={{
-                background: 'var(--color-surface)',
-                border: '1px solid var(--color-border-default)',
-                borderRadius: '14px',
-                overflow: 'hidden',
-                boxShadow: 'none',
-                transition: 'border-color 0.12s, transform 0.12s',
-                cursor: 'pointer',
-              }}
-            >
+      {activeTab === 'my' && myGroups.length === 0 ? (
+        <div
+          style={{
+            marginTop: '48px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            gap: '8px',
+          }}
+        >
+          <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+            You haven&apos;t joined any groups yet.
+          </p>
+          <button
+            type="button"
+            onClick={() => setActiveTab('all')}
+            style={{
+              marginTop: '8px',
+              background: 'var(--color-brand)',
+              color: 'white',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
+              fontWeight: '600',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            Browse all Groups
+          </button>
+        </div>
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '16px',
+            marginTop: '20px',
+          }}
+        >
+          {(activeTab === 'my' ? myGroups : filteredGroups).map((group) => {
+            const isJoined = joinedIds.has(group.id)
+
+            return (
               <div
+                key={group.id}
+                className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
                 style={{
-                  height: '160px',
-                  background: group.color,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '16px',
-                  position: 'relative',
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border-default)',
+                  borderRadius: '14px',
+                  overflow: 'hidden',
+                  boxShadow: 'none',
+                  transition: 'border-color 0.12s, transform 0.12s',
+                  cursor: 'pointer',
                 }}
               >
                 <div
                   style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'rgba(0,0,0,0.15)',
-                  }}
-                />
-                <p
-                  style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    fontWeight: '700',
-                    textAlign: 'center',
-                    lineHeight: '1.3',
-                    position: 'relative',
-                    zIndex: 1,
-                  }}
-                >
-                  {group.name}
-                </p>
-              </div>
-              <div style={{ padding: '16px' }}>
-                <p
-                  style={{
-                    fontSize: '13px',
-                    color: 'var(--color-text-muted)',
-                    lineHeight: '1.5',
-                    overflow: 'hidden',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                  }}
-                >
-                  {group.description}
-                </p>
-                <div
-                  style={{
-                    marginTop: '12px',
+                    height: '160px',
+                    background: group.color,
                     display: 'flex',
-                    justifyContent: 'space-between',
                     alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '16px',
+                    position: 'relative',
                   }}
                 >
-                  <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                    {group.members} members · {group.posts} posts
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => toggleJoined(group.id)}
-                    style={
-                      isJoined
-                        ? {
-                            background: 'transparent',
-                            border: '1px solid var(--color-border-default)',
-                            borderRadius: '9999px',
-                            padding: '4px 14px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            color: 'var(--color-text-default)',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit',
-                          }
-                        : {
-                            background: 'var(--color-brand)',
-                            color: 'white',
-                            borderRadius: '9999px',
-                            padding: '4px 14px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit',
-                          }
-                    }
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'rgba(0,0,0,0.15)',
+                    }}
+                  />
+                  <p
+                    style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      textAlign: 'center',
+                      lineHeight: '1.3',
+                      position: 'relative',
+                      zIndex: 1,
+                    }}
                   >
-                    {isJoined ? 'Joined' : 'Join'}
-                  </button>
+                    {group.name}
+                  </p>
+                </div>
+                <div style={{ padding: '16px' }}>
+                  <p
+                    style={{
+                      fontSize: '13px',
+                      color: 'var(--color-text-muted)',
+                      lineHeight: '1.5',
+                      overflow: 'hidden',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                    }}
+                  >
+                    {group.description}
+                  </p>
+                  <div
+                    style={{
+                      marginTop: '12px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                      {group.members} members · {group.posts} posts
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(event) => handleJoinToggle(group, event)}
+                      style={
+                        isJoined
+                          ? {
+                              background: 'transparent',
+                              border: '1px solid var(--color-border-default)',
+                              borderRadius: '9999px',
+                              padding: '4px 14px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              color: 'var(--color-text-default)',
+                              cursor: 'pointer',
+                              fontFamily: 'inherit',
+                            }
+                          : {
+                              background: 'var(--color-brand)',
+                              color: 'white',
+                              borderRadius: '9999px',
+                              padding: '4px 14px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              border: 'none',
+                              cursor: 'pointer',
+                              fontFamily: 'inherit',
+                            }
+                      }
+                    >
+                      {isJoined ? 'Joined' : 'Join'}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

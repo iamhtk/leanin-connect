@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type MouseEvent } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
+import { showToast } from '@/lib/utils'
 import { Avatar } from '@/components/atoms/Avatar'
 import { MOCK_CONVERSATIONS } from '@/data/conversations'
 
@@ -34,18 +36,26 @@ const SUGGESTED_MEMBERS: SuggestedMember[] = [
 ]
 
 export function SuggestedMembers() {
+  const router = useRouter()
   const [followingIds, setFollowingIds] = useState<Set<string>>(new Set())
 
-  const toggleFollow = (id: string) => {
+  const toggleFollow = (member: SuggestedMember, event: MouseEvent) => {
+    event.stopPropagation()
+    const isFollowing = followingIds.has(member.id)
     setFollowingIds((previous) => {
       const next = new Set(previous)
-      if (next.has(id)) {
-        next.delete(id)
+      if (next.has(member.id)) {
+        next.delete(member.id)
       } else {
-        next.add(id)
+        next.add(member.id)
       }
       return next
     })
+    if (isFollowing) {
+      showToast('Unfollowed ' + member.name)
+    } else {
+      showToast('Following ' + member.name + '!')
+    }
   }
 
   return (
@@ -82,12 +92,14 @@ export function SuggestedMembers() {
           return (
             <div
               key={member.id}
+              onClick={() => router.push('/directory')}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
                 padding: '8px 0',
                 borderBottom: index === SUGGESTED_MEMBERS.length - 1 ? 'none' : '1px solid var(--color-border-default)',
+                cursor: 'pointer',
               }}
             >
               <Avatar initials={member.initials} color={member.color} size={32} />
@@ -101,7 +113,7 @@ export function SuggestedMembers() {
               </div>
               <button
                 type="button"
-                onClick={() => toggleFollow(member.id)}
+                onClick={(event) => toggleFollow(member, event)}
                 className="hover:[border-color:var(--color-brand)] hover:[color:var(--color-brand)]"
                 style={{
                   backgroundColor: isFollowing ? 'var(--color-brand-subtle)' : 'transparent',

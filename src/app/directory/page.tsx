@@ -1,9 +1,20 @@
 'use client'
 
-import { useState } from 'react'
-import { Search, Filter, UserPlus, MapPin } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { Search, Filter, UserPlus, MapPin, X } from 'lucide-react'
+import { showToast } from '@/lib/utils'
 
-const MOCK_MEMBERS = [
+interface Member {
+  id: number
+  name: string
+  role: string
+  company: string
+  location: string
+  initials: string
+  color: string
+}
+
+const MOCK_MEMBERS: Member[] = [
   {
     id: 1,
     name: 'Priya Sharma',
@@ -116,15 +127,60 @@ const MOCK_MEMBERS = [
 
 type DirectoryTab = 'all' | 'circles' | 'networks'
 
+function filterMembersBySearch(members: Member[], query: string): Member[] {
+  const normalizedQuery = query.trim().toLowerCase()
+  if (!normalizedQuery) return members
+
+  return members.filter(
+    (member) =>
+      member.name.toLowerCase().includes(normalizedQuery) ||
+      member.role.toLowerCase().includes(normalizedQuery) ||
+      member.company.toLowerCase().includes(normalizedQuery),
+  )
+}
+
 export default function DirectoryPage() {
   const [activeTab, setActiveTab] = useState<DirectoryTab>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isInviteOpen, setIsInviteOpen] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteMessage, setInviteMessage] = useState('')
+  const [connectedIds, setConnectedIds] = useState<Set<number>>(new Set())
 
-  const members =
-    activeTab === 'circles'
-      ? MOCK_MEMBERS.slice(0, 4)
-      : activeTab === 'networks'
-        ? MOCK_MEMBERS.slice(0, 8)
-        : MOCK_MEMBERS
+  const baseMembers = useMemo(() => {
+    if (activeTab === 'circles') return MOCK_MEMBERS.slice(0, 3)
+    if (activeTab === 'networks') return MOCK_MEMBERS.slice(2, 6)
+    return MOCK_MEMBERS
+  }, [activeTab])
+
+  const members = useMemo(
+    () => filterMembersBySearch(baseMembers, searchQuery),
+    [baseMembers, searchQuery],
+  )
+
+  const closeInviteModal = () => {
+    setIsInviteOpen(false)
+    setInviteEmail('')
+    setInviteMessage('')
+  }
+
+  const handleSendInvitation = () => {
+    showToast('Invitation sent!')
+    closeInviteModal()
+  }
+
+  const toggleConnect = (member: Member) => {
+    setConnectedIds((previous) => {
+      const next = new Set(previous)
+      if (next.has(member.id)) {
+        next.delete(member.id)
+      } else {
+        next.add(member.id)
+        showToast('Connected with ' + member.name + '!')
+      }
+      return next
+    })
+  }
 
   return (
     <div style={{ padding: '24px 32px 48px 32px' }}>
@@ -153,6 +209,8 @@ export default function DirectoryPage() {
           <input
             type="text"
             placeholder="Search members..."
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
             style={{
               flex: 1,
               border: 'none',
@@ -166,6 +224,7 @@ export default function DirectoryPage() {
         </div>
         <button
           type="button"
+          onClick={() => showToast('Filters coming soon')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -185,6 +244,7 @@ export default function DirectoryPage() {
         </button>
         <button
           type="button"
+          onClick={() => setIsInviteOpen(true)}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -245,84 +305,213 @@ export default function DirectoryPage() {
           marginTop: '20px',
         }}
       >
-        {members.map((member) => (
-          <div
-            key={member.id}
-            className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
-            style={{
-              background: 'var(--color-surface)',
-              border: '1px solid var(--color-border-default)',
-              borderRadius: '14px',
-              padding: '16px',
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: '12px',
-              boxShadow: 'none',
-              transition: 'border-color 0.12s, transform 0.12s',
-              cursor: 'pointer',
-            }}
-          >
+        {members.map((member) => {
+          const isConnected = connectedIds.has(member.id)
+          return (
             <div
+              key={member.id}
+              className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
               style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '9999px',
-                background: member.color,
-                color: 'white',
-                fontSize: '15px',
-                fontWeight: '700',
+                background: 'var(--color-surface)',
+                border: '1px solid var(--color-border-default)',
+                borderRadius: '14px',
+                padding: '16px',
                 display: 'flex',
+                flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
+                gap: '12px',
+                boxShadow: 'none',
+                transition: 'border-color 0.12s, transform 0.12s',
+                cursor: 'pointer',
               }}
             >
-              {member.initials}
-            </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
-                {member.name}
-              </p>
-              <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
-                {member.role} · {member.company}
-              </p>
-              <p
+              <div
                 style={{
-                  fontSize: '12px',
-                  color: 'var(--color-text-muted)',
-                  marginTop: '4px',
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '9999px',
+                  background: member.color,
+                  color: 'white',
+                  fontSize: '15px',
+                  fontWeight: '700',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  justifyContent: 'center',
+                  flexShrink: 0,
                 }}
               >
-                <MapPin size={12} />
-                {member.location}
-              </p>
+                {member.initials}
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+                  {member.name}
+                </p>
+                <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                  {member.role} · {member.company}
+                </p>
+                <p
+                  style={{
+                    fontSize: '12px',
+                    color: 'var(--color-text-muted)',
+                    marginTop: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  <MapPin size={12} />
+                  {member.location}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  toggleConnect(member)
+                }}
+                style={{
+                  marginLeft: 'auto',
+                  alignSelf: 'flex-start',
+                  border: isConnected ? 'none' : '1px solid var(--color-border-default)',
+                  borderRadius: '9999px',
+                  padding: '4px 12px',
+                  fontSize: '12px',
+                  color: isConnected ? 'var(--color-text-brand)' : 'var(--color-text-secondary)',
+                  background: isConnected ? 'var(--color-brand-subtle)' : 'transparent',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  fontWeight: isConnected ? '600' : '400',
+                }}
+              >
+                {isConnected ? 'Connected' : 'Connect'}
+              </button>
             </div>
-            <button
-              type="button"
-              style={{
-                marginLeft: 'auto',
-                alignSelf: 'flex-start',
-                border: '1px solid var(--color-border-default)',
-                borderRadius: '9999px',
-                padding: '4px 12px',
-                fontSize: '12px',
-                color: 'var(--color-text-secondary)',
-                background: 'transparent',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                whiteSpace: 'nowrap',
-                flexShrink: 0,
-              }}
-            >
-              Connect
-            </button>
-          </div>
-        ))}
+          )
+        })}
       </div>
+
+      {isInviteOpen && (
+        <div
+          onClick={closeInviteModal}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.4)',
+            zIndex: 50,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <div
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              background: 'white',
+              width: '440px',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: 'var(--shadow-modal)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <p style={{ fontSize: '16px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+                Invite a new member
+              </p>
+              <button
+                type="button"
+                onClick={closeInviteModal}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--color-text-muted)',
+                  display: 'flex',
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <input
+              type="email"
+              placeholder="Email address"
+              value={inviteEmail}
+              onChange={(event) => setInviteEmail(event.target.value)}
+              style={{
+                width: '100%',
+                marginTop: '16px',
+                padding: '10px 14px',
+                fontSize: '14px',
+                border: '1px solid var(--color-border-default)',
+                borderRadius: '10px',
+                outline: 'none',
+                fontFamily: 'inherit',
+                color: 'var(--color-text-default)',
+                boxSizing: 'border-box',
+              }}
+            />
+
+            <textarea
+              placeholder="Personal message (optional)"
+              value={inviteMessage}
+              onChange={(event) => setInviteMessage(event.target.value)}
+              rows={4}
+              style={{
+                width: '100%',
+                marginTop: '12px',
+                padding: '10px 14px',
+                fontSize: '14px',
+                border: '1px solid var(--color-border-default)',
+                borderRadius: '10px',
+                outline: 'none',
+                fontFamily: 'inherit',
+                color: 'var(--color-text-default)',
+                resize: 'vertical',
+                boxSizing: 'border-box',
+              }}
+            />
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={closeInviteModal}
+                style={{
+                  background: 'transparent',
+                  border: '1px solid var(--color-border-default)',
+                  borderRadius: '9999px',
+                  padding: '8px 20px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: 'var(--color-text-default)',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSendInvitation}
+                style={{
+                  background: 'var(--color-brand)',
+                  color: 'white',
+                  borderRadius: '9999px',
+                  padding: '8px 20px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Send invitation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

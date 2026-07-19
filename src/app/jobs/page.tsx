@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Search, Filter, Briefcase, MapPin, Clock, Sparkles, ExternalLink } from 'lucide-react'
 import { MOCK_JOBS } from '@/data/jobs'
 import type { Job } from '@/lib/types'
+import { showToast } from '@/lib/utils'
 
 const JOB_TYPES = [
   { label: 'All Jobs', value: 'All' },
@@ -135,6 +136,7 @@ export default function JobsPage() {
         </div>
         <button
           type="button"
+          onClick={() => showToast('Filters coming soon')}
           style={{
             display: 'flex',
             alignItems: 'center',

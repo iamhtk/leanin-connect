@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Bell, Sparkles, User, Settings, LogOut } from 'lucide-react'
+import { showToast } from '@/lib/utils'
 
 export function Topbar() {
   const router = useRouter()
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const rightSectionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -57,19 +59,30 @@ export function Topbar() {
         }}
       >
         <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
-        <span
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              showToast('Search feature coming soon')
+            }
+          }}
+          placeholder="Search topics, members, Circles..."
           style={{
             fontSize: '14px',
-            color: 'var(--color-text-muted)',
+            color: 'var(--color-text-default)',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             minWidth: 0,
             flex: 1,
+            border: 'none',
+            outline: 'none',
+            background: 'transparent',
+            fontFamily: 'inherit',
           }}
-        >
-          Search topics, members, Circles...
-        </span>
+        />
         <span
           style={{
             marginLeft: 'auto',
@@ -93,6 +106,7 @@ export function Topbar() {
       >
         <button
           type="button"
+          onClick={() => showToast('AI Assistant coming soon')}
           style={{
             width: '32px',
             height: '32px',
@@ -187,6 +201,7 @@ export function Topbar() {
               </span>
               <button
                 type="button"
+                onClick={() => showToast('All notifications marked as read')}
                 style={{
                   background: 'transparent',
                   border: 'none',
@@ -331,7 +346,7 @@ export function Topbar() {
               type="button"
               onClick={() => {
                 setShowProfileMenu(false)
-                window.alert('Signed out')
+                showToast('Signed out')
               }}
               className="hover:bg-subtle"
               style={{

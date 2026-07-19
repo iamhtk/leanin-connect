@@ -5,7 +5,7 @@ import { Plus, Search, Send, Sparkles, X, Loader2 } from 'lucide-react'
 import { MOCK_CONVERSATIONS } from '@/data/conversations'
 import type { Conversation, Message } from '@/lib/types'
 import { Avatar } from '@/components/atoms/Avatar'
-import { formatRelativeTime } from '@/lib/utils'
+import { formatRelativeTime, showToast } from '@/lib/utils'
 
 export default function MessagesPage() {
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_CONVERSATIONS)
@@ -16,6 +16,7 @@ export default function MessagesPage() {
   const [showStarters, setShowStarters] = useState(false)
   const [showNewMessage, setShowNewMessage] = useState(false)
   const [memberSearch, setMemberSearch] = useState('')
+  const [listTab, setListTab] = useState<'All' | 'Unread'>('All')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const selectedConversation = conversations.find((conversation) => conversation.id === selectedId)
@@ -246,19 +247,20 @@ export default function MessagesPage() {
             borderBottom: '1px solid var(--color-border-default)',
           }}
         >
-          {['All', 'Unread'].map((tab) => (
+          {(['All', 'Unread'] as const).map((tab) => (
             <button
               key={tab}
               type="button"
+              onClick={() => setListTab(tab)}
               style={{
                 padding: '8px 12px',
                 fontSize: '13px',
-                fontWeight: tab === 'All' ? '600' : '400',
-                color: tab === 'All' ? 'var(--color-text-default)' : 'var(--color-text-muted)',
+                fontWeight: listTab === tab ? '600' : '400',
+                color: listTab === tab ? 'var(--color-text-default)' : 'var(--color-text-muted)',
                 background: 'transparent',
                 border: 'none',
                 borderBottom:
-                  tab === 'All' ? '2px solid var(--color-text-default)' : '2px solid transparent',
+                  listTab === tab ? '2px solid var(--color-text-default)' : '2px solid transparent',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
               }}
@@ -269,7 +271,9 @@ export default function MessagesPage() {
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto' }}>
-          {conversations.map((conversation) => (
+          {conversations
+            .filter((conversation) => listTab === 'All' || conversation.unread_count > 0)
+            .map((conversation) => (
             <div
               key={conversation.id}
               onClick={() => setSelectedId(conversation.id)}
@@ -370,6 +374,7 @@ export default function MessagesPage() {
           }}
         >
           <span
+            onClick={() => showToast('Blocking tools coming soon')}
             style={{
               fontSize: '12px',
               color: 'var(--color-text-muted)',
