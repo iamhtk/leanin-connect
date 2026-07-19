@@ -58,9 +58,59 @@ export async function POST(request: NextRequest) {
       author_company,
       author_initials,
       author_avatar_color,
-      content,
       topic_tag,
     } = body
+
+    const MAX_CONTENT_LENGTH = 5000
+    const ALLOWED_TAGS_RE = /<(?!\/?(?:p|br|strong|em|b|i|ul|ol|li|hr)[\s>/])[a-z]/i
+
+    if (!body.content || typeof body.content !== 'string') {
+      return NextResponse.json(
+        { error: 'Content is required' },
+        { status: 400 }
+      )
+    }
+
+    if (body.content.trim().length === 0) {
+      return NextResponse.json(
+        { error: 'Content cannot be empty' },
+        { status: 400 }
+      )
+    }
+
+    if (body.content.length > MAX_CONTENT_LENGTH) {
+      return NextResponse.json(
+        { error: 'Content too long' },
+        { status: 400 }
+      )
+    }
+
+    // Strip dangerous HTML server-side before storing
+    const cleanContent = body.content
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+      .replace(/<object[\s\S]*?<\/object>/gi, '')
+      .replace(/\bon\w+\s*=\s*(['"])[^'"]*\1/gi, '')
+      .replace(/\bon\w+\s*=\s*[^\s>]*/gi, '')
+      .replace(/javascript\s*:/gi, '')
+      .replace(/data\s*:/gi, '')
+      // Neutralize remaining disallowed opening tags
+      .replace(ALLOWED_TAGS_RE, '')
+
+    const VALID_TAGS = [
+      'Negotiation',
+      'Promotions',
+      'Bias at Work',
+      'Work-Life Balance',
+      'Career Pivots',
+      'Mentorship',
+      'Leadership',
+      'Early Career',
+    ]
+
+    const sanitizedTag = VALID_TAGS.includes(topic_tag)
+      ? topic_tag
+      : 'General'
 
     const { data, error } = await supabaseServer
       .from('posts')
@@ -70,8 +120,8 @@ export async function POST(request: NextRequest) {
         author_company,
         author_initials,
         author_avatar_color,
-        content,
-        topic_tag,
+        content: cleanContent,
+        topic_tag: sanitizedTag,
         likes_count: 0,
         replies_count: 0,
         user_id: user?.id || null,

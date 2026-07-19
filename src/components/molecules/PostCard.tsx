@@ -13,9 +13,23 @@ import type { Post } from '@/lib/types'
 
 function sanitizeHtml(html: string): string {
   return html
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-    .replace(/on\w+="[^"]*"/g, '')
-    .replace(/javascript:/g, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+    .replace(/<object[\s\S]*?<\/object>/gi, '')
+    .replace(/<embed[^>]*>/gi, '')
+    .replace(/<link[^>]*>/gi, '')
+    .replace(/<meta[^>]*>/gi, '')
+    .replace(/\bon\w+\s*=\s*(['"])[^'"]*\1/gi, '')
+    .replace(/\bon\w+\s*=\s*[^\s>]*/gi, '')
+    .replace(/javascript\s*:/gi, '')
+    .replace(/data\s*:/gi, '')
+    .replace(/vbscript\s*:/gi, '')
+    .replace(/<[a-z][\s\S]*?>/gi, (tag) => {
+      const allowed = ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'hr', 'b', 'i']
+      const tagName = tag.match(/^<([a-z]+)/i)?.[1]?.toLowerCase()
+      if (!tagName || !allowed.includes(tagName)) return ''
+      return tag.replace(/\s+\w+\s*=\s*(['"])[^'"]*\1/g, '')
+    })
 }
 
 export interface PostCardProps {
