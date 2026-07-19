@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, Sparkles, Loader2 } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
+import { RichTextEditor } from '@/components/molecules/RichTextEditor'
 import { TOPIC_TAGS } from '@/lib/types'
 import type { Post } from '@/lib/types'
 import { useAuth } from '@/contexts/AuthContext'
@@ -18,13 +19,23 @@ const AUTHOR_COMPANY = 'Lean In Connect'
 
 const SELECTABLE_TOPICS = TOPIC_TAGS.filter((tag) => tag.value !== 'all')
 
+function toEditorHtml(text: string): string {
+  const escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+  return '<p>' + escaped.replace(/\n/g, '<br>') + '</p>'
+}
+
 export function PostComposer({ onPostCreated }: PostComposerProps) {
   const { profile } = useAuth()
   const authorName = profile?.full_name || 'Community Member'
   const authorInitials = profile?.initials || 'CM'
   const authorColor = profile?.color || '#7B2335'
   const [isOpen, setIsOpen] = useState(false)
-  const [content, setContent] = useState('')
+  const [editorContent, setEditorContent] = useState('')
+  const [htmlContent, setHtmlContent] = useState('')
+  const [editorKey, setEditorKey] = useState(0)
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isVoiceCoachOpen, setIsVoiceCoachOpen] = useState(false)
@@ -36,7 +47,10 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
     const handler = (event: Event) => {
       const customEvent = event as CustomEvent<{ prefill: string }>
       if (customEvent.detail?.prefill) {
-        setContent(customEvent.detail.prefill.slice(0, MAX_LENGTH))
+        const prefill = customEvent.detail.prefill.slice(0, MAX_LENGTH)
+        setEditorContent(prefill)
+        setHtmlContent(toEditorHtml(prefill))
+        setEditorKey((previous) => previous + 1)
         setIsOpen(true)
       }
     }
@@ -45,7 +59,9 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
   }, [])
 
   const resetForm = () => {
-    setContent('')
+    setEditorContent('')
+    setHtmlContent('')
+    setEditorKey((previous) => previous + 1)
     setSelectedTopic(null)
     setIsVoiceCoachOpen(false)
     setVoiceCoachNotes('')
@@ -72,11 +88,17 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
         const { done, value } = await reader.read()
         if (done) break
         accumulated += decoder.decode(value, { stream: true })
-        setContent(accumulated.slice(0, MAX_LENGTH))
+        const sliced = accumulated.slice(0, MAX_LENGTH)
+        setEditorContent(sliced)
+        setHtmlContent(toEditorHtml(sliced))
       }
 
-      const streamedText = accumulated.trim()
+      const streamedText = accumulated.trim().slice(0, MAX_LENGTH)
       if (streamedText) {
+        setEditorContent(streamedText)
+        setHtmlContent(toEditorHtml(streamedText))
+        setEditorKey((previous) => previous + 1)
+
         const classifyResponse = await fetch('/api/ai/classify-topic', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -97,8 +119,8 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
 
       setIsVoiceCoachOpen(false)
       setVoiceCoachNotes('')
-    } catch (error) {
-      console.error(error)
+    } catch {
+      // Keep draft state on failure
     } finally {
       setIsGenerating(false)
     }
@@ -109,7 +131,10 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
   }
 
   const handleSubmit = async () => {
-    if (!content.trim() || !selectedTopic) return
+    if (!editorContent.trim() || !selectedTopic) return
+
+    const contentToSubmit =
+      htmlContent.trim() && editorContent.trim() ? htmlContent : editorContent
 
     setIsSubmitting(true)
     try {
@@ -122,7 +147,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           author_company: AUTHOR_COMPANY,
           author_initials: authorInitials,
           author_avatar_color: authorColor,
-          content,
+          content: contentToSubmit,
           topic_tag: selectedTopic,
         }),
       })
@@ -130,22 +155,20 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
       const result = await response.json()
 
       if (!response.ok) {
-        console.error(result.error)
         return
       }
 
       onPostCreated(result.data)
       closeModal()
       resetForm()
-    } catch (error) {
-      console.error(error)
+    } catch {
+      // Keep form open on failure
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const charsRemaining = MAX_LENGTH - content.length
-  const isSubmitDisabled = !content.trim() || !selectedTopic || isSubmitting
+  const isSubmitDisabled = !editorContent.trim() || !selectedTopic || isSubmitting
 
   return (
     <>
@@ -308,33 +331,26 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                 )}
               </AnimatePresence>
 
-              <textarea
-                value={content}
-                onChange={(event) => setContent(event.target.value.slice(0, MAX_LENGTH))}
-                placeholder="Share something with the community..."
-                aria-label="Post content"
+              <div
                 style={{
                   marginTop: '16px',
-                  width: '100%',
-                  minHeight: '120px',
-                  border: 'none',
-                  outline: 'none',
-                  resize: 'none',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                  color: 'var(--color-text-default)',
-                }}
-              />
-
-              <p
-                style={{
-                  textAlign: 'right',
-                  fontSize: '12px',
-                  color: charsRemaining < 50 ? 'var(--color-status-error)' : 'var(--color-text-muted)',
+                  border: '1px solid var(--color-border-default)',
+                  borderRadius: 'var(--radius-md)',
+                  overflow: 'hidden',
+                  background: 'var(--color-surface)',
                 }}
               >
-                {charsRemaining}
-              </p>
+                <RichTextEditor
+                  key={editorKey}
+                  content={htmlContent || editorContent}
+                  onChange={(html, text) => {
+                    setHtmlContent(html)
+                    setEditorContent(text)
+                  }}
+                  placeholder="Share something with the community..."
+                  maxLength={MAX_LENGTH}
+                />
+              </div>
 
               <div style={{ borderTop: '1px solid var(--color-border-default)', margin: '16px 0' }} />
 

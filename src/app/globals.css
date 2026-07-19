@@ -1191,3 +1191,30 @@ a, button {
   transition: color 0.12s ease, background-color 0.12s ease,
     border-color 0.12s ease, opacity 0.12s ease;
 }
+
+/* Rich post content from Tiptap */
+.post-content p {
+  margin: 0 0 8px 0;
+}
+.post-content p:last-child {
+  margin-bottom: 0;
+}
+.post-content ul,
+.post-content ol {
+  padding-left: 20px;
+  margin: 6px 0;
+}
+.post-content li {
+  margin: 2px 0;
+}
+.post-content strong {
+  font-weight: 700;
+}
+.post-content em {
+  font-style: italic;
+}
+.post-content hr {
+  border: none;
+  border-top: 1px solid var(--color-border-default);
+  margin: 10px 0;
+}

@@ -9,6 +9,13 @@ import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import type { Post } from '@/lib/types'
 
+function sanitizeHtml(html: string): string {
+  return html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/on\w+="[^"]*"/g, '')
+    .replace(/javascript:/g, '')
+}
+
 export interface PostCardProps {
   post: Post
   index: number
@@ -38,6 +45,7 @@ export function PostCard({ post, index, onSave, onLike }: PostCardProps) {
   const [isLiking, setIsLiking] = useState(false)
   const [isSaved, setIsSaved] = useState(() => readSavedIds().includes(post.id))
   const [bookmarkPulse, setBookmarkPulse] = useState(false)
+  const isHtml = post.content.trim().startsWith('<')
 
   const handleLike = async () => {
     if (!user || isLiking) return
@@ -128,17 +136,32 @@ export function PostCard({ post, index, onSave, onLike }: PostCardProps) {
         </span>
       </div>
 
-      <p
-        style={{
-          fontSize: '15px',
-          color: 'var(--color-text-default)',
-          lineHeight: '1.5',
-          marginTop: '10px',
-          whiteSpace: 'pre-wrap',
-        }}
-      >
-        {post.content}
-      </p>
+      {isHtml ? (
+        <div
+          dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(post.content),
+          }}
+          style={{
+            fontSize: '14px',
+            color: 'var(--color-text-default)',
+            lineHeight: '1.6',
+            marginTop: '10px',
+          }}
+          className="post-content"
+        />
+      ) : (
+        <p
+          style={{
+            fontSize: '14px',
+            color: 'var(--color-text-default)',
+            lineHeight: '1.6',
+            marginTop: '10px',
+            whiteSpace: 'pre-wrap',
+          }}
+        >
+          {post.content}
+        </p>
+      )}
 
       <div
         style={{
