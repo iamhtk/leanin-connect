@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Bell, Sparkles, User, Settings, LogOut, Loader2, X } from 'lucide-react'
 import { showToast } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface SearchResultsData {
   results: {
@@ -17,6 +18,7 @@ interface SearchResultsData {
 
 export function Topbar() {
   const router = useRouter()
+  const { user, profile, signOut } = useAuth()
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -363,7 +365,7 @@ export function Topbar() {
             width: '30px',
             height: '30px',
             borderRadius: 'var(--radius-full)',
-            backgroundColor: 'var(--color-brand)',
+            backgroundColor: profile?.color || '#7B2335',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -376,8 +378,9 @@ export function Topbar() {
             transition: 'background-color 0.12s',
           }}
         >
-          H
+          {profile?.initials || 'HS'}
         </button>
+
 
         {showNotifications && (
           <div
@@ -490,91 +493,142 @@ export function Topbar() {
               overflow: 'hidden',
             }}
           >
-            <button
-              type="button"
-              onClick={() => {
-                setShowProfileMenu(false)
-                router.push('/profile')
-              }}
-              className="hover:bg-subtle"
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '8px 12px',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                color: 'var(--color-text-default)',
-                background: 'transparent',
-                border: 'none',
-                fontFamily: 'inherit',
-                textAlign: 'left',
-              }}
-            >
-              <User size={15} />
-              View profile
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setShowProfileMenu(false)
-                router.push('/settings')
-              }}
-              className="hover:bg-subtle"
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '8px 12px',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                color: 'var(--color-text-default)',
-                background: 'transparent',
-                border: 'none',
-                fontFamily: 'inherit',
-                textAlign: 'left',
-              }}
-            >
-              <Settings size={15} />
-              Settings
-            </button>
             <div
               style={{
-                height: '1px',
-                background: 'var(--color-border-default)',
-                margin: '4px 0',
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => {
-                setShowProfileMenu(false)
-                showToast('Signed out')
-              }}
-              className="hover:bg-subtle"
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '8px 12px',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                color: 'var(--color-brand)',
-                background: 'transparent',
-                border: 'none',
-                fontFamily: 'inherit',
-                textAlign: 'left',
+                padding: '8px 12px 10px',
+                borderBottom: '1px solid var(--color-border-default)',
+                marginBottom: '4px',
               }}
             >
-              <LogOut size={15} />
-              Sign out
-            </button>
+              <p
+                style={{
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: 'var(--color-text-default)',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {profile?.full_name || user?.email || 'My Account'}
+              </p>
+            </div>
+            {user ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowProfileMenu(false)
+                    router.push('/profile')
+                  }}
+                  className="hover:bg-subtle"
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px 12px',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    color: 'var(--color-text-default)',
+                    background: 'transparent',
+                    border: 'none',
+                    fontFamily: 'inherit',
+                    textAlign: 'left',
+                  }}
+                >
+                  <User size={15} />
+                  View profile
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowProfileMenu(false)
+                    router.push('/settings')
+                  }}
+                  className="hover:bg-subtle"
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px 12px',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    color: 'var(--color-text-default)',
+                    background: 'transparent',
+                    border: 'none',
+                    fontFamily: 'inherit',
+                    textAlign: 'left',
+                  }}
+                >
+                  <Settings size={15} />
+                  Settings
+                </button>
+                <div
+                  style={{
+                    height: '1px',
+                    background: 'var(--color-border-default)',
+                    margin: '4px 0',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowProfileMenu(false)
+                    void signOut()
+                  }}
+                  className="hover:bg-subtle"
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '8px 12px',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    color: 'var(--color-brand)',
+                    background: 'transparent',
+                    border: 'none',
+                    fontFamily: 'inherit',
+                    textAlign: 'left',
+                  }}
+                >
+                  <LogOut size={15} />
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setShowProfileMenu(false)
+                  router.push('/auth/login')
+                }}
+                className="hover:bg-subtle"
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 12px',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  color: 'var(--color-brand)',
+                  background: 'transparent',
+                  border: 'none',
+                  fontFamily: 'inherit',
+                  textAlign: 'left',
+                }}
+              >
+                <User size={15} />
+                Sign in
+              </button>
+            )}
           </div>
         )}
       </div>

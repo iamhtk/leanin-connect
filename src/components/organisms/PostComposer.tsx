@@ -6,21 +6,23 @@ import { X, Sparkles, Loader2 } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
 import { TOPIC_TAGS } from '@/lib/types'
 import type { Post } from '@/lib/types'
+import { useAuth } from '@/contexts/AuthContext'
 
 export interface PostComposerProps {
   onPostCreated: (post: Post) => void
 }
 
 const MAX_LENGTH = 1000
-const AUTHOR_NAME = 'Hrithik Sanyal'
 const AUTHOR_ROLE = 'Design Engineer'
 const AUTHOR_COMPANY = 'Lean In Connect'
-const AUTHOR_INITIALS = 'HS'
-const AUTHOR_COLOR = 'var(--color-brand)'
 
 const SELECTABLE_TOPICS = TOPIC_TAGS.filter((tag) => tag.value !== 'all')
 
 export function PostComposer({ onPostCreated }: PostComposerProps) {
+  const { profile } = useAuth()
+  const authorName = profile?.full_name || 'Community Member'
+  const authorInitials = profile?.initials || 'CM'
+  const authorColor = profile?.color || '#7B2335'
   const [isOpen, setIsOpen] = useState(false)
   const [content, setContent] = useState('')
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
@@ -94,11 +96,11 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          author_name: AUTHOR_NAME,
+          author_name: authorName,
           author_role: AUTHOR_ROLE,
           author_company: AUTHOR_COMPANY,
-          author_initials: AUTHOR_INITIALS,
-          author_avatar_color: AUTHOR_COLOR,
+          author_initials: authorInitials,
+          author_avatar_color: authorColor,
           content,
           topic_tag: selectedTopic,
         }),
@@ -151,7 +153,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           transition: 'border-color 0.12s',
         }}
       >
-        <Avatar initials={AUTHOR_INITIALS} color={AUTHOR_COLOR} size={28} />
+        <Avatar initials={authorInitials} color={authorColor} size={28} />
         <div style={{ color: 'var(--color-text-muted)', fontSize: '15px' }}>
           Share something with the community...
         </div>
@@ -213,10 +215,10 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '16px' }}>
-                <Avatar initials={AUTHOR_INITIALS} color={AUTHOR_COLOR} size={36} />
+                <Avatar initials={authorInitials} color={authorColor} size={36} />
                 <div>
                   <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
-                    {AUTHOR_NAME}
+                    {authorName}
                   </p>
                   <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{AUTHOR_ROLE}</p>
                 </div>

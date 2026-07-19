@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseServer } from '@/lib/supabase-server'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export async function GET() {
   try {
-    const { data, error } = await supabaseServer
+    const supabase = await createServerSupabaseClient()
+    const { data, error } = await supabase
       .from('posts')
       .select('*')
       .order('created_at', { ascending: false })
@@ -20,6 +21,11 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabaseServer = await createServerSupabaseClient()
+    const {
+      data: { user },
+    } = await supabaseServer.auth.getUser()
+
     const body = await request.json()
     const {
       author_name,
@@ -43,6 +49,7 @@ export async function POST(request: NextRequest) {
         topic_tag,
         likes_count: 0,
         replies_count: 0,
+        user_id: user?.id || null,
       })
       .select()
       .single()
