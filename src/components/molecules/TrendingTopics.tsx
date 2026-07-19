@@ -30,6 +30,7 @@ export function TrendingTopics() {
         border: '1px solid var(--color-border-default)',
         borderRadius: 'var(--radius-lg)',
         padding: '16px',
+        boxShadow: 'none',
         marginBottom: '12px',
       }}
     >

@@ -14,6 +14,7 @@ const CONTAINER_STYLE: CSSProperties = {
   borderLeft: '3px solid var(--color-brand)',
   borderRadius: 'var(--radius-lg)',
   padding: '16px',
+  boxShadow: 'none',
   marginBottom: '12px',
 }
 
@@ -24,18 +25,23 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
 
   if (!data) {
     return (
-      <div style={CONTAINER_STYLE} className="animate-career-pulse-loading">
+      <div style={CONTAINER_STYLE}>
         <p
           style={{
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: '600',
             letterSpacing: '0.08em',
-            color: 'var(--color-brand)',
+            textTransform: 'uppercase',
+            color: 'var(--color-text-muted)',
+            marginBottom: '12px',
           }}
         >
           ✦ AI CAREER PULSE
         </p>
-        <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '8px' }}>
+        <p
+          className="animate-pulse-opacity"
+          style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}
+        >
           Fetching community insights...
         </p>
       </div>
@@ -45,7 +51,15 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} style={CONTAINER_STYLE}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-        <p style={{ fontSize: '10px', fontWeight: '600', letterSpacing: '0.08em', color: 'var(--color-brand)' }}>
+        <p
+          style={{
+            fontSize: '11px',
+            fontWeight: '600',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: 'var(--color-text-muted)',
+          }}
+        >
           ✦ AI CAREER PULSE
         </p>
         <span

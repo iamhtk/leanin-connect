@@ -29,7 +29,7 @@ const SUGGESTED_MEMBERS: SuggestedMember[] = [
     role: 'Staff Engineer',
     company: 'Shopify',
     initials: 'NO',
-    color: '#164E63',
+    color: 'var(--color-status-info)',
   },
 ]
 
@@ -58,6 +58,7 @@ export function SuggestedMembers() {
         border: '1px solid var(--color-border-default)',
         borderRadius: 'var(--radius-lg)',
         padding: '16px',
+        boxShadow: 'none',
         marginBottom: '12px',
       }}
     >

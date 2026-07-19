@@ -118,12 +118,12 @@ export const mapped = {
     sent: {
       background: semantic.color.brand.default,
       text:       semantic.color.text.inverse,
-      radius:     semantic.radius.lg,
+      radius:     semantic.radius.card,
     },
     received: {
       background: semantic.color.background.subtle,
       text:       semantic.color.text.default,
-      radius:     semantic.radius.lg,
+      radius:     semantic.radius.card,
     },
   },
 } as const

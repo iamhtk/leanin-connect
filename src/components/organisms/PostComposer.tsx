@@ -16,7 +16,7 @@ const AUTHOR_NAME = 'Hrithik Sanyal'
 const AUTHOR_ROLE = 'Design Engineer'
 const AUTHOR_COMPANY = 'Lean In Connect'
 const AUTHOR_INITIALS = 'HS'
-const AUTHOR_COLOR = '#CC3D55'
+const AUTHOR_COLOR = 'var(--color-brand)'
 
 const SELECTABLE_TOPICS = TOPIC_TAGS.filter((tag) => tag.value !== 'all')
 
@@ -123,15 +123,15 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           alignItems: 'center',
           backgroundColor: 'var(--color-surface)',
           border: '1px solid var(--color-border-default)',
-          borderRadius: 'var(--radius-lg)',
-          padding: '10px 14px',
+          borderRadius: 'var(--radius-full)',
+          padding: '8px 16px 8px 12px',
           cursor: 'pointer',
           marginBottom: '12px',
           transition: 'border-color 0.12s',
         }}
       >
-        <Avatar initials={AUTHOR_INITIALS} color={AUTHOR_COLOR} size={36} />
-        <div style={{ color: 'var(--color-text-muted)', fontSize: '14px' }}>
+        <Avatar initials={AUTHOR_INITIALS} color={AUTHOR_COLOR} size={28} />
+        <div style={{ color: 'var(--color-text-muted)', fontSize: '15px' }}>
           Share something with the community...
         </div>
       </div>

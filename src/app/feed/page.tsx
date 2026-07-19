@@ -20,6 +20,27 @@ const CAREER_PULSE_TAGS = [
   'Early Career',
 ]
 
+const SCOPE_TABS = [
+  { label: 'All', value: 'all' },
+  { label: 'Your Network', value: 'network' },
+  { label: 'Your Circle', value: 'circle' },
+  { label: 'Saved', value: 'saved' },
+] as const
+
+type ScopeTab = (typeof SCOPE_TABS)[number]['value']
+
+const NETWORK_AUTHOR_NAMES = [
+  'Priya Sharma',
+  'Sarah Chen',
+  'Jennifer Park',
+  'Lucia Fernandez',
+  'Divya Menon',
+]
+
+const CIRCLE_AUTHOR_NAMES = ['Amara Okafor', 'Fatima Al-Hassan', 'Kezia Williams']
+
+const SAVED_POST_IDS_KEY = 'lean_in_saved_posts'
+
 function SkeletonCard() {
   return (
     <div
@@ -28,7 +49,7 @@ function SkeletonCard() {
         border: '1px solid var(--color-border-default)',
         borderRadius: 'var(--radius-lg)',
         padding: '20px',
-        marginBottom: '12px',
+        marginBottom: '8px',
       }}
     >
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -47,7 +68,18 @@ export default function FeedPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState('all')
+  const [scopeTab, setScopeTab] = useState<ScopeTab>('all')
+  const [savedPostIds, setSavedPostIds] = useState<string[]>([])
   const [careerPulseData, setCareerPulseData] = useState<CareerPulseData | null>(null)
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SAVED_POST_IDS_KEY)
+      if (saved) setSavedPostIds(JSON.parse(saved) as string[])
+    } catch {
+      // ignore localStorage errors
+    }
+  }, [])
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -87,29 +119,88 @@ export default function FeedPage() {
     setPosts((previousPosts) => [post, ...previousPosts])
   }
 
-  const filteredPosts = selectedTag === 'all' ? posts : posts.filter((post) => post.topic_tag === selectedTag)
+  const handleSavePost = (postId: string) => {
+    setSavedPostIds((previous) => {
+      const next = previous.includes(postId)
+        ? previous.filter((id) => id !== postId)
+        : [...previous, postId]
+      return next
+    })
+  }
+
+  const scopeFilteredPosts = posts.filter((post) => {
+    if (scopeTab === 'all') return true
+    if (scopeTab === 'network') {
+      return NETWORK_AUTHOR_NAMES.includes(post.author_name)
+    }
+    if (scopeTab === 'circle') {
+      return CIRCLE_AUTHOR_NAMES.includes(post.author_name)
+    }
+    if (scopeTab === 'saved') {
+      return savedPostIds.includes(post.id)
+    }
+    return true
+  })
+
+  const filteredPosts = scopeFilteredPosts.filter(
+    (post) => selectedTag === 'all' || post.topic_tag === selectedTag
+  )
 
   return (
     <div
       style={{
-        width: '100%',
         display: 'flex',
-        gap: 0,
+        width: '100%',
         alignItems: 'flex-start',
-        padding: 0,
-        height: '100%',
       }}
     >
       <div
         style={{
-          flex: 1,
-          minWidth: 0,
-          padding: '24px 24px 0 24px',
-          overflowY: 'auto',
-          height: '100vh',
+          width: '1025px',
+          minWidth: '840px',
+          flexShrink: 0,
+          padding: '20px 32px 48px 32px',
         }}
       >
         <PostComposer onPostCreated={handlePostCreated} />
+        <div
+          style={{
+            display: 'flex',
+            borderBottom: '1px solid var(--color-border-default)',
+            marginBottom: '16px',
+          }}
+        >
+          {SCOPE_TABS.map((tab) => {
+            const isActive = scopeTab === tab.value
+
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setScopeTab(tab.value)}
+                style={{
+                  display: 'inline-flex',
+                  padding: '8px 0',
+                  marginRight: '24px',
+                  fontSize: '14px',
+                  fontWeight: isActive ? 600 : 400,
+                  color: isActive ? 'var(--color-text-default)' : 'var(--color-text-muted)',
+                  cursor: 'pointer',
+                  borderBottom: isActive
+                    ? '2px solid var(--color-text-default)'
+                    : '2px solid transparent',
+                  background: 'transparent',
+                  borderTop: 'none',
+                  borderLeft: 'none',
+                  borderRight: 'none',
+                  transition: 'all 0.12s',
+                }}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
         <TopicFilter selectedTag={selectedTag} onTagChange={setSelectedTag} />
         {loading ? (
           <div>
@@ -118,15 +209,15 @@ export default function FeedPage() {
             <SkeletonCard />
           </div>
         ) : (
-          <FeedList posts={filteredPosts} />
+          <FeedList posts={filteredPosts} scopeTab={scopeTab} onSave={handleSavePost} />
         )}
       </div>
 
       <div
         style={{
-          width: '280px',
-          minWidth: '280px',
-          padding: '24px 16px 0 0',
+          flex: 1,
+          minWidth: 0,
+          padding: '20px 20px 20px 20px',
           position: 'sticky',
           top: 0,
           height: '100vh',

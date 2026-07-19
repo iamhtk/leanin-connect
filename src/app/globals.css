@@ -115,16 +115,29 @@ button {
   font-family: inherit;
 }
 
-@keyframes career-pulse-loading {
+@keyframes pulse {
   0%,
   100% {
-    opacity: 0.4;
+    opacity: 1;
   }
   50% {
-    opacity: 1;
+    opacity: 0.5;
   }
 }
 
-.animate-career-pulse-loading {
-  animation: career-pulse-loading 1.5s ease-in-out infinite;
+.animate-pulse-opacity {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.pills-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
