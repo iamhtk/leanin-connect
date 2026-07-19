@@ -92,15 +92,23 @@ export default function FeedPage() {
   return (
     <div
       style={{
+        width: '100%',
         display: 'flex',
-        maxWidth: '1080px',
-        margin: '0 auto',
-        padding: '24px 24px 0',
-        gap: '24px',
+        gap: 0,
         alignItems: 'flex-start',
+        padding: 0,
+        height: '100%',
       }}
     >
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div
+        style={{
+          flex: 1,
+          minWidth: 0,
+          padding: '24px 24px 0 24px',
+          overflowY: 'auto',
+          height: '100vh',
+        }}
+      >
         <PostComposer onPostCreated={handlePostCreated} />
         <TopicFilter selectedTag={selectedTag} onTagChange={setSelectedTag} />
         {loading ? (
@@ -114,7 +122,19 @@ export default function FeedPage() {
         )}
       </div>
 
-      <div style={{ width: '280px', minWidth: '280px', position: 'sticky', top: '24px' }}>
+      <div
+        style={{
+          width: '280px',
+          minWidth: '280px',
+          padding: '24px 16px 0 0',
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          overflowY: 'auto',
+          borderLeft: '1px solid var(--color-border-default)',
+          backgroundColor: 'var(--color-background)',
+        }}
+      >
         <CareerPulseCard data={careerPulseData} />
         <TrendingTopics />
         <SuggestedMembers />
