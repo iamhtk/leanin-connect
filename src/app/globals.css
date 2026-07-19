@@ -3,44 +3,31 @@
 @import "tailwindcss";
 
 @theme {
-  /* Fonts - matching their system */
   --font-sans: "DM Sans", "Helvetica Neue", Arial, sans-serif;
   --font-serif: "Newsreader", Georgia, serif;
 
-  /* === COLORS: matching their oklch values converted to hex === */
-
-  /* Backgrounds - their oklch(.98 .005 60) = warm near-white */
   --color-background: #FAF9F7;
-  /* Card - pure white */
   --color-surface: #FFFFFF;
-  /* Secondary/muted bg - their oklch(.95 .012 60) */
   --color-subtle: #F3EFE9;
-  /* Accent bg - their oklch(.91 .018 55) */
   --color-muted: #EAE3DA;
 
-  /* Text - their oklch(.18 .008 40) = warm near-black */
   --color-text-default: #2B2118;
-  /* Muted foreground - their oklch(.5 .012 45) */
   --color-text-secondary: #7A6E65;
-  /* Further muted */
   --color-text-muted: #9C9089;
   --color-text-inverse: #FFFFFF;
   --color-text-brand: #7B2335;
 
-  /* Brand - their primary oklch(.42 .13 17) = burgundy */
   --color-brand: #7B2335;
   --color-brand-hover: #6A1D2C;
   --color-brand-active: #581827;
   --color-brand-subtle: #F5ECED;
   --color-brand-muted: #EDD5D8;
 
-  /* Borders - their oklch(.84 .018 50) = warm light gray */
   --color-border-default: #D6CEC5;
   --color-border-strong: #C4BAB0;
   --color-border-brand: #E8C4C9;
   --color-border-focus: #7B2335;
 
-  /* Status */
   --color-status-success: #2D7A4F;
   --color-status-success-bg: #EBF5EF;
   --color-status-warning: #B85C00;
@@ -50,25 +37,20 @@
   --color-status-info: #1E4A8C;
   --color-status-info-bg: #EBF0F9;
 
-  /* Sidebar - their oklch(.95 .012 60) */
   --color-sidebar: #F3EFE9;
   --color-sidebar-border: #D6CEC5;
 
-  /* === RADIUS: matching their exact values === */
   --radius-sm: 4px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* === SHADOWS: they use NONE - border-only separation === */
   --shadow-card: none;
   --shadow-card-hover: none;
   --shadow-modal: 0 4px 24px rgba(43, 33, 24, 0.12);
   --shadow-dropdown: 0 2px 12px rgba(43, 33, 24, 0.08);
 
-  /* === TYPOGRAPHY: matching their type scale === */
-  /* Their body: 0.9375rem = 15px */
   --text-xs: 12px;
   --text-sm: 13px;
   --text-base: 15px;
@@ -79,10 +61,6 @@
   --text-3xl: 28px;
   --text-4xl: 36px;
 
-  /* === SPACING: their exact scale === */
-  /* xs=4px sm=8px md=12px lg=16px xl=24px 2xl=32px */
-
-  /* === MOTION: their exact values === */
   --motion-fast: 0.12s;
   --motion-normal: 0.2s;
   --motion-slow: 0.32s;
@@ -186,7 +164,6 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Ensure theme fills the viewport including mobile safe areas */
 html {
   background-color: var(--color-background);
 }
@@ -201,13 +178,8 @@ button {
 }
 
 @keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .animate-pulse-opacity {
@@ -219,9 +191,7 @@ button {
 }
 
 @keyframes bounce-dot {
-  0%,
-  80%,
-  100% {
+  0%, 80%, 100% {
     transform: translateY(0);
     opacity: 0.4;
   }
@@ -232,14 +202,8 @@ button {
 }
 
 @keyframes bounce {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(-6px);
-  }
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
 }
 
 .typing-dot {
@@ -252,13 +216,8 @@ button {
   animation: bounce 1.2s ease-in-out infinite;
 }
 
-.typing-dot:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.typing-dot:nth-child(3) {
-  animation-delay: 0.4s;
-}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateX(-50%) translateY(8px); }
@@ -266,32 +225,45 @@ button {
 }
 
 /* ============================================
-   FEED LAYOUT — SACRED. DO NOT MODIFY.
+   FEED LAYOUT
+   Left: flex:1 (fills space)
+   Right: flex:1 capped at 600px (matches hosted
+          proportions, prevents large-monitor balloon)
+   Sticky: top 52px = topbar height
    ============================================ */
 .feed-layout {
   display: flex;
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
+  align-items: flex-start;
   min-height: calc(100vh - 52px);
 }
 
 .feed-left-column {
   flex: 1;
   min-width: 0;
-  border-right: 1px solid var(--color-border-default);
+  padding: 20px 32px 48px 32px;
 }
 
 .feed-right-column {
-  width: 380px;
-  min-width: 380px;
-  max-width: 380px;
-  flex-shrink: 0;
-  flex-grow: 0;
+  flex: 1;
+  min-width: 0;
+  max-width: 520px;
+  padding: 20px 20px 20px 20px;
   position: sticky;
   top: 52px;
-  height: calc(100vh - 52px);
-  overflow-y: auto;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  overflow-y: visible;
+  border-left: 1px solid var(--color-border-default);
+  background-color: var(--color-background);
+  scrollbar-width: none;
+}
+
+.feed-right-column::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* Full-width greeting banner above feed columns */
@@ -303,6 +275,15 @@ button {
   width: 100%;
   padding: 20px 20px 16px 32px;
   box-sizing: border-box;
+}
+
+.feed-page .feed-left-column {
+  padding-top: 0;
+}
+
+.feed-page .feed-right-column {
+  padding-top: 0;
+  border-left: 1px solid var(--color-border-default);
 }
 
 .feed-greeting-banner {
@@ -388,6 +369,14 @@ button {
     padding: 12px 12px 10px;
   }
 
+  .feed-page .feed-left-column {
+    padding-top: 0 !important;
+  }
+
+  .feed-page .feed-right-column {
+    padding-top: 0 !important;
+  }
+
   .feed-greeting-banner {
     aspect-ratio: 16 / 7;
     min-height: 120px;
@@ -405,10 +394,6 @@ button {
 
 /* ============================================
    RESPONSIVE TOKENS
-   Mobile: 0-767px (default)
-   Tablet: 768px-1023px
-   Desktop: 1024px-1439px
-   Large: 1440px+
    ============================================ */
 
 :root {
@@ -683,8 +668,6 @@ button {
 
 /* ============================================
    RESPONSIVE OVERRIDES
-   Base feed rules above stay for large desktop.
-   These media queries adapt smaller viewports.
    ============================================ */
 
 .app-shell {
@@ -704,11 +687,9 @@ button {
   padding: var(--space-page-y) var(--space-page-x) 80px;
   max-width: 100%;
   box-sizing: border-box;
-  /* clip avoids creating a scroll container that breaks position:sticky */
   overflow-x: clip;
 }
 
-/* Sticky page filters / search bars — pins under Topbar while scrolling #main-content */
 .sticky-nav {
   position: sticky;
   top: 0;
@@ -751,7 +732,7 @@ button {
   flex-shrink: 0;
 }
 
-/* Tablet + mobile chrome: sidebar off, bottom nav on */
+/* Tablet + mobile: sidebar off, bottom nav on */
 @media (max-width: 1023px) {
   .mobile-nav {
     display: flex !important;
@@ -796,6 +777,33 @@ button {
   }
 }
 
+/* Feed: stack columns below 1280px */
+@media (max-width: 1279px) {
+  .feed-layout {
+    flex-direction: column;
+  }
+
+  .feed-left-column {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex: none;
+    padding: 16px 16px 24px;
+  }
+
+  .feed-right-column {
+    position: static !important;
+    height: auto !important;
+    overflow: visible !important;
+    border-left: none !important;
+    border-top: 1px solid var(--color-border-default);
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 16px 16px 80px;
+  }
+}
+
 @media (max-width: 767px) {
   .responsive-modal {
     width: calc(100vw - 32px) !important;
@@ -804,6 +812,14 @@ button {
   .page-shell,
   .jobs-page {
     padding: 16px 16px 88px !important;
+  }
+
+  .feed-left-column {
+    padding: 12px 12px 20px !important;
+  }
+
+  .feed-right-column {
+    padding: 12px 12px 88px !important;
   }
 
   .page-toolbar {
@@ -1071,14 +1087,8 @@ button {
 }
 
 @keyframes aiSheetIn {
-  from {
-    transform: translateY(100%);
-    opacity: 0.6;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(100%); opacity: 0.6; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes aiFadeIn {
@@ -1118,7 +1128,6 @@ button {
     letter-spacing: -0.01em !important;
   }
 
-  /* iOS bottom sheet card — not a side drawer */
   .ai-assistant-root {
     align-items: flex-end;
     justify-content: center;
@@ -1209,7 +1218,7 @@ button {
   }
 
   .ai-assistant-input-wrap input {
-    font-size: 16px; /* prevents iOS zoom on focus */
+    font-size: 16px;
   }
 
   .ai-assistant-send {
@@ -1225,9 +1234,6 @@ button {
     height: calc(100vh - 52px - 64px) !important;
   }
 }
-
-
-
 
 /* Card hover state */
 .card-hover {
@@ -1257,12 +1263,6 @@ button {
   100% { background-position: -200% 0; }
 }
 
-/* Pulse animation */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
@@ -1279,7 +1279,6 @@ button {
   background: var(--color-text-muted);
 }
 
-/* Main page scroller: hidden until user scrolls, then fades away */
 #main-content {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
@@ -1302,33 +1301,18 @@ button:active:not(:disabled) {
   transform: scale(0.97);
 }
 
-/* Smooth color transitions on interactive elements */
 a, button {
   transition: color 0.12s ease, background-color 0.12s ease,
     border-color 0.12s ease, opacity 0.12s ease;
 }
 
 /* Rich post content from Tiptap */
-.post-content p {
-  margin: 0 0 8px 0;
-}
-.post-content p:last-child {
-  margin-bottom: 0;
-}
-.post-content ul,
-.post-content ol {
-  padding-left: 20px;
-  margin: 6px 0;
-}
-.post-content li {
-  margin: 2px 0;
-}
-.post-content strong {
-  font-weight: 700;
-}
-.post-content em {
-  font-style: italic;
-}
+.post-content p { margin: 0 0 8px 0; }
+.post-content p:last-child { margin-bottom: 0; }
+.post-content ul, .post-content ol { padding-left: 20px; margin: 6px 0; }
+.post-content li { margin: 2px 0; }
+.post-content strong { font-weight: 700; }
+.post-content em { font-style: italic; }
 .post-content hr {
   border: none;
   border-top: 1px solid var(--color-border-default);
