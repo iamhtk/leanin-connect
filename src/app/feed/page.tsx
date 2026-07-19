@@ -156,21 +156,8 @@ function FeedPageContent() {
   )
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        width: '100%',
-        alignItems: 'flex-start',
-      }}
-    >
-      <div
-        style={{
-          width: '1025px',
-          minWidth: '840px',
-          flexShrink: 0,
-          padding: '20px 32px 48px 32px',
-        }}
-      >
+    <div className="feed-layout">
+      <div className="feed-left-column">
         <PostComposer onPostCreated={handlePostCreated} />
         <div
           style={{
@@ -222,19 +209,7 @@ function FeedPageContent() {
         )}
       </div>
 
-      <div
-        style={{
-          flex: 1,
-          minWidth: 0,
-          padding: '20px 20px 20px 20px',
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
-          overflowY: 'auto',
-          borderLeft: '1px solid var(--color-border-default)',
-          backgroundColor: 'var(--color-background)',
-        }}
-      >
+      <div className="feed-right-column">
         <CareerPulseCard data={careerPulseData} />
         <TrendingTopics />
         <SuggestedMembers />

@@ -71,7 +71,7 @@ export default function JobsPage() {
   })
 
   return (
-    <div style={{ padding: '24px 32px 48px 32px' }}>
+    <div className="jobs-page" style={{ padding: '24px 32px 48px 32px' }}>
       <div style={{ marginBottom: '24px' }}>
         <h1
           style={{
@@ -98,6 +98,7 @@ export default function JobsPage() {
           display: 'flex',
           gap: '10px',
           marginBottom: '16px',
+          flexWrap: 'wrap',
         }}
       >
         <div

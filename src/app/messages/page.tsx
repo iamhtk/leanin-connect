@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Search, Send, Sparkles, X, Loader2 } from 'lucide-react'
+import { Plus, Search, Send, Sparkles, X, Loader2, ChevronLeft } from 'lucide-react'
 import { MOCK_CONVERSATIONS } from '@/data/conversations'
 import type { Conversation, Message } from '@/lib/types'
 import { Avatar } from '@/components/atoms/Avatar'
@@ -159,22 +159,10 @@ export default function MessagesPage() {
 
   return (
     <div
-      style={{
-        display: 'flex',
-        height: 'calc(100vh - 52px)',
-        overflow: 'hidden',
-      }}
+      className="messages-layout"
+      data-selected={selectedId ? 'true' : 'false'}
     >
-      <div
-        style={{
-          width: '300px',
-          minWidth: '300px',
-          borderRight: '1px solid var(--color-border-default)',
-          display: 'flex',
-          flexDirection: 'column',
-          background: 'var(--color-surface)',
-        }}
-      >
+      <div className="messages-left-panel">
         <div
           style={{
             padding: '16px',
@@ -399,15 +387,7 @@ export default function MessagesPage() {
       </div>
 
       {selectedConversation ? (
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            background: 'var(--color-background)',
-            minWidth: 0,
-          }}
-        >
+        <div className="messages-right-panel">
           <div
             style={{
               padding: '12px 20px',
@@ -418,6 +398,27 @@ export default function MessagesPage() {
               gap: '12px',
             }}
           >
+            <button
+              type="button"
+              className="mobile-back-btn"
+              onClick={() => setSelectedId(null)}
+              style={{
+                alignItems: 'center',
+                gap: '4px',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--color-text-default)',
+                fontFamily: 'inherit',
+                fontSize: '13px',
+                fontWeight: '500',
+                padding: '0 4px 0 0',
+                flexShrink: 0,
+              }}
+            >
+              <ChevronLeft size={18} />
+              Back
+            </button>
             <Avatar
               initials={selectedConversation.participant_initials}
               color={selectedConversation.participant_avatar_color}
@@ -733,10 +734,8 @@ export default function MessagesPage() {
         </div>
       ) : (
         <div
+          className="messages-right-panel"
           style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             color: 'var(--color-text-muted)',

@@ -456,7 +456,7 @@ export default function EventsPage() {
       )}
 
       {timeFilter === 'upcoming' && activeTab === 'leanin' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '20px', maxWidth: '680px' }}>
           {filteredEvents.map((event) => {
             const isRsvpd = rsvpIds.has(event.id)
             return (

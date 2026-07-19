@@ -96,11 +96,11 @@ export function Sidebar() {
   return (
     <aside
       style={{
-        width: '208px',
-        minWidth: '208px',
+        width: 'var(--sidebar-width)',
+        minWidth: 'var(--sidebar-width)',
         backgroundColor: 'var(--color-sidebar)',
         borderRight: '1px solid var(--color-border-default)',
-        display: 'flex',
+        display: 'var(--sidebar-visible)' as React.CSSProperties['display'],
         flexDirection: 'column',
         height: '100%',
         padding: '16px 8px',

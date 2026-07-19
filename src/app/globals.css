@@ -90,6 +90,139 @@
   --motion-emphasized: cubic-bezier(.05, .7, .1, 1);
 }
 
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   Mobile:        320px - 767px
+   Tablet:        768px - 1023px
+   Desktop:       1024px - 1439px
+   Large Desktop: 1440px+
+   ============================================ */
+
+/* MOBILE TOKENS (default, mobile-first) */
+:root {
+  /* Typography scale - mobile */
+  --font-size-display: 28px;
+  --font-size-h1: 22px;
+  --font-size-h2: 18px;
+  --font-size-h3: 16px;
+  --font-size-h4: 15px;
+  --font-size-body-lg: 15px;
+  --font-size-body: 14px;
+  --font-size-body-sm: 13px;
+  --font-size-caption: 12px;
+  --font-size-label: 11px;
+
+  /* Spacing scale - mobile */
+  --space-page-x: 16px;
+  --space-page-y: 16px;
+  --space-card: 14px;
+  --space-section: 20px;
+  --space-component-xs: 4px;
+  --space-component-sm: 8px;
+  --space-component-md: 12px;
+  --space-component-lg: 16px;
+  --space-component-xl: 20px;
+
+  /* Layout - mobile */
+  --sidebar-width: 0px;
+  --sidebar-visible: none;
+  --topbar-height: 52px;
+  --content-max-width: 100%;
+  --feed-column-width: 100%;
+  --right-panel-width: 0px;
+  --right-panel-visible: none;
+  --grid-cols-2: repeat(1, 1fr);
+  --grid-cols-3: repeat(1, 1fr);
+
+  /* Border radius - mobile (slightly smaller) */
+  --radius-card: 12px;
+  --radius-modal: 14px;
+}
+
+/* TABLET TOKENS */
+@media (min-width: 768px) {
+  :root {
+    --font-size-display: 32px;
+    --font-size-h1: 26px;
+    --font-size-h2: 20px;
+    --font-size-h3: 17px;
+    --font-size-body-lg: 15px;
+    --font-size-body: 14px;
+    --font-size-body-sm: 13px;
+    --font-size-caption: 12px;
+    --font-size-label: 11px;
+
+    --space-page-x: 20px;
+    --space-page-y: 20px;
+    --space-card: 16px;
+    --space-section: 28px;
+
+    --sidebar-width: 200px;
+    --sidebar-visible: flex;
+    --content-max-width: 100%;
+    --feed-column-width: 100%;
+    --right-panel-width: 0px;
+    --right-panel-visible: none;
+    --grid-cols-2: repeat(2, 1fr);
+    --grid-cols-3: repeat(2, 1fr);
+
+    --radius-card: 12px;
+    --radius-modal: 16px;
+  }
+}
+
+/* DESKTOP TOKENS */
+@media (min-width: 1024px) {
+  :root {
+    --font-size-display: 36px;
+    --font-size-h1: 28px;
+    --font-size-h2: 22px;
+    --font-size-h3: 18px;
+    --font-size-h4: 16px;
+    --font-size-body-lg: 16px;
+    --font-size-body: 15px;
+    --font-size-body-sm: 13px;
+    --font-size-caption: 12px;
+    --font-size-label: 11px;
+
+    --space-page-x: 32px;
+    --space-page-y: 24px;
+    --space-card: 16px;
+    --space-section: 32px;
+
+    --sidebar-width: 208px;
+    --sidebar-visible: flex;
+    --content-max-width: 100%;
+    --feed-column-width: 840px;
+    --right-panel-width: 280px;
+    --right-panel-visible: flex;
+    --grid-cols-2: repeat(2, 1fr);
+    --grid-cols-3: repeat(3, 1fr);
+
+    --radius-card: 14px;
+    --radius-modal: 16px;
+  }
+}
+
+/* LARGE DESKTOP TOKENS */
+@media (min-width: 1440px) {
+  :root {
+    --font-size-display: 40px;
+    --font-size-h1: 32px;
+    --font-size-h2: 24px;
+    --font-size-body: 15px;
+
+    --space-page-x: 48px;
+    --space-page-y: 32px;
+    --space-card: 20px;
+    --space-section: 40px;
+
+    --feed-column-width: 920px;
+    --right-panel-width: 300px;
+    --grid-cols-3: repeat(3, 1fr);
+  }
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -178,4 +311,177 @@ button {
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateX(-50%) translateY(8px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Typography responsive classes */
+.page-title {
+  font-size: var(--font-size-h1);
+  font-weight: 600;
+  color: var(--color-text-default);
+}
+
+.page-subtitle {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.card-padding {
+  padding: var(--space-card);
+}
+
+.section-spacing {
+  margin-bottom: var(--space-section);
+}
+
+/* Topbar mobile helpers */
+.mobile-logo {
+  display: none;
+}
+
+.search-mobile {
+  display: none;
+}
+
+/* Feed layout responsive */
+.feed-layout {
+  display: flex;
+  width: 100%;
+}
+
+.feed-left-column {
+  width: 840px;
+  min-width: 840px;
+  flex-shrink: 0;
+  padding: 20px 32px 48px 32px;
+}
+
+.feed-right-column {
+  flex: 1;
+  padding: 20px 20px 20px 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-border-default);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 1023px) {
+  .feed-left-column {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 16px 20px 48px 20px !important;
+  }
+
+  .feed-right-column {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .feed-left-column {
+    padding: 12px 16px 80px 16px !important;
+  }
+
+  .mobile-nav {
+    display: flex !important;
+  }
+
+  /* Add bottom padding to main content on mobile
+     so content is not hidden behind mobile nav */
+  main {
+    padding-bottom: 60px;
+  }
+
+  .mobile-logo {
+    display: block;
+  }
+
+  .search-bar-desktop {
+    display: none !important;
+  }
+
+  .search-mobile {
+    display: flex !important;
+  }
+
+  .mobile-back-btn {
+    display: flex !important;
+  }
+
+  .jobs-page {
+    padding: 16px 16px 80px 16px !important;
+  }
+
+  /* All interactive elements meet WCAG 44px touch target */
+  button,
+  a,
+  [role='button'] {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Exception for inline text links */
+  a.inline-link {
+    min-height: unset;
+    min-width: unset;
+    display: inline;
+  }
+}
+
+.mobile-back-btn {
+  display: none;
+}
+
+/* Messages layout responsive */
+.messages-layout {
+  display: flex;
+  height: calc(100vh - 52px);
+  overflow: hidden;
+}
+
+.messages-left-panel {
+  width: 300px;
+  min-width: 300px;
+  border-right: 1px solid var(--color-border-default);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+}
+
+.messages-right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .messages-left-panel {
+    width: 100% !important;
+    min-width: 100% !important;
+    border-right: none !important;
+  }
+
+  .messages-right-panel {
+    display: none !important;
+  }
+
+  /* When a conversation is selected on mobile,
+     show the right panel and hide the left panel */
+  .messages-layout[data-selected='true'] .messages-left-panel {
+    display: none !important;
+  }
+
+  .messages-layout[data-selected='true'] .messages-right-panel {
+    display: flex !important;
+    width: 100% !important;
+  }
 }

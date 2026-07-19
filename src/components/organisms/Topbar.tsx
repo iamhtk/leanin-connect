@@ -40,8 +40,20 @@ export function Topbar() {
         flexShrink: 0,
       }}
     >
+      <span
+        className="mobile-logo"
+        style={{
+          fontSize: '13px',
+          fontWeight: '700',
+          letterSpacing: '0.06em',
+          color: 'var(--color-text-default)',
+        }}
+      >
+        LEAN <strong>IN</strong> CONNECT
+      </span>
+
       <div
-        className="hover:[border-color:var(--color-border-strong)]"
+        className="search-bar-desktop hover:[border-color:var(--color-border-strong)]"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -106,6 +118,25 @@ export function Topbar() {
         ref={rightSectionRef}
         style={{ display: 'flex', alignItems: 'center', gap: '4px', position: 'relative' }}
       >
+        <button
+          type="button"
+          className="search-mobile hover:bg-subtle"
+          onClick={() => router.push('/directory')}
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            border: 'none',
+            backgroundColor: 'transparent',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: 'var(--color-text-muted)',
+          }}
+        >
+          <Search size={16} />
+        </button>
+
         <button
           type="button"
           onClick={() => setShowAssistant(true)}
