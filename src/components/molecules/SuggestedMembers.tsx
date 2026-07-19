@@ -93,13 +93,17 @@ export function SuggestedMembers() {
             <div
               key={member.id}
               onClick={() => router.push('/directory')}
+              className="hover:bg-subtle"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                padding: '8px 0',
+                padding: '8px',
+                margin: '0 -8px',
+                borderRadius: '8px',
                 borderBottom: index === SUGGESTED_MEMBERS.length - 1 ? 'none' : '1px solid var(--color-border-default)',
                 cursor: 'pointer',
+                transition: 'background-color 0.12s',
               }}
             >
               <Avatar initials={member.initials} color={member.color} size={32} />

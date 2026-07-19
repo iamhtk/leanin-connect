@@ -67,7 +67,7 @@ export default function GroupsPage() {
   }
 
   return (
-    <main aria-label="Groups" style={{ padding: '24px 32px 48px 32px' }}>
+    <main className="page-shell" aria-label="Groups">
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Groups</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -110,7 +110,7 @@ export default function GroupsPage() {
         />
       </div>
 
-      <div role="tablist" aria-label="Group scope" style={{ display: 'flex', gap: '8px' }}>
+      <div style={{ display: 'flex', gap: '8px' }}>
         {(
           [
             { label: 'My Groups', value: 'my' },
@@ -122,8 +122,6 @@ export default function GroupsPage() {
             <button
               key={tab.value}
               type="button"
-              role="tab"
-              aria-selected={isActive}
               onClick={() => setActiveTab(tab.value)}
               style={{
                 padding: '6px 14px',
@@ -177,36 +175,23 @@ export default function GroupsPage() {
           </button>
         </div>
       ) : (
-        <div
-          role="list"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'var(--grid-cols-3)',
-            gap: '16px',
-            marginTop: '20px',
-          }}
-        >
+        <div className="page-grid-3" style={{ marginTop: '20px' }}>
           {(activeTab === 'my' ? myGroups : filteredGroups).map((group) => {
             const isJoined = joinedIds.has(group.id)
 
             return (
               <div
                 key={group.id}
-                role="listitem"
-                aria-label={`${group.name}. ${group.description}`}
-                className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
+                className="card-hover"
                 style={{
                   background: 'var(--color-surface)',
                   border: '1px solid var(--color-border-default)',
                   borderRadius: '14px',
                   overflow: 'hidden',
                   boxShadow: 'none',
-                  transition: 'border-color 0.12s, transform 0.12s',
-                  cursor: 'pointer',
                 }}
               >
                 <div
-                  aria-hidden="true"
                   style={{
                     height: '160px',
                     background: group.color,
@@ -265,7 +250,6 @@ export default function GroupsPage() {
                     </span>
                     <button
                       type="button"
-                      aria-label={isJoined ? `Leave ${group.name}` : `Join ${group.name}`}
                       onClick={(event) => handleJoinToggle(group, event)}
                       style={
                         isJoined

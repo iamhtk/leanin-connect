@@ -25,7 +25,7 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
 
   if (!data) {
     return (
-      <div style={CONTAINER_STYLE} aria-live="polite" aria-busy="true">
+      <div style={CONTAINER_STYLE}>
         <p
           style={{
             fontSize: '11px',
@@ -38,25 +38,17 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
         >
           ✦ AI CAREER PULSE
         </p>
-        <p
-          className="animate-pulse-opacity"
-          style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}
-        >
-          Fetching community insights...
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div className="skeleton" style={{ height: '12px', width: '90%' }} />
+          <div className="skeleton" style={{ height: '12px', width: '75%' }} />
+          <div className="skeleton" style={{ height: '12px', width: '60%' }} />
+        </div>
       </div>
     )
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      style={CONTAINER_STYLE}
-      aria-live="polite"
-      aria-busy="false"
-    >
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} style={CONTAINER_STYLE}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
         <p
           style={{
@@ -120,6 +112,7 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
               padding: '7px 0',
               borderBottom: index === data.questions.length - 1 ? 'none' : '1px solid var(--color-border-default)',
               cursor: 'pointer',
+              transition: 'color 0.12s',
             }}
           >
             {question}

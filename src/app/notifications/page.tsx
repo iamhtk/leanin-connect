@@ -11,7 +11,7 @@ export default function NotificationsPage() {
   const [activeTab, setActiveTab] = useState<NotificationsTab>('all')
 
   return (
-    <main aria-label="Notifications" aria-live="polite" aria-atomic="false" style={{ padding: '24px 32px 48px 32px' }}>
+    <main className="page-shell" aria-label="Notifications">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
         <div>
           <p
@@ -91,9 +91,11 @@ export default function NotificationsPage() {
           border: '1px solid var(--color-border-default)',
           borderRadius: '14px',
           padding: '48px 24px',
+          minHeight: '300px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'center',
           textAlign: 'center',
           boxShadow: 'none',
         }}
@@ -145,7 +147,7 @@ export default function NotificationsPage() {
         >
           Nothing new since you last looked. We only ping you for things that need a person — not the algorithm.
         </p>
-        <div style={{ display: 'flex', gap: '10px', marginTop: '20px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '20px', alignItems: 'center' }}>
           <button
             type="button"
             onClick={() => router.push('/feed')}

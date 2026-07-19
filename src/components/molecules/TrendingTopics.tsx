@@ -63,11 +63,17 @@ export function TrendingTopics() {
               padding: '8px 0',
               borderBottom: index === TRENDING_TOPICS.length - 1 ? 'none' : '1px solid var(--color-border-default)',
               cursor: 'pointer',
+              transition: 'color 0.12s',
             }}
           >
             <span
               className="group-hover:text-[var(--color-brand)]"
-              style={{ fontSize: '14px', fontWeight: '500', color: 'var(--color-text-default)' }}
+              style={{
+                fontSize: '14px',
+                fontWeight: '500',
+                color: 'var(--color-text-default)',
+                transition: 'color 0.12s',
+              }}
             >
               {item.topic}
             </span>

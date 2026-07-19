@@ -20,16 +20,15 @@ type ExpandedSection = 'profile' | 'notifications' | 'marketing' | 'privacy' | n
 interface ToggleSwitchProps {
   checked: boolean
   onChange: (checked: boolean) => void
-  ariaLabel: string
 }
 
-function ToggleSwitch({ checked, onChange, ariaLabel }: ToggleSwitchProps) {
+function ToggleSwitch({ checked, onChange }: ToggleSwitchProps) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
-      aria-label={ariaLabel}
+      tabIndex={0}
       onClick={(event) => {
         event.stopPropagation()
         onChange(!checked)
@@ -110,7 +109,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <main aria-label="Account settings" style={{ padding: '24px 32px 48px 32px' }}>
+    <main className="page-shell" aria-label="Settings">
       <div style={{ marginBottom: '8px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Settings</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -133,8 +132,6 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => toggleSection('profile')}
-            aria-expanded={expanded === 'profile'}
-            aria-controls="settings-profile-panel"
             className="hover:bg-subtle"
             style={{
               width: '100%',
@@ -147,6 +144,7 @@ export default function SettingsPage() {
               cursor: 'pointer',
               fontFamily: 'inherit',
               textAlign: 'left',
+              transition: 'background-color 0.12s',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -179,11 +177,14 @@ export default function SettingsPage() {
               <ChevronRight size={16} style={{ color: 'var(--color-text-muted)' }} />
             )}
           </button>
-          {expanded === 'profile' && (
             <div
-              id="settings-profile-panel"
-              role="region"
-              aria-label="Profile and identity settings"
+              style={{
+                overflow: 'hidden',
+                maxHeight: expanded === 'profile' ? '400px' : '0',
+                transition: 'max-height 0.25s ease',
+              }}
+            >
+            <div
               style={{
                 borderTop: '1px solid var(--color-border-default)',
                 padding: '16px',
@@ -271,7 +272,7 @@ export default function SettingsPage() {
                 </button>
               </div>
             </div>
-          )}
+            </div>
         </div>
 
         {/* Notifications */}
@@ -279,8 +280,6 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => toggleSection('notifications')}
-            aria-expanded={expanded === 'notifications'}
-            aria-controls="settings-notifications-panel"
             className="hover:bg-subtle"
             style={{
               width: '100%',
@@ -293,6 +292,7 @@ export default function SettingsPage() {
               cursor: 'pointer',
               fontFamily: 'inherit',
               textAlign: 'left',
+              transition: 'background-color 0.12s',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -325,11 +325,14 @@ export default function SettingsPage() {
               <ChevronRight size={16} style={{ color: 'var(--color-text-muted)' }} />
             )}
           </button>
-          {expanded === 'notifications' && (
             <div
-              id="settings-notifications-panel"
-              role="region"
-              aria-label="Notification preferences"
+              style={{
+                overflow: 'hidden',
+                maxHeight: expanded === 'notifications' ? '400px' : '0',
+                transition: 'max-height 0.25s ease',
+              }}
+            >
+            <div
               style={{
                 borderTop: '1px solid var(--color-border-default)',
                 padding: '16px',
@@ -359,7 +362,6 @@ export default function SettingsPage() {
                   </div>
                   <ToggleSwitch
                     checked={notifToggles[item.id]}
-                    ariaLabel={`${item.title} notifications`}
                     onChange={(checked) =>
                       setNotifToggles((previous) => ({ ...previous, [item.id]: checked }))
                     }
@@ -367,7 +369,7 @@ export default function SettingsPage() {
                 </div>
               ))}
             </div>
-          )}
+            </div>
         </div>
 
         {/* Marketing */}
@@ -375,8 +377,6 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => toggleSection('marketing')}
-            aria-expanded={expanded === 'marketing'}
-            aria-controls="settings-marketing-panel"
             className="hover:bg-subtle"
             style={{
               width: '100%',
@@ -389,6 +389,7 @@ export default function SettingsPage() {
               cursor: 'pointer',
               fontFamily: 'inherit',
               textAlign: 'left',
+              transition: 'background-color 0.12s',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -421,11 +422,14 @@ export default function SettingsPage() {
               <ChevronRight size={16} style={{ color: 'var(--color-text-muted)' }} />
             )}
           </button>
-          {expanded === 'marketing' && (
             <div
-              id="settings-marketing-panel"
-              role="region"
-              aria-label="Marketing email preferences"
+              style={{
+                overflow: 'hidden',
+                maxHeight: expanded === 'marketing' ? '400px' : '0',
+                transition: 'max-height 0.25s ease',
+              }}
+            >
+            <div
               style={{
                 borderTop: '1px solid var(--color-border-default)',
                 padding: '16px',
@@ -437,13 +441,9 @@ export default function SettingsPage() {
               <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text-default)' }}>
                 Send me newsletters and event invites
               </p>
-              <ToggleSwitch
-                checked={marketingOn}
-                ariaLabel="Send me newsletters and event invites"
-                onChange={setMarketingOn}
-              />
+              <ToggleSwitch checked={marketingOn} onChange={setMarketingOn} />
             </div>
-          )}
+            </div>
         </div>
 
         {/* Privacy */}
@@ -451,8 +451,6 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => toggleSection('privacy')}
-            aria-expanded={expanded === 'privacy'}
-            aria-controls="settings-privacy-panel"
             className="hover:bg-subtle"
             style={{
               width: '100%',
@@ -465,6 +463,7 @@ export default function SettingsPage() {
               cursor: 'pointer',
               fontFamily: 'inherit',
               textAlign: 'left',
+              transition: 'background-color 0.12s',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -497,11 +496,14 @@ export default function SettingsPage() {
               <ChevronRight size={16} style={{ color: 'var(--color-text-muted)' }} />
             )}
           </button>
-          {expanded === 'privacy' && (
             <div
-              id="settings-privacy-panel"
-              role="region"
-              aria-label="Privacy and visibility settings"
+              style={{
+                overflow: 'hidden',
+                maxHeight: expanded === 'privacy' ? '400px' : '0',
+                transition: 'max-height 0.25s ease',
+              }}
+            >
+            <div
               style={{
                 borderTop: '1px solid var(--color-border-default)',
                 padding: '16px',
@@ -510,7 +512,6 @@ export default function SettingsPage() {
                 gap: '12px',
               }}
             >
-              <div role="radiogroup" aria-label="Profile visibility" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {(
                 [
                   { value: 'public' as const, label: 'Public — Anyone can see your profile' },
@@ -521,18 +522,8 @@ export default function SettingsPage() {
                   { value: 'private' as const, label: 'Private — Only people you approve' },
                 ] as const
               ).map((option) => (
-                <div
+                <label
                   key={option.value}
-                  role="radio"
-                  aria-checked={privacy === option.value}
-                  tabIndex={privacy === option.value ? 0 : -1}
-                  onClick={() => setPrivacy(option.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault()
-                      setPrivacy(option.value)
-                    }
-                  }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -543,7 +534,6 @@ export default function SettingsPage() {
                   }}
                 >
                   <span
-                    aria-hidden="true"
                     style={{
                       width: '18px',
                       height: '18px',
@@ -566,12 +556,18 @@ export default function SettingsPage() {
                       />
                     )}
                   </span>
+                  <input
+                    type="radio"
+                    name="privacy"
+                    checked={privacy === option.value}
+                    onChange={() => setPrivacy(option.value)}
+                    style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
+                  />
                   {option.label}
-                </div>
+                </label>
               ))}
-              </div>
             </div>
-          )}
+            </div>
         </div>
 
         {/* Coming soon rows */}

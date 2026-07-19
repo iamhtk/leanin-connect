@@ -33,10 +33,26 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, isLoading])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 280)
+    return () => window.clearTimeout(timer)
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [isOpen, onClose])
 
   const sendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return
@@ -93,178 +109,57 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
   if (!isOpen) return null
 
   return (
-    <>
-      <div
-        className="ai-assistant-overlay"
-        onClick={onClose}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.2)',
-          zIndex: 40,
-        }}
-      />
+    <div className="ai-assistant-root" role="dialog" aria-modal="true" aria-label="AI Assistant">
+      <div className="ai-assistant-backdrop" onClick={onClose} />
 
-      <div
-        className="ai-assistant-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-label="AI Assistant"
-        aria-describedby="assistant-description"
-        style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          width: '380px',
-          height: '100vh',
-          background: 'var(--color-surface)',
-          borderLeft: '1px solid var(--color-border-default)',
-          zIndex: 50,
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: 'var(--shadow-modal)',
-        }}
-      >
-        <span id="assistant-description" className="sr-only">
-          Chat with the AI assistant to navigate Lean In Connect, find resources, join Circles, and connect with the community
-        </span>
-        <div className="ai-assistant-handle" aria-hidden="true">
+      <div className="ai-assistant-panel">
+        <div className="ai-assistant-grabber" aria-hidden="true">
           <span />
         </div>
 
-        <div
-          className="ai-assistant-header"
-          style={{
-            padding: '16px 20px',
-            borderBottom: '1px solid var(--color-border-default)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: 'var(--color-surface)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div
-              style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: '9999px',
-                background: 'var(--color-brand-subtle)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
+        <div className="ai-assistant-header">
+          <div className="ai-assistant-title-row">
+            <div className="ai-assistant-avatar">
               <Sparkles size={14} style={{ color: 'var(--color-brand)' }} />
             </div>
-            <span
-              style={{
-                fontSize: '15px',
-                fontWeight: '600',
-                color: 'var(--color-text-default)',
-              }}
-            >
-              Assistant
-            </span>
+            <div>
+              <p className="ai-assistant-title">Assistant</p>
+              <p className="ai-assistant-subtitle">Lean In Connect</p>
+            </div>
           </div>
           <button
             type="button"
-            aria-label="Close AI Assistant"
             onClick={onClose}
-            style={{
-              width: '28px',
-              height: '28px',
-              borderRadius: '9999px',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--color-text-muted)',
-            }}
+            className="ai-assistant-close"
+            aria-label="Close assistant"
           >
             <X size={16} />
           </button>
         </div>
 
-        <div
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-          }}
-        >
+        <div className="ai-assistant-messages">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              style={{
-                display: 'flex',
-                justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
-              }}
+              className={`ai-bubble-row ${msg.role === 'user' ? 'is-user' : 'is-assistant'}`}
             >
               {msg.role === 'assistant' && (
-                <div
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '9999px',
-                    background: 'var(--color-brand-subtle)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: '8px',
-                    flexShrink: 0,
-                    marginTop: '2px',
-                  }}
-                >
+                <div className="ai-bubble-avatar">
                   <Sparkles size={11} style={{ color: 'var(--color-brand)' }} />
                 </div>
               )}
-              <div
-                style={{
-                  maxWidth: '80%',
-                  background: msg.role === 'user' ? 'var(--color-brand)' : 'var(--color-subtle)',
-                  color: msg.role === 'user' ? 'white' : 'var(--color-text-default)',
-                  borderRadius: msg.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
-                  padding: '10px 14px',
-                  fontSize: '14px',
-                  lineHeight: '1.5',
-                }}
-              >
+              <div className={`ai-bubble ${msg.role === 'user' ? 'is-user' : 'is-assistant'}`}>
                 {msg.content}
               </div>
             </div>
           ))}
 
           {isLoading && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div
-                style={{
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '9999px',
-                  background: 'var(--color-brand-subtle)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
+            <div className="ai-bubble-row is-assistant">
+              <div className="ai-bubble-avatar">
                 <Sparkles size={11} style={{ color: 'var(--color-brand)' }} />
               </div>
-              <div
-                style={{
-                  background: 'var(--color-subtle)',
-                  borderRadius: '14px 14px 14px 4px',
-                  padding: '10px 14px',
-                  display: 'flex',
-                  gap: '4px',
-                  alignItems: 'center',
-                }}
-              >
+              <div className="ai-bubble is-assistant ai-typing">
                 {[0, 1, 2].map((i) => (
                   <span
                     key={i}
@@ -284,44 +179,14 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
           )}
 
           {messages.length === 1 && (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '6px',
-                marginTop: '8px',
-              }}
-            >
-              <p
-                style={{
-                  fontSize: '11px',
-                  fontWeight: '600',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: 'var(--color-text-muted)',
-                  marginBottom: '4px',
-                }}
-              >
-                Try asking
-              </p>
+            <div className="ai-suggestions">
+              <p className="ai-suggestions-label">Try asking</p>
               {SUGGESTED_PROMPTS.map((prompt) => (
                 <button
                   key={prompt}
                   type="button"
+                  className="ai-suggestion-chip"
                   onClick={() => sendMessage(prompt)}
-                  style={{
-                    textAlign: 'left',
-                    background: 'var(--color-surface)',
-                    border: '1px solid var(--color-border-default)',
-                    borderRadius: '10px',
-                    padding: '10px 14px',
-                    fontSize: '13px',
-                    color: 'var(--color-text-default)',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    lineHeight: '1.4',
-                    transition: 'border-color 0.12s',
-                  }}
                 >
                   {prompt}
                 </button>
@@ -332,31 +197,12 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
           <div ref={messagesEndRef} />
         </div>
 
-        <div
-          style={{
-            padding: '12px 16px',
-            borderTop: '1px solid var(--color-border-default)',
-            display: 'flex',
-            gap: '8px',
-            alignItems: 'flex-end',
-            background: 'var(--color-surface)',
-          }}
-        >
-          <div
-            style={{
-              flex: 1,
-              background: 'var(--color-background)',
-              border: '1px solid var(--color-border-default)',
-              borderRadius: '14px',
-              padding: '10px 14px',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
+        <div className="ai-assistant-composer">
+          <div className="ai-assistant-input-wrap">
             <input
+              ref={inputRef}
               type="text"
               value={input}
-              aria-label="Message the assistant"
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -364,38 +210,16 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
                   sendMessage(input)
                 }
               }}
-              placeholder="Ask the assistant..."
-              style={{
-                flex: 1,
-                border: 'none',
-                outline: 'none',
-                fontSize: '14px',
-                background: 'transparent',
-                color: 'var(--color-text-default)',
-                fontFamily: 'inherit',
-              }}
+              placeholder="Ask anything..."
+              aria-label="Message assistant"
             />
           </div>
           <button
             type="button"
-            aria-label="Send message"
-            aria-disabled={!input.trim() || isLoading}
+            className="ai-assistant-send"
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading}
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '9999px',
-              background: input.trim() && !isLoading ? 'var(--color-brand)' : 'var(--color-muted)',
-              border: 'none',
-              cursor: input.trim() && !isLoading ? 'pointer' : 'not-allowed',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              flexShrink: 0,
-              transition: 'background 0.12s',
-            }}
+            aria-label="Send message"
           >
             {isLoading ? (
               <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
@@ -405,6 +229,6 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
           </button>
         </div>
       </div>
-    </>
+    </div>
   )
 }

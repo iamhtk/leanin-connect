@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, Filter, Briefcase, MapPin, Clock, Sparkles, ExternalLink } from 'lucide-react'
+import { Search, Filter, Briefcase, MapPin, Clock, Sparkles, ExternalLink, X } from 'lucide-react'
 import { MOCK_JOBS } from '@/data/jobs'
 import type { Job } from '@/lib/types'
 import { showToast } from '@/lib/utils'
@@ -21,6 +21,238 @@ interface AIMatch {
   reason: string
 }
 
+interface SalaryCoachModalProps {
+  job: Job
+  onClose: () => void
+}
+
+function SalaryCoachModal({ job, onClose }: SalaryCoachModalProps) {
+  const [tips, setTips] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchTips = async () => {
+      try {
+        const response = await fetch('/api/ai/salary-coach', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            role: job.role,
+            company: job.company,
+            salaryRange: job.salary_range,
+            jobType: job.job_type,
+          }),
+        })
+        const result = (await response.json()) as { data?: string[] }
+        if (result.data) {
+          setTips(result.data)
+        }
+      } catch {
+        // Keep empty tips on failure
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void fetchTips()
+  }, [job])
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.4)',
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Salary Coach"
+        onClick={(event) => event.stopPropagation()}
+        style={{
+          background: 'var(--color-surface)',
+          width: '460px',
+          maxWidth: '100%',
+          borderRadius: '16px',
+          padding: '24px',
+          boxShadow: 'var(--shadow-modal)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Sparkles size={14} style={{ color: 'var(--color-brand)' }} aria-hidden="true" />
+            <h2 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+              Salary Coach
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close salary coach"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--color-text-muted)',
+              display: 'flex',
+              padding: '4px',
+            }}
+          >
+            <X size={18} aria-hidden="true" />
+          </button>
+        </div>
+
+        <div
+          style={{
+            display: 'inline-flex',
+            marginTop: '16px',
+            background: 'var(--color-brand-subtle)',
+            border: '1px solid var(--color-border-brand)',
+            borderRadius: '9999px',
+            padding: '6px 14px',
+            fontSize: '13px',
+            fontWeight: '600',
+            color: 'var(--color-brand)',
+          }}
+        >
+          {job.role} · {job.company}
+        </div>
+        <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+          {job.salary_range}
+        </p>
+
+        <div
+          style={{
+            height: '1px',
+            background: 'var(--color-border-default)',
+            margin: '16px 0',
+          }}
+        />
+
+        {isLoading && (
+          <div>
+            {[0, 1, 2].map((index) => (
+              <div
+                key={index}
+                className="animate-pulse-opacity"
+                style={{
+                  height: '48px',
+                  background: 'var(--color-subtle)',
+                  borderRadius: '10px',
+                  marginBottom: '8px',
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {!isLoading && tips.length > 0 && (
+          <div>
+            <p
+              style={{
+                fontSize: '11px',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                color: 'var(--color-text-muted)',
+                marginBottom: '12px',
+                letterSpacing: '0.06em',
+              }}
+            >
+              3 negotiation tips from Lean In:
+            </p>
+            {tips.map((tip, index) => (
+              <div
+                key={tip}
+                style={{
+                  display: 'flex',
+                  gap: '10px',
+                  padding: '12px',
+                  background: 'var(--color-subtle)',
+                  borderRadius: '10px',
+                  marginBottom: '8px',
+                }}
+              >
+                <span
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '9999px',
+                    background: 'var(--color-brand-subtle)',
+                    color: 'var(--color-brand)',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  {index + 1}
+                </span>
+                <p
+                  style={{
+                    fontSize: '13px',
+                    color: 'var(--color-text-default)',
+                    lineHeight: '1.5',
+                  }}
+                >
+                  {tip}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+          <a
+            href={job.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'var(--color-brand)',
+              color: 'white',
+              borderRadius: '9999px',
+              padding: '8px 18px',
+              fontSize: '13px',
+              fontWeight: '600',
+              textDecoration: 'none',
+            }}
+          >
+            Apply now
+            <ExternalLink size={12} aria-hidden="true" />
+          </a>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              background: 'transparent',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '8px 18px',
+              fontSize: '13px',
+              color: 'var(--color-text-default)',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            Maybe later
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function JobsPage() {
   const [jobs] = useState<Job[]>(MOCK_JOBS)
   const [selectedType, setSelectedType] = useState('All')
@@ -28,23 +260,24 @@ export default function JobsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [aiMatches, setAiMatches] = useState<AIMatch[]>([])
   const [isMatchLoading, setIsMatchLoading] = useState(true)
+  const [salaryCoachJob, setSalaryCoachJob] = useState<Job | null>(null)
 
   useEffect(() => {
     const fetchMatches = async () => {
       try {
         const response = await fetch('/api/ai/job-match', { method: 'POST' })
-        const result = await response.json()
+        const result = (await response.json()) as { data?: AIMatch[] }
         if (result.data) {
           setAiMatches(result.data)
         }
-      } catch (error) {
-        console.error(error)
+      } catch {
+        // Keep empty matches on failure
       } finally {
         setIsMatchLoading(false)
       }
     }
 
-    fetchMatches()
+    void fetchMatches()
   }, [])
 
   const enrichedJobs = jobs.map((job) => {
@@ -71,7 +304,7 @@ export default function JobsPage() {
   })
 
   return (
-    <main aria-label="Job opportunities" className="jobs-page" style={{ padding: '24px 32px 48px 32px' }}>
+    <main className="page-shell jobs-page" aria-label="Job opportunities">
       <div style={{ marginBottom: '24px' }}>
         <h1
           style={{
@@ -94,11 +327,11 @@ export default function JobsPage() {
       </div>
 
       <div
+        className="page-toolbar"
         style={{
           display: 'flex',
           gap: '10px',
           marginBottom: '16px',
-          flexWrap: 'wrap',
         }}
       >
         <div
@@ -111,9 +344,8 @@ export default function JobsPage() {
             border: '1px solid var(--color-border-default)',
             borderRadius: '9999px',
             padding: '0 16px',
-            height: '44px',
-            minHeight: '44px',
-            whiteSpace: 'nowrap',
+            height: '40px',
+            minWidth: 0,
           }}
         >
           <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
@@ -146,20 +378,17 @@ export default function JobsPage() {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            background: 'var(--color-surface)',
+            background: 'transparent',
             border: '1px solid var(--color-border-default)',
             borderRadius: '9999px',
-            padding: '0 16px',
-            height: '44px',
-            minHeight: '44px',
-            fontSize: '14px',
-            color: 'var(--color-text-secondary)',
+            padding: '8px 20px',
+            fontSize: '13px',
+            color: 'var(--color-text-default)',
             cursor: 'pointer',
             fontFamily: 'inherit',
-            whiteSpace: 'nowrap',
           }}
         >
-          <Filter size={14} />
+          <Filter size={14} aria-hidden="true" />
           Filters
         </button>
       </div>
@@ -168,15 +397,12 @@ export default function JobsPage() {
         className="pills-scroll"
         style={{
           display: 'flex',
-          alignItems: 'center',
           gap: '4px',
+          marginBottom: '16px',
           overflowX: 'auto',
-          scrollbarWidth: 'none',
-          paddingBottom: '12px',
-          marginBottom: '8px',
+          WebkitOverflowScrolling: 'touch',
         }}
       >
-        <div role="group" aria-label="Filter by job type" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         {JOB_TYPES.map((type) => {
           const isActive = selectedType === type.value
 
@@ -208,10 +434,8 @@ export default function JobsPage() {
             </button>
           )
         })}
-        </div>
 
         <div
-          aria-hidden="true"
           style={{
             width: '1px',
             height: '16px',
@@ -222,7 +446,6 @@ export default function JobsPage() {
           }}
         />
 
-        <div role="group" aria-label="Filter by category" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         {CATEGORIES.map((category) => {
           const isActive = selectedCategory === category
 
@@ -254,7 +477,6 @@ export default function JobsPage() {
             </button>
           )
         })}
-        </div>
       </div>
 
       {isMatchLoading && (
@@ -291,25 +513,29 @@ export default function JobsPage() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {sortedJobs.map((job) => (
-          <JobCard key={job.id} job={job} />
+          <JobCard key={job.id} job={job} onApply={() => setSalaryCoachJob(job)} />
         ))}
       </div>
+
+      {salaryCoachJob && (
+        <SalaryCoachModal job={salaryCoachJob} onClose={() => setSalaryCoachJob(null)} />
+      )}
     </main>
   )
 }
 
 interface JobCardProps {
   job: Job & { is_ai_match?: boolean; match_reason?: string }
+  onApply: () => void
 }
 
-function JobCard({ job }: JobCardProps) {
+function JobCard({ job, onApply }: JobCardProps) {
   const postedDate = new Date(job.posted_at)
   const daysAgo = Math.floor((Date.now() - postedDate.getTime()) / (1000 * 60 * 60 * 24))
 
   return (
     <div
-      role="article"
-      aria-label={`${job.role} at ${job.company}`}
+      className="hover:[border-color:var(--color-border-strong)]"
       style={{
         background: 'var(--color-surface)',
         border: job.is_ai_match
@@ -339,7 +565,7 @@ function JobCard({ job }: JobCardProps) {
             marginBottom: '10px',
           }}
         >
-          <Sparkles size={11} />
+          <Sparkles size={11} style={{ flexShrink: 0 }} aria-hidden="true" />
           AI Match · {job.match_reason}
         </div>
       )}
@@ -356,6 +582,8 @@ function JobCard({ job }: JobCardProps) {
             style={{
               width: '40px',
               height: '40px',
+              minWidth: '40px',
+              minHeight: '40px',
               borderRadius: '10px',
               background: job.company_logo_color,
               display: 'flex',
@@ -391,11 +619,9 @@ function JobCard({ job }: JobCardProps) {
           </div>
         </div>
 
-        <a
-          href={job.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Apply for ${job.role} at ${job.company}, opens in new tab`}
+        <button
+          type="button"
+          onClick={onApply}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -406,14 +632,15 @@ function JobCard({ job }: JobCardProps) {
             padding: '7px 16px',
             fontSize: '13px',
             fontWeight: '600',
-            textDecoration: 'none',
             flexShrink: 0,
             border: 'none',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
           }}
         >
           Apply
-          <ExternalLink size={12} />
-        </a>
+          <ExternalLink size={12} aria-hidden="true" />
+        </button>
       </div>
 
       <div
@@ -465,6 +692,8 @@ function JobCard({ job }: JobCardProps) {
             fontSize: '12px',
             color: 'var(--color-text-muted)',
             marginLeft: 'auto',
+            textAlign: 'right',
+            flexShrink: 0,
           }}
         >
           {job.salary_range}

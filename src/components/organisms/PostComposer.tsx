@@ -130,7 +130,6 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
         role="button"
         tabIndex={0}
         aria-label="Create a post"
-        aria-haspopup="dialog"
         onClick={() => setIsOpen(true)}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
@@ -176,11 +175,10 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             }}
           >
             <motion.div
+              onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-label="Create post"
-              aria-describedby="composer-description"
-              onClick={(event) => event.stopPropagation()}
               initial={{ scale: 0.97, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.97, opacity: 0 }}
@@ -192,18 +190,16 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                 padding: '24px',
                 boxShadow: 'var(--shadow-modal)',
               }}
+              className="responsive-modal"
             >
-              <span id="composer-description" className="sr-only">
-                Write a post to share with the Lean In community
-              </span>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <p style={{ fontSize: '16px', fontWeight: '600', color: 'var(--color-text-default)' }}>
                   Create a post
                 </p>
                 <button
                   type="button"
-                  aria-label="Close post composer"
                   onClick={closeModal}
+                  aria-label="Close post composer"
                   style={{
                     background: 'none',
                     border: 'none',
@@ -212,7 +208,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                     display: 'flex',
                   }}
                 >
-                  <X size={18} />
+                  <X size={18} aria-hidden="true" />
                 </button>
               </div>
 
@@ -294,7 +290,6 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                 onChange={(event) => setContent(event.target.value.slice(0, MAX_LENGTH))}
                 placeholder="Share something with the community..."
                 aria-label="Post content"
-                aria-describedby="char-count"
                 style={{
                   marginTop: '16px',
                   width: '100%',
@@ -309,9 +304,6 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               />
 
               <p
-                id="char-count"
-                aria-live="polite"
-                aria-atomic="true"
                 style={{
                   textAlign: 'right',
                   fontSize: '12px',
@@ -326,7 +318,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               <p style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>
                 Choose a topic
               </p>
-              <div role="group" aria-label="Choose a topic" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {SELECTABLE_TOPICS.map((tag) => {
                   const isSelected = selectedTopic === tag.value
 
@@ -334,7 +326,6 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                     <button
                       key={tag.value}
                       type="button"
-                      aria-pressed={selectedTopic === tag.value}
                       onClick={() => setSelectedTopic(tag.value)}
                       style={{
                         backgroundColor: isSelected ? 'var(--color-brand)' : 'var(--color-subtle)',
@@ -375,7 +366,6 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSubmitDisabled}
-                  aria-disabled={!content.trim() || !selectedTopic}
                   style={{
                     backgroundColor: 'var(--color-brand)',
                     color: 'var(--color-text-inverse)',

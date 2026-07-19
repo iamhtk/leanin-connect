@@ -1,8 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { Search, Filter, Plus, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Search, Filter, Plus, X, Sparkles } from 'lucide-react'
 import { showToast } from '@/lib/utils'
+
+interface CircleRecommendation {
+  id: number
+  reason: string
+}
 
 const MOCK_CIRCLES = [
   {
@@ -65,12 +71,30 @@ const MOCK_CIRCLES = [
 ]
 
 export default function CirclesPage() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<'my' | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [joinedIds, setJoinedIds] = useState<Set<number>>(new Set())
   const [isOpen, setIsOpen] = useState(false)
   const [circleName, setCircleName] = useState('')
   const [circleAbout, setCircleAbout] = useState('')
+  const [recommendations, setRecommendations] = useState<CircleRecommendation[]>([])
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const response = await fetch('/api/ai/circle-recommend', { method: 'POST' })
+        const result = (await response.json()) as { data?: CircleRecommendation[] }
+        if (result.data) {
+          setRecommendations(result.data)
+        }
+      } catch {
+        // Keep empty recommendations on failure
+      }
+    }
+
+    void fetchRecommendations()
+  }, [])
 
   const filteredCircles = MOCK_CIRCLES.filter((circle) =>
     circle.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -109,7 +133,7 @@ export default function CirclesPage() {
   }
 
   return (
-    <main aria-label="Circles" style={{ padding: '24px 32px 48px 32px' }}>
+    <main className="page-shell" aria-label="Circles">
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Circles</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -117,7 +141,7 @@ export default function CirclesPage() {
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
         <div
           style={{
             flex: 1,
@@ -195,7 +219,7 @@ export default function CirclesPage() {
         </button>
       </div>
 
-      <div role="tablist" aria-label="Circle scope" style={{ display: 'flex', gap: '8px' }}>
+      <div style={{ display: 'flex', gap: '8px' }}>
         {(
           [
             { label: 'My Circles', value: 'my' },
@@ -207,8 +231,6 @@ export default function CirclesPage() {
             <button
               key={tab.value}
               type="button"
-              role="tab"
-              aria-selected={isActive}
               onClick={() => setActiveTab(tab.value)}
               style={{
                 padding: '6px 14px',
@@ -265,15 +287,116 @@ export default function CirclesPage() {
           </button>
         </div>
       ) : (
-        <div
-          role="list"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'var(--grid-cols-2)',
-            gap: '16px',
-            marginTop: '20px',
-          }}
-        >
+        <>
+          {recommendations.length > 0 && (
+            <div style={{ marginTop: '20px', marginBottom: '20px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginBottom: '12px',
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-brand)',
+                }}
+              >
+                <Sparkles size={12} aria-hidden="true" />
+                Recommended for you
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  overflowX: 'auto',
+                  scrollbarWidth: 'none',
+                  paddingBottom: '4px',
+                }}
+              >
+                {recommendations.map((rec) => {
+                  const circle = MOCK_CIRCLES.find((item) => item.id === rec.id)
+                  if (!circle) return null
+
+                  const isJoined = joinedIds.has(circle.id)
+                  const isLeading = circle.status === 'Leading'
+
+                  return (
+                    <div
+                      key={rec.id}
+                      onClick={() => router.push('/circles/' + circle.id)}
+                      style={{
+                        width: '260px',
+                        minWidth: '260px',
+                        background: 'var(--color-surface)',
+                        border: '1px solid var(--color-brand-muted)',
+                        borderLeft: '3px solid var(--color-brand)',
+                        borderRadius: '12px',
+                        padding: '14px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: '600',
+                          letterSpacing: '0.08em',
+                          textTransform: 'uppercase',
+                          color: 'var(--color-brand)',
+                          background: 'var(--color-brand-subtle)',
+                          padding: '2px 8px',
+                          borderRadius: '9999px',
+                        }}
+                      >
+                        {circle.category}
+                      </span>
+                      <p
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: 'var(--color-text-default)',
+                          marginTop: '8px',
+                        }}
+                      >
+                        {circle.name}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: '12px',
+                          color: 'var(--color-text-muted)',
+                          marginTop: '4px',
+                          lineHeight: '1.4',
+                        }}
+                      >
+                        {rec.reason}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={(event) => handleJoinClick(circle, event)}
+                        style={{
+                          marginTop: '10px',
+                          background: isLeading || isJoined ? 'var(--color-brand-subtle)' : 'var(--color-brand)',
+                          color: isLeading || isJoined ? 'var(--color-brand)' : 'white',
+                          border: 'none',
+                          borderRadius: '9999px',
+                          padding: '5px 14px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                        }}
+                      >
+                        {isLeading ? 'Leading' : isJoined ? 'Joined' : 'Join'}
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="page-grid-2" style={{ marginTop: recommendations.length > 0 ? '0' : '20px' }}>
           {filteredCircles.map((circle) => {
             const isJoined = joinedIds.has(circle.id)
             const isLeading = circle.status === 'Leading'
@@ -281,16 +404,14 @@ export default function CirclesPage() {
             return (
               <div
                 key={circle.id}
-                role="listitem"
-                className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
+                onClick={() => router.push('/circles/' + circle.id)}
+                className="card-hover"
                 style={{
                   background: 'var(--color-surface)',
                   border: '1px solid var(--color-border-default)',
                   borderRadius: '14px',
                   overflow: 'hidden',
                   boxShadow: 'none',
-                  transition: 'border-color 0.12s, transform 0.12s',
-                  cursor: 'pointer',
                 }}
               >
                 <div
@@ -301,7 +422,6 @@ export default function CirclesPage() {
                   }}
                 >
                   <div
-                    aria-hidden="true"
                     style={{
                       position: 'absolute',
                       inset: 0,
@@ -379,13 +499,6 @@ export default function CirclesPage() {
                     </div>
                     <button
                       type="button"
-                      aria-label={
-                        isLeading
-                          ? `You are leading ${circle.name}`
-                          : isJoined
-                            ? `Joined ${circle.name}`
-                            : `Join ${circle.name}`
-                      }
                       onClick={(event) => handleJoinClick(circle, event)}
                       style={
                         isLeading
@@ -433,6 +546,7 @@ export default function CirclesPage() {
             )
           })}
         </div>
+        </>
       )}
 
       {isOpen && (
@@ -457,6 +571,7 @@ export default function CirclesPage() {
               padding: '24px',
               boxShadow: 'var(--shadow-modal)',
             }}
+            className="responsive-modal"
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <p style={{ fontSize: '16px', fontWeight: '600', color: 'var(--color-text-default)' }}>

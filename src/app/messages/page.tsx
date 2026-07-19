@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Search, Send, Sparkles, X, Loader2, ChevronLeft } from 'lucide-react'
+import { Plus, Search, Send, Sparkles, X, Loader2, ArrowLeft } from 'lucide-react'
 import { MOCK_CONVERSATIONS } from '@/data/conversations'
 import type { Conversation, Message } from '@/lib/types'
 import { Avatar } from '@/components/atoms/Avatar'
@@ -159,11 +159,11 @@ export default function MessagesPage() {
 
   return (
     <main
-      aria-label="Messages"
       className="messages-layout"
+      aria-label="Messages"
       data-selected={selectedId ? 'true' : 'false'}
     >
-      <div className="messages-left-panel" aria-label="Conversation list">
+      <div className="messages-left-panel">
         <div
           style={{
             padding: '16px',
@@ -214,9 +214,13 @@ export default function MessagesPage() {
               padding: '7px 12px',
             }}
           >
-            <Search size={13} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+            <Search size={13} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+            <label htmlFor="messages-search" className="sr-only">
+              Search messages
+            </label>
             <input
-              type="text"
+              id="messages-search"
+              type="search"
               placeholder="Search messages"
               style={{
                 flex: 1,
@@ -269,11 +273,6 @@ export default function MessagesPage() {
               key={conv.id}
               role="button"
               tabIndex={0}
-              aria-label={
-                conv.unread_count > 0
-                  ? `Conversation with ${conv.participant_name}, ${conv.unread_count} unread messages`
-                  : `Conversation with ${conv.participant_name}`
-              }
               onClick={() => setSelectedId(conv.id)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -393,11 +392,7 @@ export default function MessagesPage() {
       </div>
 
       {selectedConversation ? (
-        <div
-          className="messages-right-panel"
-          aria-label={`Chat with ${selectedConversation.participant_name}`}
-          aria-live="polite"
-        >
+        <div className="messages-right-panel">
           <div
             style={{
               padding: '12px 20px',
@@ -412,22 +407,21 @@ export default function MessagesPage() {
               type="button"
               className="mobile-back-btn"
               onClick={() => setSelectedId(null)}
+              aria-label="Back to conversations"
               style={{
                 alignItems: 'center',
-                gap: '4px',
-                background: 'transparent',
+                justifyContent: 'center',
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
                 border: 'none',
+                background: 'transparent',
                 cursor: 'pointer',
-                color: 'var(--color-text-default)',
-                fontFamily: 'inherit',
-                fontSize: '13px',
-                fontWeight: '500',
-                padding: '0 4px 0 0',
+                color: 'var(--color-text-muted)',
                 flexShrink: 0,
               }}
             >
-              <ChevronLeft size={18} />
-              Back
+              <ArrowLeft size={18} />
             </button>
             <Avatar
               initials={selectedConversation.participant_initials}
@@ -456,7 +450,6 @@ export default function MessagesPage() {
             </div>
             <button
               type="button"
-              aria-label="Get AI suggested conversation openers"
               onClick={fetchStarters}
               style={{
                 display: 'flex',
@@ -608,6 +601,7 @@ export default function MessagesPage() {
                       fontSize: '14px',
                       lineHeight: '1.5',
                       border: message.is_sent ? 'none' : '1px solid var(--color-border-default)',
+                      boxShadow: message.is_sent ? 'none' : '0 2px 4px rgba(43, 33, 24, 0.06)',
                     }}
                   >
                     {!message.is_sent && message.content === '...' ? (
@@ -699,7 +693,6 @@ export default function MessagesPage() {
               <textarea
                 value={messageInput}
                 onChange={(event) => setMessageInput(event.target.value)}
-                aria-label={`Message to ${selectedConversation.participant_name}`}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' && !event.shiftKey) {
                     event.preventDefault()
@@ -723,8 +716,6 @@ export default function MessagesPage() {
             </div>
             <button
               type="button"
-              aria-label="Send message"
-              aria-disabled={!messageInput.trim()}
               onClick={handleSendMessage}
               disabled={!messageInput.trim()}
               style={{
@@ -749,8 +740,6 @@ export default function MessagesPage() {
       ) : (
         <div
           className="messages-right-panel"
-          aria-label="Chat with member"
-          aria-live="polite"
           style={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -816,6 +805,7 @@ export default function MessagesPage() {
               padding: '24px',
               boxShadow: 'var(--shadow-modal)',
             }}
+            className="responsive-modal"
           >
             <div
               style={{
@@ -849,7 +839,12 @@ export default function MessagesPage() {
               </button>
             </div>
 
+            <label htmlFor="messages-member-search" className="sr-only">
+              Search for a member
+            </label>
             <input
+              id="messages-member-search"
+              type="search"
               value={memberSearch}
               onChange={(event) => setMemberSearch(event.target.value)}
               placeholder="Search for a member..."

@@ -79,7 +79,7 @@ function NavLink({ item, isActive }: NavLinkProps) {
     backgroundColor: isActive ? 'var(--color-muted)' : 'transparent',
     color: 'var(--color-text-default)',
     cursor: 'pointer',
-    transition: 'background 0.12s',
+    transition: 'background-color 0.12s',
   }
 
   return (
@@ -100,12 +100,14 @@ export function Sidebar() {
 
   return (
     <aside
+      className="desktop-sidebar"
       style={{
-        width: 'var(--sidebar-width)',
-        minWidth: 'var(--sidebar-width)',
+        width: '208px',
+        minWidth: '208px',
+        flexShrink: 0,
         backgroundColor: 'var(--color-sidebar)',
         borderRight: '1px solid var(--color-border-default)',
-        display: 'var(--sidebar-visible)' as React.CSSProperties['display'],
+        display: 'flex',
         flexDirection: 'column',
         height: '100%',
         padding: '16px 8px',
@@ -121,12 +123,7 @@ export function Sidebar() {
 
       <nav aria-label="Main navigation" style={{ display: 'flex', flexDirection: 'column' }}>
         {NAV_SECTIONS.map((section, index) => (
-          <div
-            key={section.title}
-            role="group"
-            aria-label={section.title}
-            style={{ marginTop: index === 0 ? 0 : '16px' }}
-          >
+          <div key={section.title} style={{ marginTop: index === 0 ? 0 : '16px' }}>
             <p
               style={{
                 fontSize: '11px',
@@ -154,7 +151,6 @@ export function Sidebar() {
       </nav>
 
       <div
-        aria-label="User profile, Hrithik Sanyal, Design Engineer"
         style={{
           marginTop: 'auto',
           padding: '12px 8px',
@@ -166,8 +162,19 @@ export function Sidebar() {
       >
         <Avatar initials="HS" color="var(--color-brand-subtle)" textColor="var(--color-brand)" size={32} />
         <div style={{ minWidth: 0 }}>
-          <p style={{ fontSize: '13px', fontWeight: '500', color: 'var(--color-text-default)' }}>Hrithik Sanyal</p>
-          <p style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>Design Engineer</p>
+          <p
+            style={{
+              fontSize: '13px',
+              fontWeight: '500',
+              color: 'var(--color-text-default)',
+              lineHeight: '1.3',
+            }}
+          >
+            Hrithik Sanyal
+          </p>
+          <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px', lineHeight: '1.3' }}>
+            Design Engineer
+          </p>
         </div>
       </div>
     </aside>

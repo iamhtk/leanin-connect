@@ -183,7 +183,7 @@ export default function DirectoryPage() {
   }
 
   return (
-    <main aria-label="Member directory" style={{ padding: '24px 32px 48px 32px' }}>
+    <main className="page-shell" aria-label="Directory">
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Directory</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -191,7 +191,7 @@ export default function DirectoryPage() {
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
         <div
           style={{
             flex: 1,
@@ -301,23 +301,13 @@ export default function DirectoryPage() {
         })}
       </div>
 
-      <div
-        role="list"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'var(--grid-cols-3)',
-          gap: '12px',
-          marginTop: '20px',
-        }}
-      >
+      <div className="page-grid-3" style={{ marginTop: '20px' }}>
         {members.map((member) => {
           const isConnected = connectedIds.has(member.id)
           return (
             <div
               key={member.id}
-              role="listitem"
-              aria-label={`${member.name}, ${member.role} at ${member.company}`}
-              className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
+              className="card-hover"
               style={{
                 background: 'var(--color-surface)',
                 border: '1px solid var(--color-border-default)',
@@ -328,8 +318,6 @@ export default function DirectoryPage() {
                 alignItems: 'center',
                 gap: '12px',
                 boxShadow: 'none',
-                transition: 'border-color 0.12s, transform 0.12s',
-                cursor: 'pointer',
               }}
             >
               <div
@@ -372,12 +360,11 @@ export default function DirectoryPage() {
               </div>
               <button
                 type="button"
-                aria-label={isConnected ? `Connected with ${member.name}` : `Connect with ${member.name}`}
-                aria-pressed={isConnected}
                 onClick={(event) => {
                   event.stopPropagation()
                   toggleConnect(member)
                 }}
+                className="hover:[border-color:var(--color-brand)] hover:[color:var(--color-brand)]"
                 style={{
                   marginLeft: 'auto',
                   alignSelf: 'flex-start',
@@ -392,6 +379,7 @@ export default function DirectoryPage() {
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
                   fontWeight: isConnected ? '600' : '400',
+                  transition: 'all 0.12s',
                 }}
               >
                 {isConnected ? 'Connected' : 'Connect'}
@@ -423,6 +411,7 @@ export default function DirectoryPage() {
               padding: '24px',
               boxShadow: 'var(--shadow-modal)',
             }}
+            className="responsive-modal"
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <p style={{ fontSize: '16px', fontWeight: '600', color: 'var(--color-text-default)' }}>

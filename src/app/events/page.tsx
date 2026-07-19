@@ -106,7 +106,7 @@ export default function EventsPage() {
   }
 
   return (
-    <div style={{ padding: '24px 32px 48px 32px' }}>
+    <main className="page-shell" aria-label="Events">
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Events</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -114,7 +114,7 @@ export default function EventsPage() {
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
         <div
           style={{
             flex: 1,
@@ -128,9 +128,13 @@ export default function EventsPage() {
             height: '40px',
           }}
         >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+          <label htmlFor="events-search" className="sr-only">
+            Search events
+          </label>
           <input
-            type="text"
+            id="events-search"
+            type="search"
             placeholder="Search events..."
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
@@ -222,7 +226,15 @@ export default function EventsPage() {
           })}
         </div>
 
-        <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+        <div
+          style={{
+            display: 'inline-flex',
+            background: 'var(--color-subtle)',
+            borderRadius: '9999px',
+            padding: '2px',
+            flexShrink: 0,
+          }}
+        >
           {(
             [
               { label: 'Upcoming', value: 'upcoming' },
@@ -236,15 +248,16 @@ export default function EventsPage() {
                 type="button"
                 onClick={() => setTimeFilter(option.value)}
                 style={{
-                  padding: '4px 12px',
+                  padding: '5px 14px',
                   borderRadius: '9999px',
                   fontSize: '12px',
                   fontWeight: '600',
                   cursor: 'pointer',
                   fontFamily: 'inherit',
-                  border: isActive ? 'none' : '1px solid var(--color-border-default)',
-                  background: isActive ? 'var(--color-muted)' : 'transparent',
+                  border: 'none',
+                  background: isActive ? 'var(--color-surface)' : 'transparent',
                   color: isActive ? 'var(--color-text-default)' : 'var(--color-text-muted)',
+                  boxShadow: isActive ? 'var(--shadow-card)' : 'none',
                 }}
               >
                 {option.label}
@@ -284,7 +297,6 @@ export default function EventsPage() {
           }}
         >
           <div
-            aria-hidden="true"
             style={{
               width: '64px',
               height: '64px',
@@ -366,7 +378,6 @@ export default function EventsPage() {
           }}
         >
           <div
-            aria-hidden="true"
             style={{
               width: '64px',
               height: '64px',
@@ -420,7 +431,6 @@ export default function EventsPage() {
           }}
         >
           <div
-            aria-hidden="true"
             style={{
               width: '64px',
               height: '64px',
@@ -459,12 +469,13 @@ export default function EventsPage() {
       )}
 
       {timeFilter === 'upcoming' && activeTab === 'leanin' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '20px', maxWidth: '680px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '20px' }}>
           {filteredEvents.map((event) => {
             const isRsvpd = rsvpIds.has(event.id)
             return (
               <div
                 key={event.id}
+                className="card-hover"
                 style={{
                   background: 'var(--color-surface)',
                   border: '1px solid var(--color-border-default)',
@@ -546,6 +557,7 @@ export default function EventsPage() {
                       border: 'none',
                       cursor: 'pointer',
                       fontFamily: 'inherit',
+                      transition: 'background 0.12s',
                     }}
                   >
                     {isRsvpd ? 'RSVPd ✓' : 'RSVP'}
@@ -579,6 +591,7 @@ export default function EventsPage() {
               padding: '24px',
               boxShadow: 'var(--shadow-modal)',
             }}
+            className="responsive-modal"
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <p style={{ fontSize: '16px', fontWeight: '600', color: 'var(--color-text-default)' }}>
@@ -599,11 +612,7 @@ export default function EventsPage() {
               </button>
             </div>
 
-            <label htmlFor="event-title" className="sr-only">
-              Event title
-            </label>
             <input
-              id="event-title"
               type="text"
               placeholder="Event title"
               value={proposeTitle}
@@ -622,11 +631,7 @@ export default function EventsPage() {
               }}
             />
 
-            <label htmlFor="event-date" className="sr-only">
-              Date and time
-            </label>
             <input
-              id="event-date"
               type="text"
               placeholder="Date and time"
               value={proposeDateTime}
@@ -645,11 +650,7 @@ export default function EventsPage() {
               }}
             />
 
-            <label htmlFor="event-type" className="sr-only">
-              Event format
-            </label>
             <select
-              id="event-type"
               value={proposeFormat}
               onChange={(event) => setProposeFormat(event.target.value as EventFormat)}
               style={{
@@ -670,11 +671,7 @@ export default function EventsPage() {
               <option value="In person">In person</option>
             </select>
 
-            <label htmlFor="event-description" className="sr-only">
-              Event description
-            </label>
             <textarea
-              id="event-description"
               placeholder="Description"
               value={proposeDescription}
               onChange={(event) => setProposeDescription(event.target.value)}
@@ -733,6 +730,6 @@ export default function EventsPage() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   )
 }

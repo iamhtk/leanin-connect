@@ -160,10 +160,14 @@ function FeedPageContent() {
       <div className="feed-left-column">
         <PostComposer onPostCreated={handlePostCreated} />
         <div
+          className="pills-scroll"
           style={{
             display: 'flex',
             borderBottom: '1px solid var(--color-border-default)',
             marginBottom: '16px',
+            overflowX: 'auto',
+            gap: '0',
+            WebkitOverflowScrolling: 'touch',
           }}
         >
           {SCOPE_TABS.map((tab) => {
@@ -205,9 +209,7 @@ function FeedPageContent() {
             <SkeletonCard />
           </div>
         ) : (
-          <div aria-live="polite" aria-relevant="additions">
-            <FeedList posts={filteredPosts} scopeTab={scopeTab} onSave={handleSavePost} />
-          </div>
+          <FeedList posts={filteredPosts} scopeTab={scopeTab} onSave={handleSavePost} />
         )}
       </div>
 

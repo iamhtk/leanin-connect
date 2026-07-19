@@ -43,11 +43,11 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
 
   return (
     <motion.article
-      aria-label={`Post by ${post.author_name}`}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut', delay: index * 0.06 }}
-      className="hover:[border-color:var(--color-border-strong)]"
+      className="card-hover"
+      aria-label={'Post by ' + post.author_name}
       style={{
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border-default)',
@@ -55,8 +55,6 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
         boxShadow: 'none',
         padding: '16px',
         marginBottom: '8px',
-        cursor: 'pointer',
-        transition: 'border-color 0.12s',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
@@ -108,8 +106,7 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
       >
         <button
           type="button"
-          aria-label={`${post.likes_count} likes`}
-          aria-pressed={false}
+          aria-label={'Like, ' + post.likes_count + ' likes'}
           className="hover:text-[var(--color-text-default)]"
           style={{
             display: 'flex',
@@ -122,14 +119,15 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
             border: 'none',
             padding: 0,
             fontFamily: 'inherit',
+            transition: 'color 0.12s',
           }}
         >
-          <Heart size={15} />
+          <Heart size={15} aria-hidden="true" />
           {post.likes_count}
         </button>
         <button
           type="button"
-          aria-label={`${post.replies_count} replies`}
+          aria-label={'Reply, ' + post.replies_count + ' replies'}
           className="hover:text-[var(--color-text-default)]"
           style={{
             display: 'flex',
@@ -142,19 +140,20 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
             border: 'none',
             padding: 0,
             fontFamily: 'inherit',
+            transition: 'color 0.12s',
           }}
         >
-          <MessageCircle size={15} />
+          <MessageCircle size={15} aria-hidden="true" />
           {post.replies_count}
         </button>
         <button
           type="button"
-          aria-label={isSaved ? 'Remove bookmark' : 'Save post'}
-          aria-pressed={isSaved}
           onClick={(event) => {
             event.stopPropagation()
             handleBookmarkClick()
           }}
+          aria-label={isSaved ? 'Remove bookmark' : 'Bookmark post'}
+          aria-pressed={isSaved}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -166,12 +165,14 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
             border: 'none',
             padding: 0,
             fontFamily: 'inherit',
+            transition: 'color 0.12s',
           }}
         >
           <Bookmark
             size={15}
             fill={isSaved ? 'var(--color-brand)' : 'none'}
             color={isSaved ? 'var(--color-brand)' : 'var(--color-text-muted)'}
+            aria-hidden="true"
           />
         </button>
       </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState, type MouseEvent } from 'react'
+import { useRouter } from 'next/navigation'
 import { Search, Filter, Bookmark } from 'lucide-react'
 import { showToast } from '@/lib/utils'
 
@@ -148,6 +149,7 @@ function parseSavedIds(raw: string | null): Set<number> {
 }
 
 export default function ResourcesPage() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<ResourcesTab>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set())
@@ -204,7 +206,7 @@ export default function ResourcesPage() {
   const showTrackBadge = activeTab === 'tracks'
 
   return (
-    <div style={{ padding: '24px 32px 48px 32px' }}>
+    <main className="page-shell" aria-label="Resources">
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Resources</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -212,7 +214,7 @@ export default function ResourcesPage() {
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
         <div
           style={{
             flex: 1,
@@ -327,32 +329,23 @@ export default function ResourcesPage() {
           </p>
         </div>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'var(--grid-cols-3)',
-            gap: '16px',
-            marginTop: '20px',
-          }}
-        >
+        <div className="page-grid-3" style={{ marginTop: '20px' }}>
           {resources.map((resource) => {
             const isSaved = savedIds.has(resource.id)
             return (
               <div
                 key={resource.id}
-                role="article"
-                aria-label={`${resource.title}, ${resource.type} by ${resource.author}`}
-                onClick={() => showToast('Opening ' + resource.title + '...')}
+                onClick={() => router.push('/resources/' + resource.id)}
+                className="card-hover"
                 style={{
                   background: 'var(--color-surface)',
                   border: '1px solid var(--color-border-default)',
                   borderRadius: '14px',
                   overflow: 'hidden',
                   boxShadow: 'none',
-                  cursor: 'pointer',
                 }}
               >
-                <div aria-hidden="true" style={{ height: '100px', background: resource.color, position: 'relative' }}>
+                <div style={{ height: '100px', background: resource.color, position: 'relative' }}>
                   <span
                     style={{
                       position: 'absolute',
@@ -388,7 +381,6 @@ export default function ResourcesPage() {
                   )}
                   <button
                     type="button"
-                    aria-label={isSaved ? `Remove ${resource.title} from library` : `Save ${resource.title} to library`}
                     onClick={(event) => toggleSaved(resource, event)}
                     style={{
                       position: 'absolute',
@@ -462,6 +454,6 @@ export default function ResourcesPage() {
           })}
         </div>
       )}
-    </div>
+    </main>
   )
 }

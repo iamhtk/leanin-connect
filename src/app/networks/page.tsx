@@ -91,7 +91,7 @@ export default function NetworksPage() {
   }
 
   return (
-    <main aria-label="Networks" style={{ padding: '24px 32px 48px 32px' }}>
+    <main className="page-shell" aria-label="Networks">
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Networks</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -99,7 +99,7 @@ export default function NetworksPage() {
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
         <div
           style={{
             flex: 1,
@@ -177,7 +177,7 @@ export default function NetworksPage() {
         </button>
       </div>
 
-      <div role="tablist" aria-label="Network scope" style={{ display: 'flex', gap: '8px' }}>
+      <div style={{ display: 'flex', gap: '8px' }}>
         {(
           [
             { label: 'My Networks', value: 'my' },
@@ -189,8 +189,6 @@ export default function NetworksPage() {
             <button
               key={tab.value}
               type="button"
-              role="tab"
-              aria-selected={isActive}
               onClick={() => setActiveTab(tab.value)}
               style={{
                 padding: '6px 14px',
@@ -244,31 +242,20 @@ export default function NetworksPage() {
           </button>
         </div>
       ) : (
-        <div
-          role="list"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'var(--grid-cols-2)',
-            gap: '16px',
-            marginTop: '20px',
-          }}
-        >
+        <div className="page-grid-2" style={{ marginTop: '20px' }}>
           {filteredNetworks.map((network) => {
             const isRequested = requestedIds.has(network.id)
 
             return (
               <div
                 key={network.id}
-                role="listitem"
-                className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
+                className="card-hover"
                 style={{
                   background: 'var(--color-surface)',
                   border: '1px solid var(--color-border-default)',
                   borderRadius: '14px',
                   overflow: 'hidden',
                   boxShadow: 'none',
-                  transition: 'border-color 0.12s, transform 0.12s',
-                  cursor: 'pointer',
                 }}
               >
                 <div
@@ -279,7 +266,6 @@ export default function NetworksPage() {
                   }}
                 >
                   <div
-                    aria-hidden="true"
                     style={{
                       position: 'absolute',
                       inset: 0,
@@ -287,7 +273,6 @@ export default function NetworksPage() {
                     }}
                   />
                   <span
-                    aria-hidden="true"
                     style={{
                       position: 'absolute',
                       bottom: '12px',
@@ -329,16 +314,21 @@ export default function NetworksPage() {
                       gap: '12px',
                     }}
                   >
-                    <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                      {network.members} members · {network.circles} Circles · {network.region}
-                    </span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '12px',
+                        flexWrap: 'wrap',
+                        fontSize: '12px',
+                        color: 'var(--color-text-muted)',
+                      }}
+                    >
+                      <span>{network.members} members</span>
+                      <span>{network.circles} Circles</span>
+                      <span>{network.region}</span>
+                    </div>
                     <button
                       type="button"
-                      aria-label={
-                        isRequested
-                          ? `Membership requested for ${network.name}`
-                          : `Request to join ${network.name}`
-                      }
                       onClick={(event) => handleRequestClick(network, event)}
                       style={
                         isRequested

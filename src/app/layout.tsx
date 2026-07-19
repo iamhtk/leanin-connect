@@ -1,12 +1,19 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { Sidebar } from '@/components/organisms/Sidebar'
 import { Topbar } from '@/components/organisms/Topbar'
-import { MobileNav } from '@/components/organisms/MobileNav'
+import { AppChrome } from '@/components/organisms/AppChrome'
 
 export const metadata: Metadata = {
   title: 'Lean In Connect',
   description: 'A community platform helping women grow their careers.',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -21,22 +28,18 @@ export default function RootLayout({
           Skip to main content
         </a>
         <div
-          style={{
-            display: 'flex',
-            height: '100svh',
-            overflow: 'hidden',
-            backgroundColor: 'var(--color-background)',
-          }}
+          className="app-shell flex h-screen overflow-hidden"
+          style={{ backgroundColor: 'var(--color-background)' }}
         >
           <Sidebar />
-          <div className="flex flex-col flex-1 overflow-hidden">
+          <div className="app-shell-content">
             <Topbar />
-            <div id="main-content" className="flex-1 overflow-y-auto">
+            <main id="main-content" className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
               {children}
-            </div>
+            </main>
           </div>
-          <MobileNav />
         </div>
+        <AppChrome />
       </body>
     </html>
   )

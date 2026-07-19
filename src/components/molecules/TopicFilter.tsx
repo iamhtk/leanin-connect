@@ -13,7 +13,6 @@ export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
     <nav aria-label="Filter by topic">
       <div
         role="tablist"
-        aria-label="Topic filters"
         style={{
           display: 'flex',
           gap: '4px',
@@ -32,29 +31,28 @@ export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
               type="button"
               role="tab"
               aria-selected={selectedTag === tag.value}
-              aria-label={`Filter by ${tag.label}`}
               whileTap={{ scale: 0.97 }}
               onClick={() => onTagChange(tag.value)}
-            className={
-              isActive
-                ? undefined
-                : 'hover:bg-muted hover:[color:var(--color-text-default)]'
-            }
-            style={{
-              backgroundColor: isActive ? 'var(--color-text-default)' : 'transparent',
-              color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
-              border: 'none',
-              fontSize: '14px',
-              fontWeight: '600',
-              padding: '6px 14px',
-              borderRadius: 'var(--radius-full)',
-              whiteSpace: 'nowrap',
-              cursor: 'pointer',
-              flexShrink: 0,
-              transition: 'all 0.12s',
-            }}
-          >
-            {tag.label}
+              className={
+                isActive
+                  ? undefined
+                  : 'hover:bg-muted hover:[color:var(--color-text-default)]'
+              }
+              style={{
+                backgroundColor: isActive ? 'var(--color-text-default)' : 'transparent',
+                color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
+                border: 'none',
+                fontSize: '14px',
+                fontWeight: '600',
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-full)',
+                whiteSpace: 'nowrap',
+                cursor: 'pointer',
+                flexShrink: 0,
+                transition: 'all 0.12s',
+              }}
+            >
+              {tag.label}
             </motion.button>
           )
         })}
