@@ -1,5 +1,4 @@
 import { PostCard } from '@/components/molecules/PostCard'
-import { CareerPulseCard } from '@/components/molecules/CareerPulseCard'
 import type { Post } from '@/lib/types'
 
 export interface FeedListProps {
@@ -18,10 +17,7 @@ export function FeedList({ posts }: FeedListProps) {
   return (
     <div>
       {posts.map((post, index) => (
-        <div key={post.id}>
-          <PostCard post={post} index={index} />
-          {index === 1 && <CareerPulseCard />}
-        </div>
+        <PostCard key={post.id} post={post} index={index} />
       ))}
     </div>
   )

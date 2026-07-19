@@ -138,7 +138,7 @@ export function Sidebar() {
                 <NavLink
                   key={item.href}
                   item={item}
-                  isActive={pathname === item.href}
+                  isActive={pathname === item.href || (item.href === '/feed' && pathname === '/')}
                 />
               ))}
             </div>

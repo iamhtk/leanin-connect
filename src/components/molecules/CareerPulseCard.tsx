@@ -1,60 +1,26 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import type { Post } from '@/lib/types'
+import type { CareerPulseCard as CareerPulseData } from '@/lib/types'
 
-interface CareerPulseData {
-  theme: string
-  stat: string
-  stat_source: string
-  insight: string
-  questions: string[]
+export interface CareerPulseCardProps {
+  data: CareerPulseData | null
 }
 
-export function CareerPulseCard() {
-  const [data, setData] = useState<CareerPulseData | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchPulse = async () => {
-      try {
-        const postsResponse = await fetch('/api/posts')
-        const postsResult = await postsResponse.json()
-        const posts: Post[] = postsResult.data ?? []
-        const tags = posts.slice(0, 8).map((post) => post.topic_tag)
-
-        const pulseResponse = await fetch('/api/ai/career-pulse', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tags }),
-        })
-        const pulseResult = await pulseResponse.json()
-        setData(pulseResult.data ?? null)
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchPulse()
-  }, [])
-
+export function CareerPulseCard({ data }: CareerPulseCardProps) {
   const handleQuestionClick = (question: string) => {
     window.alert(question)
   }
 
-  if (loading || !data) {
+  if (!data) {
     return (
       <div
-        className="animate-pulse"
+        className="animate-career-pulse-loading"
         style={{
           backgroundColor: 'var(--color-brand-subtle)',
           border: '1px solid var(--color-border-brand)',
           borderRadius: 'var(--radius-lg)',
           padding: '20px',
-          marginBottom: '12px',
         }}
       >
         <p
@@ -84,7 +50,7 @@ export function CareerPulseCard() {
         border: '1px solid var(--color-border-brand)',
         borderRadius: 'var(--radius-lg)',
         padding: '20px',
-        marginBottom: '12px',
+        marginBottom: '16px',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -104,14 +70,12 @@ export function CareerPulseCard() {
         </span>
       </div>
 
-      <div style={{ marginBottom: '12px' }}>
-        <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)', lineHeight: '1.4' }}>
-          {data.stat}
-        </p>
-        <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '4px' }}>{data.stat_source}</p>
-      </div>
+      <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)', lineHeight: '1.4', marginBottom: '4px' }}>
+        {data.stat}
+      </p>
+      <p style={{ fontSize: '10px', color: 'var(--color-text-muted)', marginBottom: '12px' }}>{data.stat_source}</p>
 
-      <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: '16px' }}>
+      <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: '14px' }}>
         {data.insight}
       </p>
 
@@ -130,26 +94,21 @@ export function CareerPulseCard() {
       </p>
 
       <div>
-        {data.questions.map((question) => (
-          <button
+        {data.questions.map((question, index) => (
+          <p
             key={question}
-            type="button"
             onClick={() => handleQuestionClick(question)}
             style={{
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border-brand)',
-              borderRadius: 'var(--radius-full)',
-              padding: '6px 14px',
               fontSize: '12px',
               color: 'var(--color-text-default)',
+              lineHeight: '1.5',
+              padding: '8px 0',
+              borderBottom: index === data.questions.length - 1 ? 'none' : '1px solid var(--color-border-brand)',
               cursor: 'pointer',
-              display: 'inline-block',
-              marginRight: '8px',
-              marginBottom: '8px',
             }}
           >
             {question}
-          </button>
+          </p>
         ))}
       </div>
     </motion.div>

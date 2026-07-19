@@ -4,7 +4,21 @@ import { useEffect, useState } from 'react'
 import { PostComposer } from '@/components/organisms/PostComposer'
 import { TopicFilter } from '@/components/molecules/TopicFilter'
 import { FeedList } from '@/components/organisms/FeedList'
-import type { Post } from '@/lib/types'
+import { CareerPulseCard } from '@/components/molecules/CareerPulseCard'
+import { TrendingTopics } from '@/components/molecules/TrendingTopics'
+import { SuggestedMembers } from '@/components/molecules/SuggestedMembers'
+import type { Post, CareerPulseCard as CareerPulseData } from '@/lib/types'
+
+const CAREER_PULSE_TAGS = [
+  'Negotiation',
+  'Promotions',
+  'Bias at Work',
+  'Work-Life Balance',
+  'Career Pivots',
+  'Mentorship',
+  'Leadership',
+  'Early Career',
+]
 
 function SkeletonCard() {
   return (
@@ -33,6 +47,7 @@ export default function FeedPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState('all')
+  const [careerPulseData, setCareerPulseData] = useState<CareerPulseData | null>(null)
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -50,6 +65,24 @@ export default function FeedPage() {
     fetchPosts()
   }, [])
 
+  useEffect(() => {
+    const fetchCareerPulse = async () => {
+      try {
+        const response = await fetch('/api/ai/career-pulse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tags: CAREER_PULSE_TAGS }),
+        })
+        const result = await response.json()
+        setCareerPulseData(result.data ?? null)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchCareerPulse()
+  }, [])
+
   const handlePostCreated = (post: Post) => {
     setPosts((previousPosts) => [post, ...previousPosts])
   }
@@ -57,18 +90,36 @@ export default function FeedPage() {
   const filteredPosts = selectedTag === 'all' ? posts : posts.filter((post) => post.topic_tag === selectedTag)
 
   return (
-    <div style={{ maxWidth: '680px', margin: '0 auto', padding: '32px 24px 0' }}>
-      <PostComposer onPostCreated={handlePostCreated} />
-      <TopicFilter selectedTag={selectedTag} onTagChange={setSelectedTag} />
-      {loading ? (
-        <div>
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-        </div>
-      ) : (
-        <FeedList posts={filteredPosts} />
-      )}
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        maxWidth: '960px',
+        margin: '0 auto',
+        padding: '32px 24px 0',
+        gap: 0,
+      }}
+    >
+      <div style={{ flex: 1, maxWidth: '620px' }}>
+        <PostComposer onPostCreated={handlePostCreated} />
+        <TopicFilter selectedTag={selectedTag} onTagChange={setSelectedTag} />
+        {loading ? (
+          <div>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        ) : (
+          <FeedList posts={filteredPosts} />
+        )}
+      </div>
+
+      <div style={{ width: '300px', minWidth: '300px', paddingLeft: '24px' }}>
+        <CareerPulseCard data={careerPulseData} />
+        <TrendingTopics />
+        <SuggestedMembers />
+      </div>
     </div>
   )
 }

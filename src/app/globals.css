@@ -88,3 +88,17 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+@keyframes career-pulse-loading {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-career-pulse-loading {
+  animation: career-pulse-loading 1.5s ease-in-out infinite;
+}
