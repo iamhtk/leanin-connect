@@ -14,6 +14,8 @@ export default function MessagesPage() {
   const [aiStarters, setAiStarters] = useState<string[]>([])
   const [isLoadingStarters, setIsLoadingStarters] = useState(false)
   const [showStarters, setShowStarters] = useState(false)
+  const [showNewMessage, setShowNewMessage] = useState(false)
+  const [memberSearch, setMemberSearch] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const selectedConversation = conversations.find((conversation) => conversation.id === selectedId)
@@ -51,30 +53,100 @@ export default function MessagesPage() {
     }
   }
 
-  const handleSendMessage = () => {
-    if (!messageInput.trim() || !selectedId) return
-    const newMessage: Message = {
+  const handleSendMessage = async () => {
+    if (!messageInput.trim() || !selectedId || !selectedConversation) return
+
+    const userMsg: Message = {
       id: Date.now().toString(),
       content: messageInput.trim(),
       sent_at: new Date().toISOString(),
       is_sent: true,
     }
+
+    const currentInput = messageInput.trim()
+    const typingId = `typing-${Date.now()}`
+    const conversationId = selectedId
+    const currentConv = conversations.find((conversation) => conversation.id === selectedId)
+    const history = currentConv?.messages.slice(-6) || []
+
+    setMessageInput('')
+
     setConversations((previous) =>
       previous.map((conversation) => {
-        if (conversation.id !== selectedId) return conversation
+        if (conversation.id !== conversationId) return conversation
         return {
           ...conversation,
-          messages: [...conversation.messages, newMessage],
-          last_message: messageInput.trim(),
+          messages: [
+            ...conversation.messages,
+            userMsg,
+            {
+              id: typingId,
+              content: '...',
+              sent_at: new Date().toISOString(),
+              is_sent: false,
+            },
+          ],
+          last_message: currentInput,
           last_message_at: new Date().toISOString(),
           unread_count: 0,
         }
       })
     )
-    setMessageInput('')
+
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, 50)
+
+    try {
+      const response = await fetch('/api/ai/chat-reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          participantName: selectedConversation.participant_name,
+          participantRole: selectedConversation.participant_role,
+          participantCompany: selectedConversation.participant_company,
+          userMessage: currentInput,
+          conversationHistory: history,
+        }),
+      })
+
+      const data = await response.json()
+      const replyText = data.data || 'Thanks for reaching out!'
+
+      const replyMsg: Message = {
+        id: Date.now().toString(),
+        content: replyText,
+        sent_at: new Date().toISOString(),
+        is_sent: false,
+      }
+
+      setConversations((previous) =>
+        previous.map((conversation) => {
+          if (conversation.id !== conversationId) return conversation
+          return {
+            ...conversation,
+            messages: conversation.messages.filter((message) => message.id !== typingId).concat(replyMsg),
+            last_message: replyText,
+            last_message_at: new Date().toISOString(),
+          }
+        })
+      )
+
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+      }, 50)
+    } catch (error) {
+      console.error(error)
+      setConversations((previous) =>
+        previous.map((conversation) => {
+          if (conversation.id !== conversationId) return conversation
+          return {
+            ...conversation,
+            messages: conversation.messages.filter((message) => message.id !== typingId),
+          }
+        })
+      )
+    }
   }
 
   const handleStarterClick = (starter: string) => {
@@ -120,6 +192,7 @@ export default function MessagesPage() {
           </h2>
           <button
             type="button"
+            onClick={() => setShowNewMessage(true)}
             style={{
               width: '28px',
               height: '28px',
@@ -508,18 +581,28 @@ export default function MessagesPage() {
                       border: message.is_sent ? 'none' : '1px solid var(--color-border-default)',
                     }}
                   >
-                    {message.content}
+                    {!message.is_sent && message.content === '...' ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '18px' }}>
+                        <span className="typing-dot" />
+                        <span className="typing-dot" />
+                        <span className="typing-dot" />
+                      </span>
+                    ) : (
+                      message.content
+                    )}
                   </div>
-                  <div
-                    style={{
-                      fontSize: '11px',
-                      color: 'var(--color-text-muted)',
-                      marginTop: '4px',
-                      textAlign: message.is_sent ? 'right' : 'left',
-                    }}
-                  >
-                    {formatRelativeTime(message.sent_at)}
-                  </div>
+                  {!(!message.is_sent && message.content === '...') && (
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        color: 'var(--color-text-muted)',
+                        marginTop: '4px',
+                        textAlign: message.is_sent ? 'right' : 'left',
+                      }}
+                    >
+                      {formatRelativeTime(message.sent_at)}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -640,6 +723,153 @@ export default function MessagesPage() {
           >
             Use the + button to start your first conversation.
           </p>
+        </div>
+      )}
+
+      {showNewMessage && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.4)',
+            zIndex: 50,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onClick={() => setShowNewMessage(false)}
+        >
+          <div
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              background: 'white',
+              width: '400px',
+              borderRadius: '16px',
+              padding: '24px',
+              boxShadow: 'var(--shadow-modal)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: 'var(--color-text-default)',
+                }}
+              >
+                New Message
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowNewMessage(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--color-text-muted)',
+                  display: 'flex',
+                  padding: '4px',
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <input
+              value={memberSearch}
+              onChange={(event) => setMemberSearch(event.target.value)}
+              placeholder="Search for a member..."
+              style={{
+                width: '100%',
+                border: '1px solid var(--color-border-default)',
+                borderRadius: '9999px',
+                padding: '10px 16px',
+                marginTop: '16px',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                outline: 'none',
+                boxSizing: 'border-box',
+                color: 'var(--color-text-default)',
+                background: 'var(--color-surface)',
+              }}
+            />
+
+            <p
+              style={{
+                fontSize: '10px',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                color: 'var(--color-text-muted)',
+                marginTop: '16px',
+                marginBottom: '8px',
+                letterSpacing: '0.04em',
+              }}
+            >
+              Suggested
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              {conversations
+                .filter((conversation) => {
+                  if (!memberSearch.trim()) return true
+                  return conversation.participant_name
+                    .toLowerCase()
+                    .includes(memberSearch.trim().toLowerCase())
+                })
+                .slice(0, 4)
+                .map((conversation) => (
+                  <button
+                    key={conversation.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedId(conversation.id)
+                      setShowNewMessage(false)
+                      setMemberSearch('')
+                    }}
+                    className="hover:bg-subtle"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '8px',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      border: 'none',
+                      background: 'transparent',
+                      width: '100%',
+                      textAlign: 'left',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    <Avatar
+                      initials={conversation.participant_initials}
+                      color={conversation.participant_avatar_color}
+                      size={36}
+                    />
+                    <div>
+                      <p
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          color: 'var(--color-text-default)',
+                        }}
+                      >
+                        {conversation.participant_name}
+                      </p>
+                      <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                        {conversation.participant_role}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+            </div>
+          </div>
         </div>
       )}
     </div>
