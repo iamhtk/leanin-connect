@@ -19,7 +19,7 @@ export default function MessagesPage() {
   const [listTab, setListTab] = useState<'All' | 'Unread'>('All')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const selectedConversation = conversations.find((conversation) => conversation.id === selectedId)
+  const selectedConversation = conversations.find((c) => c.id === selectedId)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -57,28 +57,30 @@ export default function MessagesPage() {
   const handleSendMessage = async () => {
     if (!messageInput.trim() || !selectedId || !selectedConversation) return
 
+    const currentInput = messageInput.trim()
+    setMessageInput('')
+
+    const conversationId = selectedId
+    const participant = selectedConversation
+    const recentHistory = (conversations.find((c) => c.id === conversationId)?.messages || []).slice(-6)
+
     const userMsg: Message = {
-      id: Date.now().toString(),
-      content: messageInput.trim(),
+      id: 'user-' + Date.now().toString(),
+      content: currentInput,
       sent_at: new Date().toISOString(),
       is_sent: true,
     }
 
-    const currentInput = messageInput.trim()
-    const typingId = `typing-${Date.now()}`
-    const conversationId = selectedId
-    const currentConv = conversations.find((conversation) => conversation.id === selectedId)
-    const history = currentConv?.messages.slice(-6) || []
+    const typingId = 'typing-' + Date.now()
 
-    setMessageInput('')
-
-    setConversations((previous) =>
-      previous.map((conversation) => {
-        if (conversation.id !== conversationId) return conversation
+    // Add user message + typing indicator in one update (avoids React 18 batch overwrite)
+    setConversations((prev) =>
+      prev.map((c) => {
+        if (c.id !== conversationId) return c
         return {
-          ...conversation,
+          ...c,
           messages: [
-            ...conversation.messages,
+            ...c.messages,
             userMsg,
             {
               id: typingId,
@@ -96,37 +98,37 @@ export default function MessagesPage() {
 
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, 50)
+    }, 100)
 
     try {
-      const response = await fetch('/api/ai/chat-reply', {
+      const res = await fetch('/api/ai/chat-reply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          participantName: selectedConversation.participant_name,
-          participantRole: selectedConversation.participant_role,
-          participantCompany: selectedConversation.participant_company,
+          participantName: participant.participant_name,
+          participantRole: participant.participant_role,
+          participantCompany: participant.participant_company,
           userMessage: currentInput,
-          conversationHistory: history,
+          conversationHistory: recentHistory,
         }),
       })
 
-      const data = await response.json()
-      const replyText = data.data || 'Thanks for reaching out!'
+      const data = (await res.json()) as { data?: string; error?: string }
+      const replyText = data.data || 'Thanks for your message!'
 
       const replyMsg: Message = {
-        id: Date.now().toString(),
+        id: 'reply-' + Date.now().toString(),
         content: replyText,
         sent_at: new Date().toISOString(),
         is_sent: false,
       }
 
-      setConversations((previous) =>
-        previous.map((conversation) => {
-          if (conversation.id !== conversationId) return conversation
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.id !== conversationId) return c
           return {
-            ...conversation,
-            messages: conversation.messages.filter((message) => message.id !== typingId).concat(replyMsg),
+            ...c,
+            messages: c.messages.filter((m) => m.id !== typingId).concat(replyMsg),
             last_message: replyText,
             last_message_at: new Date().toISOString(),
           }
@@ -136,14 +138,14 @@ export default function MessagesPage() {
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
       }, 50)
-    } catch (error) {
-      console.error(error)
-      setConversations((previous) =>
-        previous.map((conversation) => {
-          if (conversation.id !== conversationId) return conversation
+    } catch (err) {
+      console.error('AI reply failed:', err)
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.id !== conversationId) return c
           return {
-            ...conversation,
-            messages: conversation.messages.filter((message) => message.id !== typingId),
+            ...c,
+            messages: c.messages.filter((m) => m.id !== typingId),
           }
         })
       )
@@ -273,27 +275,37 @@ export default function MessagesPage() {
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {conversations
             .filter((conversation) => listTab === 'All' || conversation.unread_count > 0)
-            .map((conversation) => (
+            .map((conv) => (
             <div
-              key={conversation.id}
-              onClick={() => setSelectedId(conversation.id)}
+              key={conv.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => setSelectedId(conv.id)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  setSelectedId(conv.id)
+                }
+              }}
               style={{
                 display: 'flex',
                 gap: '10px',
                 alignItems: 'flex-start',
                 padding: '12px 16px',
                 cursor: 'pointer',
-                background: selectedId === conversation.id ? 'var(--color-subtle)' : 'transparent',
+                width: '100%',
+                boxSizing: 'border-box',
+                background: selectedId === conv.id ? 'var(--color-subtle)' : 'transparent',
                 borderBottom: '1px solid var(--color-border-default)',
                 transition: 'background 0.12s',
               }}
             >
               <Avatar
-                initials={conversation.participant_initials}
-                color={conversation.participant_avatar_color}
+                initials={conv.participant_initials}
+                color={conv.participant_avatar_color}
                 size={38}
               />
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ flex: 1, minWidth: 0, pointerEvents: 'none' }}>
                 <div
                   style={{
                     display: 'flex',
@@ -312,7 +324,7 @@ export default function MessagesPage() {
                       maxWidth: '140px',
                     }}
                   >
-                    {conversation.participant_name}
+                    {conv.participant_name}
                   </span>
                   <span
                     style={{
@@ -322,7 +334,7 @@ export default function MessagesPage() {
                       marginLeft: '8px',
                     }}
                   >
-                    {formatRelativeTime(conversation.last_message_at)}
+                    {formatRelativeTime(conv.last_message_at)}
                   </span>
                 </div>
                 <div
@@ -343,9 +355,9 @@ export default function MessagesPage() {
                       maxWidth: '170px',
                     }}
                   >
-                    {conversation.last_message}
+                    {conv.last_message}
                   </span>
-                  {conversation.unread_count > 0 && (
+                  {conv.unread_count > 0 && (
                     <span
                       style={{
                         background: 'var(--color-brand)',
@@ -358,7 +370,7 @@ export default function MessagesPage() {
                         flexShrink: 0,
                       }}
                     >
-                      {conversation.unread_count}
+                      {conv.unread_count}
                     </span>
                   )}
                 </div>
@@ -588,9 +600,45 @@ export default function MessagesPage() {
                   >
                     {!message.is_sent && message.content === '...' ? (
                       <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '18px' }}>
-                        <span className="typing-dot" />
-                        <span className="typing-dot" />
-                        <span className="typing-dot" />
+                        <span
+                          className="typing-dot"
+                          style={{
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '9999px',
+                            background: 'var(--color-text-muted)',
+                            display: 'inline-block',
+                            margin: '0 2px',
+                            animation: 'bounce 1.2s ease-in-out infinite',
+                            animationDelay: '0s',
+                          }}
+                        />
+                        <span
+                          className="typing-dot"
+                          style={{
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '9999px',
+                            background: 'var(--color-text-muted)',
+                            display: 'inline-block',
+                            margin: '0 2px',
+                            animation: 'bounce 1.2s ease-in-out infinite',
+                            animationDelay: '0.2s',
+                          }}
+                        />
+                        <span
+                          className="typing-dot"
+                          style={{
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '9999px',
+                            background: 'var(--color-text-muted)',
+                            display: 'inline-block',
+                            margin: '0 2px',
+                            animation: 'bounce 1.2s ease-in-out infinite',
+                            animationDelay: '0.4s',
+                          }}
+                        />
                       </span>
                     ) : (
                       message.content
