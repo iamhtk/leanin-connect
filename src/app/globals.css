@@ -1911,3 +1911,258 @@ a, button {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
+
+/* ============================================
+   SWIPE GESTURE VISUAL FEEDBACK
+   ============================================ */
+
+/* ─── PULL TO REFRESH INDICATOR ─── */
+.pull-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: height 0.15s ease;
+}
+
+.pull-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-default);
+  border-top-color: var(--color-brand);
+  flex-shrink: 0;
+}
+
+.pull-spinner.is-refreshing {
+  animation: spin 0.7s linear infinite;
+}
+
+/* ─── SWIPE REVEAL ACTIONS ─── */
+.swipe-reveal-wrapper {
+  position: relative;
+  overflow: hidden;
+  /* Ensure reveal actions clip properly */
+  border-radius: inherit;
+}
+
+.swipe-reveal-actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: stretch;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.swipe-reveal-wrapper.is-open .swipe-reveal-actions {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.swipe-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  min-width: 72px;
+  transition:
+    filter 0.1s ease,
+    transform 0.08s ease;
+}
+
+.swipe-action-btn:active {
+  filter: brightness(0.88);
+  transform: scale(0.94);
+}
+
+.swipe-action-btn.action-bookmark {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand);
+}
+
+.swipe-action-btn.action-like {
+  background: oklch(.97 .04 17);
+  color: oklch(.52 .18 17);
+}
+
+.swipe-action-btn.action-delete {
+  background: var(--color-status-error-bg);
+  color: var(--color-status-error);
+}
+
+.swipe-action-btn.action-archive {
+  background: var(--color-status-info-bg);
+  color: var(--color-status-info);
+}
+
+.swipe-action-btn.action-dismiss {
+  background: var(--color-subtle);
+  color: var(--color-text-muted);
+}
+
+/* ─── SWIPE TAB TRANSITION ─── */
+.swipe-tabs-content {
+  /* Smooth content transitions when swiping between tabs */
+  will-change: transform;
+}
+
+.swipe-tabs-content.is-swiping {
+  pointer-events: none;
+}
+
+/* ─── BOTTOM SHEET DRAG AFFORDANCE ─── */
+.sheet-grabber {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 4px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.sheet-grabber:active {
+  cursor: grabbing;
+}
+
+.sheet-grabber-pill {
+  width: 36px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--color-muted);
+  transition: background-color 0.15s ease, width 0.15s ease;
+}
+
+.sheet-grabber:hover .sheet-grabber-pill {
+  background: var(--color-border-strong);
+  width: 48px;
+}
+
+/* ─── EDGE SWIPE HINT (first time only) ─── */
+@keyframes edgeHint {
+  0% { transform: translateX(-100%); opacity: 0; }
+  30% { transform: translateX(20px); opacity: 1; }
+  70% { transform: translateX(20px); opacity: 1; }
+  100% { transform: translateX(-100%); opacity: 0; }
+}
+
+.edge-swipe-hint {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60px;
+  border-radius: 0 4px 4px 0;
+  background: var(--color-brand);
+  opacity: 0;
+  z-index: 999;
+  pointer-events: none;
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .edge-swipe-hint {
+    display: block;
+    animation: edgeHint 2.5s ease-in-out 2s 1 forwards;
+  }
+}
+
+/* ─── MOBILE SWIPE AFFORDANCE ON CARDS ─── */
+@media (hover: none) and (pointer: coarse) {
+  /* On touch devices, show a subtle indicator that cards are swipeable */
+  .card-hover::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 30px;
+    background: var(--color-border-default);
+    border-radius: 9999px 0 0 9999px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+}
+
+/* ─── SWIPE FEEDBACK ON CONVERSATION ROWS ─── */
+.conv-item {
+  /* Add position for absolute reveal overlay to sit behind */
+  position: relative;
+}
+
+/* ─── HAPTIC-LIKE VISUAL PULSE when swipe action triggers ─── */
+@keyframes swipePulse {
+  0% { transform: scale(1); }
+  30% { transform: scale(0.96); }
+  60% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.swipe-triggered {
+  animation: swipePulse 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* ─── TAB SWIPE DIRECTION INDICATOR ─── */
+@keyframes tabSwipeLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-8px); opacity: 0; }
+}
+
+@keyframes tabSwipeRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(8px); opacity: 0; }
+}
+
+.tab-exiting-left {
+  animation: tabSwipeLeft 0.18s ease forwards;
+}
+
+.tab-exiting-right {
+  animation: tabSwipeRight 0.18s ease forwards;
+}
+
+/* ─── TOUCH FEEDBACK OVERRIDE FOR SWIPEABLE ELEMENTS ─── */
+.swipeable {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-y; /* allow vertical scroll, intercept horizontal */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.swipeable-vertical {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-x;
+  user-select: none;
+}
+
+/* ─── DARK MODE SWIPE ACTIONS ─── */
+[data-theme="dark"] .swipe-action-btn.action-bookmark {
+  background: var(--color-brand-subtle);
+}
+
+[data-theme="dark"] .swipe-action-btn.action-like {
+  background: oklch(.18 .06 17);
+  color: oklch(.65 .15 17);
+}
+
+[data-theme="dark"] .swipe-action-btn.action-delete {
+  background: var(--color-error-subtle);
+  color: var(--color-error);
+}
+
+[data-theme="dark"] .swipe-action-btn.action-archive {
+  background: var(--color-sky-subtle);
+  color: var(--color-sky);
+}
+
+[data-theme="dark"] .sheet-grabber-pill {
+  background: oklch(.30 .005 17);
+}
