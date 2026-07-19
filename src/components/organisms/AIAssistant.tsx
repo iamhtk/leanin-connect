@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { X, Send, Sparkles, Loader2 } from 'lucide-react'
+import { useBottomSheetDismiss } from '@/hooks/useBottomSheetDismiss'
 
 interface AIMessage {
   id: string
@@ -32,8 +33,21 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
   ])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const { handlers: dismissHandlers, sheetStyle } = useBottomSheetDismiss({
+    onDismiss: onClose,
+    threshold: 100,
+  })
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 1024)
+    const handler = () => setIsMobile(window.innerWidth < 1024)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -112,8 +126,13 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
     <div className="ai-assistant-root" role="dialog" aria-modal="true" aria-label="AI Assistant">
       <div className="ai-assistant-backdrop" onClick={onClose} />
 
-      <div className="ai-assistant-panel">
-        <div className="ai-assistant-grabber" aria-hidden="true">
+      <div className="ai-assistant-panel" style={isMobile ? sheetStyle : undefined}>
+        <div
+          className="ai-assistant-grabber"
+          aria-hidden="true"
+          {...dismissHandlers}
+          style={{ cursor: 'grab', touchAction: 'none' }}
+        >
           <span />
         </div>
 

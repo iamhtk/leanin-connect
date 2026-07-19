@@ -9,6 +9,7 @@ import { FeedList } from '@/components/organisms/FeedList'
 import { CareerPulseCard } from '@/components/molecules/CareerPulseCard'
 import { TrendingTopics } from '@/components/molecules/TrendingTopics'
 import { SuggestedMembers } from '@/components/molecules/SuggestedMembers'
+import { useSwipeTabs } from '@/hooks/useSwipeTabs'
 import type { Post, CareerPulseCard as CareerPulseData } from '@/lib/types'
 
 const CAREER_PULSE_TAGS = [
@@ -88,6 +89,17 @@ function FeedPageContent() {
     })
   }
 
+  const scopeValues = SCOPE_TABS.map((tab) => tab.value)
+  const activeIndex = scopeValues.indexOf(scopeTab)
+  const swipeTabHandlers = useSwipeTabs({
+    tabs: [...scopeValues],
+    activeIndex,
+    onChange: (index) => {
+      const next = scopeValues[index]
+      if (next) setScopeTab(next)
+    },
+  })
+
   return (
     <div className="feed-page">
       <div className="feed-greeting-banner-wrap">
@@ -96,61 +108,63 @@ function FeedPageContent() {
       <div className="feed-layout">
         <div className="feed-left-column">
           <PostComposer onPostCreated={handlePostCreated} />
-          <div className="sticky-nav sticky-nav--feed">
-            <div
-              className="pills-scroll"
-              style={{
-                display: 'flex',
-                borderBottom: '1px solid var(--color-border-default)',
-                marginBottom: '12px',
-                overflowX: 'auto',
-                gap: '0',
-                WebkitOverflowScrolling: 'touch',
-              }}
-            >
-              {SCOPE_TABS.map((tab) => {
-                const isActive = scopeTab === tab.value
+          <div {...swipeTabHandlers} style={{ touchAction: 'pan-y' }}>
+            <div className="sticky-nav sticky-nav--feed">
+              <div
+                className="pills-scroll"
+                style={{
+                  display: 'flex',
+                  borderBottom: '1px solid var(--color-border-default)',
+                  marginBottom: '12px',
+                  overflowX: 'auto',
+                  gap: '0',
+                  WebkitOverflowScrolling: 'touch',
+                }}
+              >
+                {SCOPE_TABS.map((tab) => {
+                  const isActive = scopeTab === tab.value
 
-                return (
-                  <button
-                    key={tab.value}
-                    type="button"
-                    onClick={() => setScopeTab(tab.value)}
-                    className="tab-item"
-                    style={{
-                      display: 'inline-flex',
-                      padding: '8px 0',
-                      marginRight: '24px',
-                      fontSize: '14px',
-                      fontWeight: isActive ? 600 : 400,
-                      color: isActive ? 'var(--color-text-default)' : 'var(--color-text-muted)',
-                      cursor: 'pointer',
-                      borderBottom: isActive
-                        ? '2px solid var(--color-text-default)'
-                        : '2px solid transparent',
-                      background: 'transparent',
-                      borderTop: 'none',
-                      borderLeft: 'none',
-                      borderRight: 'none',
-                      transition: 'all 0.12s',
-                    }}
-                  >
-                    {tab.label}
-                  </button>
-                )
-              })}
+                  return (
+                    <button
+                      key={tab.value}
+                      type="button"
+                      onClick={() => setScopeTab(tab.value)}
+                      className="tab-item"
+                      style={{
+                        display: 'inline-flex',
+                        padding: '8px 0',
+                        marginRight: '24px',
+                        fontSize: '14px',
+                        fontWeight: isActive ? 600 : 400,
+                        color: isActive ? 'var(--color-text-default)' : 'var(--color-text-muted)',
+                        cursor: 'pointer',
+                        borderBottom: isActive
+                          ? '2px solid var(--color-text-default)'
+                          : '2px solid transparent',
+                        background: 'transparent',
+                        borderTop: 'none',
+                        borderLeft: 'none',
+                        borderRight: 'none',
+                        transition: 'all 0.12s',
+                      }}
+                    >
+                      {tab.label}
+                    </button>
+                  )
+                })}
+              </div>
+              <TopicFilter selectedTag={selectedTag} onTagChange={setSelectedTag} />
             </div>
-            <TopicFilter selectedTag={selectedTag} onTagChange={setSelectedTag} />
+            <FeedList
+              selectedTag={selectedTag}
+              scopeTab={scopeTab}
+              savedPostIds={savedPostIds}
+              onSave={handleSavePost}
+              onAddPostReady={(nextAddPost) => {
+                setAddPost(() => nextAddPost)
+              }}
+            />
           </div>
-          <FeedList
-            selectedTag={selectedTag}
-            scopeTab={scopeTab}
-            savedPostIds={savedPostIds}
-            onSave={handleSavePost}
-            onAddPostReady={(nextAddPost) => {
-              setAddPost(() => nextAddPost)
-            }}
-          />
         </div>
 
         <div className="feed-right-column">

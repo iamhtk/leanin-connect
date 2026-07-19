@@ -1,15 +1,120 @@
 'use client'
 
 import { useState } from 'react'
-import { Check } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications'
+import { useSwipeReveal } from '@/hooks/useSwipeReveal'
 import { formatRelativeTime } from '@/lib/utils'
 import { Avatar } from '@/components/atoms/Avatar'
 import { getPortraitUrl } from '@/lib/cover-images'
 
 type NotificationsTab = 'all' | 'circles' | 'networks'
+
+interface NotificationItem {
+  id: string
+  type: string
+  content: string
+  from_user_name: string | null
+  from_user_initials: string
+  from_user_color: string
+  is_read: boolean
+  created_at: string
+}
+
+interface NotifRowProps {
+  notif: NotificationItem
+  onDismiss: () => void
+}
+
+function NotifRow({ notif, onDismiss }: NotifRowProps) {
+  const { handlers, style } = useSwipeReveal({
+    revealWidth: 80,
+    threshold: 55,
+    onDelete: onDismiss,
+  })
+
+  return (
+    <div style={{ position: 'relative', overflow: 'hidden' }}>
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: '80px',
+          display: 'flex',
+          alignItems: 'stretch',
+        }}
+      >
+        <button
+          type="button"
+          onClick={onDismiss}
+          aria-label="Dismiss notification"
+          style={{
+            flex: 1,
+            background: 'var(--color-status-error-bg)',
+            border: 'none',
+            cursor: 'pointer',
+            color: 'var(--color-status-error)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <X size={18} />
+        </button>
+      </div>
+      <div
+        {...handlers}
+        style={{
+          ...style,
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '12px',
+          padding: '14px 16px',
+          borderRadius: '12px',
+          border: '1px solid var(--color-border-default)',
+          borderLeft: notif.is_read
+            ? '1px solid var(--color-border-default)'
+            : '3px solid var(--color-brand)',
+          background: notif.is_read ? 'var(--color-surface)' : 'var(--color-brand-subtle)',
+        }}
+        className="notif-item"
+      >
+        <Avatar
+          initials={notif.from_user_initials || '?'}
+          color={notif.from_user_color || 'var(--color-brand)'}
+          size={40}
+          src={getPortraitUrl(notif.from_user_name || notif.from_user_initials || notif.id)}
+          alt={notif.from_user_name || 'Member'}
+        />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p
+            style={{
+              fontSize: '14px',
+              color: 'var(--color-text-default)',
+              lineHeight: 1.45,
+            }}
+          >
+            {notif.content}
+          </p>
+          <p
+            style={{
+              fontSize: '12px',
+              color: 'var(--color-text-muted)',
+              marginTop: '4px',
+            }}
+          >
+            {notif.from_user_name || 'Someone'} · {formatRelativeTime(notif.created_at)}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function NotificationsPage() {
   const router = useRouter()
@@ -18,6 +123,7 @@ export default function NotificationsPage() {
     user?.id
   )
   const [activeTab, setActiveTab] = useState<NotificationsTab>('all')
+  const [dismissed, setDismissed] = useState<string[]>([])
 
   const filteredNotifications =
     activeTab === 'all'
@@ -25,6 +131,10 @@ export default function NotificationsPage() {
       : notifications.filter((notification) =>
           notification.type.toLowerCase().includes(activeTab.slice(0, -1))
         )
+
+  const visibleNotifs = filteredNotifications.filter(
+    (notification) => !dismissed.includes(notification.id)
+  )
 
   return (
     <main className="page-shell" aria-label="Notifications">
@@ -144,7 +254,7 @@ export default function NotificationsPage() {
             />
           ))}
         </div>
-      ) : filteredNotifications.length === 0 ? (
+      ) : visibleNotifs.length === 0 ? (
         <div
           style={{
             marginTop: '24px',
@@ -246,56 +356,18 @@ export default function NotificationsPage() {
         </div>
       ) : (
         <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {filteredNotifications.map((notification) => (
-            <div
+          {visibleNotifs.map((notification) => (
+            <NotifRow
               key={notification.id}
-              className="notif-item"
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '12px',
-                padding: '14px 16px',
-                borderRadius: '12px',
-                border: '1px solid var(--color-border-default)',
-                borderLeft: notification.is_read
-                  ? '1px solid var(--color-border-default)'
-                  : '3px solid var(--color-brand)',
-                background: notification.is_read
-                  ? 'var(--color-surface)'
-                  : 'var(--color-brand-subtle)',
-              }}
-            >
-              <Avatar
-                initials={notification.from_user_initials || '?'}
-                color={notification.from_user_color || 'var(--color-brand)'}
-                size={40}
-                src={getPortraitUrl(
-                  notification.from_user_name || notification.from_user_initials || notification.id
-                )}
-                alt={notification.from_user_name || 'Member'}
-              />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p
-                  style={{
-                    fontSize: '14px',
-                    color: 'var(--color-text-default)',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  {notification.content}
-                </p>
-                <p
-                  style={{
-                    fontSize: '12px',
-                    color: 'var(--color-text-muted)',
-                    marginTop: '4px',
-                  }}
-                >
-                  {notification.from_user_name || 'Someone'} ·{' '}
-                  {formatRelativeTime(notification.created_at)}
-                </p>
-              </div>
-            </div>
+              notif={notification}
+              onDismiss={() =>
+                setDismissed((previous) =>
+                  previous.includes(notification.id)
+                    ? previous
+                    : [...previous, notification.id]
+                )
+              }
+            />
           ))}
         </div>
       )}

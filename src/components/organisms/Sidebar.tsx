@@ -16,10 +16,13 @@ import {
   Contact,
   PanelLeftClose,
   PanelLeft,
+  X,
 } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
 import { useAuth } from '@/contexts/AuthContext'
 import { getPortraitUrl } from '@/lib/cover-images'
+import { useEdgeSwipe } from '@/hooks/useEdgeSwipe'
+import { useSwipe } from '@/hooks/useSwipe'
 
 interface NavItem {
   label: string
@@ -64,9 +67,10 @@ interface NavLinkProps {
   item: NavItem
   isActive: boolean
   collapsed: boolean
+  onNavigate?: () => void
 }
 
-function NavLink({ item, isActive, collapsed }: NavLinkProps) {
+function NavLink({ item, isActive, collapsed, onNavigate }: NavLinkProps) {
   const Icon = item.icon
 
   const linkStyle: React.CSSProperties = {
@@ -94,6 +98,7 @@ function NavLink({ item, isActive, collapsed }: NavLinkProps) {
       aria-current={isActive ? 'page' : undefined}
       title={collapsed ? item.label : undefined}
       aria-label={item.label}
+      onClick={onNavigate}
     >
       {isActive && (
         <motion.span
@@ -120,53 +125,33 @@ function NavLink({ item, isActive, collapsed }: NavLinkProps) {
   )
 }
 
-export function Sidebar() {
-  const pathname = usePathname()
-  const { profile } = useAuth()
-  const [collapsed, setCollapsed] = useState(false)
+interface SidebarNavContentProps {
+  collapsed: boolean
+  pathname: string
+  onToggleCollapsed?: () => void
+  onNavigate?: () => void
+  showClose?: boolean
+  onClose?: () => void
+  displayName: string
+  displayRole: string
+  avatarSrc: string
+  avatarInitials: string
+}
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY)
-      if (saved === 'true') setCollapsed(true)
-    } catch {
-      // ignore
-    }
-  }, [])
-
-  const toggleCollapsed = () => {
-    setCollapsed((previous) => {
-      const next = !previous
-      try {
-        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next))
-      } catch {
-        // ignore
-      }
-      return next
-    })
-  }
-
-  const displayName = profile?.full_name || 'Hrithik Sanyal'
-  const displayRole = profile?.role || 'Design Engineer'
-  const avatarSrc = profile?.avatar_url || getPortraitUrl(displayName)
-  const avatarInitials = profile?.initials || 'HS'
-
+function SidebarNavContent({
+  collapsed,
+  pathname,
+  onToggleCollapsed,
+  onNavigate,
+  showClose,
+  onClose,
+  displayName,
+  displayRole,
+  avatarSrc,
+  avatarInitials,
+}: SidebarNavContentProps) {
   return (
-    <aside
-      className={`desktop-sidebar${collapsed ? ' desktop-sidebar--collapsed' : ''}`}
-      style={{
-        width: collapsed ? '64px' : '208px',
-        minWidth: collapsed ? '64px' : '208px',
-        flexShrink: 0,
-        backgroundColor: 'var(--color-sidebar)',
-        borderRight: '1px solid var(--color-border-default)',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        padding: collapsed ? '12px 6px' : '16px 8px',
-        transition: 'width 0.2s ease, min-width 0.2s ease, padding 0.2s ease',
-      }}
-    >
+    <>
       <div
         style={{
           marginBottom: '12px',
@@ -184,28 +169,56 @@ export function Sidebar() {
             <span style={{ fontWeight: 400, letterSpacing: '0.06em' }}> CONNECT</span>
           </span>
         ) : null}
-        <button
-          type="button"
-          onClick={toggleCollapsed}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className="hover:bg-muted sidebar-toggle"
-          style={{
-            width: '28px',
-            height: '28px',
-            borderRadius: 'var(--radius-md)',
-            border: 'none',
-            background: 'transparent',
-            color: 'var(--color-text-secondary)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          {collapsed ? <PanelLeft size={16} strokeWidth={1.5} /> : <PanelLeftClose size={16} strokeWidth={1.5} />}
-        </button>
+        {showClose && onClose ? (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close sidebar"
+            className="hover:bg-muted icon-btn"
+            style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: 'var(--radius-md)',
+              border: 'none',
+              background: 'transparent',
+              color: 'var(--color-text-secondary)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <X size={16} strokeWidth={1.5} />
+          </button>
+        ) : onToggleCollapsed ? (
+          <button
+            type="button"
+            onClick={onToggleCollapsed}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="hover:bg-muted sidebar-toggle"
+            style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: 'var(--radius-md)',
+              border: 'none',
+              background: 'transparent',
+              color: 'var(--color-text-secondary)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            {collapsed ? (
+              <PanelLeft size={16} strokeWidth={1.5} />
+            ) : (
+              <PanelLeftClose size={16} strokeWidth={1.5} />
+            )}
+          </button>
+        ) : null}
       </div>
 
       <nav aria-label="Main navigation" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -232,6 +245,7 @@ export function Sidebar() {
                   key={item.href}
                   item={item}
                   collapsed={collapsed}
+                  onNavigate={onNavigate}
                   isActive={pathname === item.href || (item.href === '/feed' && pathname === '/')}
                 />
               ))}
@@ -271,12 +285,153 @@ export function Sidebar() {
             >
               {displayName}
             </p>
-            <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px', lineHeight: '1.3' }}>
+            <p
+              style={{
+                fontSize: '11px',
+                color: 'var(--color-text-muted)',
+                marginTop: '2px',
+                lineHeight: '1.3',
+              }}
+            >
               {displayRole}
             </p>
           </div>
         ) : null}
       </div>
-    </aside>
+    </>
+  )
+}
+
+export function Sidebar() {
+  const pathname = usePathname()
+  const { profile } = useAuth()
+  const [collapsed, setCollapsed] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isCompact, setIsCompact] = useState(false)
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY)
+      if (saved === 'true') setCollapsed(true)
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  useEffect(() => {
+    const update = () => setIsCompact(window.innerWidth < 1024)
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+
+  useEffect(() => {
+    if (!isCompact) setSidebarOpen(false)
+  }, [isCompact])
+
+  useEdgeSwipe({
+    onSwipeRight: () => {
+      if (window.innerWidth < 1024) setSidebarOpen(true)
+    },
+    edgeWidth: 24,
+    threshold: 80,
+  })
+
+  const closeHandlers = useSwipe({
+    onSwipeLeft: () => setSidebarOpen(false),
+    threshold: 60,
+  })
+
+  const toggleCollapsed = () => {
+    setCollapsed((previous) => {
+      const next = !previous
+      try {
+        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next))
+      } catch {
+        // ignore
+      }
+      return next
+    })
+  }
+
+  const displayName = profile?.full_name || 'Hrithik Sanyal'
+  const displayRole = profile?.role || 'Design Engineer'
+  const avatarSrc = profile?.avatar_url || getPortraitUrl(displayName)
+  const avatarInitials = profile?.initials || 'HS'
+
+  return (
+    <>
+      <aside
+        className={`desktop-sidebar${collapsed ? ' desktop-sidebar--collapsed' : ''}`}
+        style={{
+          width: collapsed ? '64px' : '208px',
+          minWidth: collapsed ? '64px' : '208px',
+          flexShrink: 0,
+          backgroundColor: 'var(--color-sidebar)',
+          borderRight: '1px solid var(--color-border-default)',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          padding: collapsed ? '12px 6px' : '16px 8px',
+          transition: 'width 0.2s ease, min-width 0.2s ease, padding 0.2s ease',
+        }}
+      >
+        <SidebarNavContent
+          collapsed={collapsed}
+          pathname={pathname}
+          onToggleCollapsed={toggleCollapsed}
+          displayName={displayName}
+          displayRole={displayRole}
+          avatarSrc={avatarSrc}
+          avatarInitials={avatarInitials}
+        />
+      </aside>
+
+      {sidebarOpen && isCompact ? (
+        <>
+          <div
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden="true"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(26, 21, 20, 0.4)',
+              zIndex: 70,
+            }}
+          />
+          <aside
+            {...closeHandlers}
+            aria-label="Mobile navigation"
+            style={{
+              position: 'fixed',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: '280px',
+              maxWidth: '85vw',
+              zIndex: 71,
+              backgroundColor: 'var(--color-sidebar)',
+              borderRight: '1px solid var(--color-border-default)',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '16px 8px',
+              boxShadow: 'var(--shadow-modal)',
+            }}
+          >
+            <SidebarNavContent
+              collapsed={false}
+              pathname={pathname}
+              showClose
+              onClose={() => setSidebarOpen(false)}
+              onNavigate={() => setSidebarOpen(false)}
+              displayName={displayName}
+              displayRole={displayRole}
+              avatarSrc={avatarSrc}
+              avatarInitials={avatarInitials}
+            />
+          </aside>
+        </>
+      ) : null}
+    </>
   )
 }

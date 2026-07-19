@@ -9,6 +9,7 @@ import { TOPIC_TAGS } from '@/lib/types'
 import type { Post } from '@/lib/types'
 import { useAuth } from '@/contexts/AuthContext'
 import { getPortraitUrl } from '@/lib/cover-images'
+import { useBottomSheetDismiss } from '@/hooks/useBottomSheetDismiss'
 
 export interface PostComposerProps {
   onPostCreated: (post: Post) => void
@@ -37,6 +38,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
   const authorAvatarSrc = profile?.avatar_url || getPortraitUrl(authorName)
   const composerPrompt = `Share something with the community, ${authorFirstName}...`
   const [isOpen, setIsOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const [editorContent, setEditorContent] = useState('')
   const [htmlContent, setHtmlContent] = useState('')
   const [editorKey, setEditorKey] = useState(0)
@@ -46,6 +48,18 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
   const [voiceCoachNotes, setVoiceCoachNotes] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [pulsingTopic, setPulsingTopic] = useState<string | null>(null)
+
+  const { handlers: dismissHandlers, sheetStyle } = useBottomSheetDismiss({
+    onDismiss: () => setIsOpen(false),
+    threshold: 80,
+  })
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 1024)
+    const handler = () => setIsMobile(window.innerWidth < 1024)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -248,10 +262,20 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                 borderRadius: 'var(--radius-xl)',
                 padding: '24px',
                 boxShadow: 'var(--shadow-modal)',
+                ...(isMobile ? sheetStyle : {}),
               }}
               className="responsive-modal"
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div
+                {...dismissHandlers}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'grab',
+                  touchAction: 'none',
+                }}
+              >
                 <p style={{ fontSize: '16px', fontWeight: '600', color: 'var(--color-text-default)' }}>
                   Create a post
                 </p>

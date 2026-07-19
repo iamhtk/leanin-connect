@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, type TouchEvent } from 'react'
 import { Bookmark, Users } from 'lucide-react'
 import { PostCard } from '@/components/molecules/PostCard'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import { usePullToRefresh } from '@/hooks/usePullToRefresh'
 import type { Post } from '@/lib/types'
 
 export interface FeedListProps {
@@ -52,6 +53,46 @@ function getEmptyCopy(scopeTab: FeedListProps['scopeTab']): { title: string; sub
   }
 }
 
+function PullIndicator({
+  pullDistance,
+  isRefreshing,
+  progress,
+}: {
+  pullDistance: number
+  isRefreshing: boolean
+  progress: number
+}) {
+  return (
+    <div
+      aria-live="polite"
+      aria-label={isRefreshing ? 'Refreshing feed' : 'Pull to refresh'}
+      style={{
+        height: `${pullDistance}px`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        transition: isRefreshing ? 'none' : 'height 0.2s ease',
+      }}
+    >
+      <div
+        style={{
+          width: '32px',
+          height: '32px',
+          borderRadius: '50%',
+          border: '2px solid var(--color-border-default)',
+          borderTopColor: 'var(--color-brand)',
+          animation: isRefreshing ? 'spin 0.7s linear infinite' : 'none',
+          transform: `rotate(${progress * 180}deg)`,
+          transition: isRefreshing ? 'none' : 'transform 0.1s linear',
+          opacity: progress,
+        }}
+        aria-hidden="true"
+      />
+    </div>
+  )
+}
+
 export function FeedList({
   selectedTag,
   scopeTab = 'all',
@@ -59,8 +100,25 @@ export function FeedList({
   onSave,
   onAddPostReady,
 }: FeedListProps) {
-  const { posts, isLoading, isFetchingMore, hasMore, sentinelRef, addPost } =
+  const { posts, isLoading, isFetchingMore, hasMore, sentinelRef, addPost, refetch } =
     useInfiniteScroll(selectedTag)
+
+  const { pullDistance, isPulling, isRefreshing, progress, handlers } = usePullToRefresh({
+    onRefresh: async () => {
+      await refetch()
+    },
+    threshold: 80,
+  })
+
+  const pullHandlers = {
+    onTouchStart: (event: TouchEvent) => {
+      const main = document.getElementById('main-content')
+      if (main && main.scrollTop > 0) return
+      handlers.onTouchStart(event)
+    },
+    onTouchMove: handlers.onTouchMove,
+    onTouchEnd: handlers.onTouchEnd,
+  }
 
   useEffect(() => {
     onAddPostReady?.(addPost)
@@ -74,9 +132,18 @@ export function FeedList({
     return true
   })
 
+  const showPullIndicator = isPulling || isRefreshing
+
   if (isLoading) {
     return (
-      <div>
+      <div {...pullHandlers} style={{ overscrollBehavior: 'none' }}>
+        {showPullIndicator ? (
+          <PullIndicator
+            pullDistance={pullDistance}
+            isRefreshing={isRefreshing}
+            progress={progress}
+          />
+        ) : null}
         {[0, 1, 2].map((index) => (
           <div
             key={index}
@@ -98,7 +165,9 @@ export function FeedList({
 
     return (
       <div
+        {...pullHandlers}
         style={{
+          overscrollBehavior: 'none',
           textAlign: 'center',
           padding: '48px 0',
           display: 'flex',
@@ -106,6 +175,13 @@ export function FeedList({
           alignItems: 'center',
         }}
       >
+        {showPullIndicator ? (
+          <PullIndicator
+            pullDistance={pullDistance}
+            isRefreshing={isRefreshing}
+            progress={progress}
+          />
+        ) : null}
         <div
           style={{
             width: '48px',
@@ -143,7 +219,15 @@ export function FeedList({
   }
 
   return (
-    <div>
+    <div {...pullHandlers} style={{ overscrollBehavior: 'none' }}>
+      {showPullIndicator ? (
+        <PullIndicator
+          pullDistance={pullDistance}
+          isRefreshing={isRefreshing}
+          progress={progress}
+        />
+      ) : null}
+
       {displayPosts.map((post, index) => (
         <PostCard key={post.id} post={post} index={index} onSave={onSave} />
       ))}

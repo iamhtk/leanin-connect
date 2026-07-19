@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Search, Send, Sparkles, X, Loader2, ArrowLeft } from 'lucide-react'
+import { Plus, Search, Send, Sparkles, X, Loader2, ArrowLeft, Archive } from 'lucide-react'
 import { MOCK_CONVERSATIONS } from '@/data/conversations'
 import type { Conversation, Message } from '@/lib/types'
 import { PortraitImage } from '@/components/atoms/PortraitImage'
 import { formatRelativeTime, showToast } from '@/lib/utils'
 import { getPortraitUrl } from '@/lib/cover-images'
+import { useSwipeReveal } from '@/hooks/useSwipeReveal'
+import { useSwipe } from '@/hooks/useSwipe'
 
 function ConversationAvatar({
   conversation,
@@ -24,6 +26,164 @@ function ConversationAvatar({
       alt={conversation.participant_name}
       size={size}
     />
+  )
+}
+
+interface ConversationRowProps {
+  conv: Conversation
+  isSelected: boolean
+  onSelect: () => void
+  onArchive: () => void
+  onRemove: () => void
+}
+
+function ConversationRow({
+  conv,
+  isSelected,
+  onSelect,
+  onArchive,
+  onRemove,
+}: ConversationRowProps) {
+  const { handlers: convHandlers, style: convStyle, close } = useSwipeReveal({
+    revealWidth: 80,
+    threshold: 55,
+    onDelete: onRemove,
+    onArchive,
+  })
+
+  return (
+    <div style={{ position: 'relative', overflow: 'hidden' }}>
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: '80px',
+          display: 'flex',
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => {
+            onArchive()
+            close()
+          }}
+          aria-label="Archive conversation"
+          style={{
+            flex: 1,
+            background: 'oklch(.6 .12 230)',
+            border: 'none',
+            cursor: 'pointer',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Archive size={18} />
+        </button>
+      </div>
+
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onSelect}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            onSelect()
+          }
+        }}
+        {...convHandlers}
+        style={{
+          ...convStyle,
+          display: 'flex',
+          gap: '10px',
+          alignItems: 'flex-start',
+          padding: '12px 16px',
+          cursor: 'pointer',
+          width: '100%',
+          boxSizing: 'border-box',
+          background: isSelected ? 'var(--color-subtle)' : 'var(--color-surface)',
+          borderBottom: '1px solid var(--color-border-default)',
+        }}
+        className={`conv-item${isSelected ? ' is-selected' : ''}`}
+      >
+        <ConversationAvatar conversation={conv} size={38} />
+        <div style={{ flex: 1, minWidth: 0, pointerEvents: 'none' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                color: 'var(--color-text-default)',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                maxWidth: '140px',
+              }}
+            >
+              {conv.participant_name}
+            </span>
+            <span
+              style={{
+                fontSize: '11px',
+                color: 'var(--color-text-muted)',
+                flexShrink: 0,
+                marginLeft: '8px',
+              }}
+            >
+              {formatRelativeTime(conv.last_message_at)}
+            </span>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: '2px',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '12px',
+                color: 'var(--color-text-muted)',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                maxWidth: '170px',
+              }}
+            >
+              {conv.last_message}
+            </span>
+            {conv.unread_count > 0 && (
+              <span
+                style={{
+                  background: 'var(--color-brand)',
+                  color: 'white',
+                  borderRadius: '9999px',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  padding: '2px 6px',
+                  marginLeft: '6px',
+                  flexShrink: 0,
+                }}
+              >
+                {conv.unread_count}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -50,6 +210,11 @@ export default function MessagesPage() {
   }
 
   const selectedConversation = conversations.find((c) => c.id === selectedId)
+
+  const { onTouchStart, onTouchMove, onTouchEnd } = useSwipe({
+    onSwipeDown: () => setSelectedId(null),
+    threshold: 60,
+  })
 
   useEffect(() => {
     try {
@@ -359,104 +524,19 @@ export default function MessagesPage() {
           {conversations
             .filter((conversation) => listTab === 'All' || conversation.unread_count > 0)
             .map((conv) => (
-            <div
-              key={conv.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => setSelectedId(conv.id)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault()
-                  setSelectedId(conv.id)
-                }
-              }}
-              className={`conv-item${selectedId === conv.id ? ' is-selected' : ''}`}
-              style={{
-                display: 'flex',
-                gap: '10px',
-                alignItems: 'flex-start',
-                padding: '12px 16px',
-                cursor: 'pointer',
-                width: '100%',
-                boxSizing: 'border-box',
-                background: selectedId === conv.id ? 'var(--color-subtle)' : 'transparent',
-                borderBottom: '1px solid var(--color-border-default)',
-                transition: 'background 0.12s',
-              }}
-            >
-              <ConversationAvatar conversation={conv} size={38} />
-              <div style={{ flex: 1, minWidth: 0, pointerEvents: 'none' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      color: 'var(--color-text-default)',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      maxWidth: '140px',
-                    }}
-                  >
-                    {conv.participant_name}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      color: 'var(--color-text-muted)',
-                      flexShrink: 0,
-                      marginLeft: '8px',
-                    }}
-                  >
-                    {formatRelativeTime(conv.last_message_at)}
-                  </span>
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginTop: '2px',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      color: 'var(--color-text-muted)',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      maxWidth: '170px',
-                    }}
-                  >
-                    {conv.last_message}
-                  </span>
-                  {conv.unread_count > 0 && (
-                    <span
-                      style={{
-                        background: 'var(--color-brand)',
-                        color: 'white',
-                        borderRadius: '9999px',
-                        fontSize: '10px',
-                        fontWeight: '700',
-                        padding: '2px 6px',
-                        marginLeft: '6px',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {conv.unread_count}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+              <ConversationRow
+                key={conv.id}
+                conv={conv}
+                isSelected={selectedId === conv.id}
+                onSelect={() => setSelectedId(conv.id)}
+                onArchive={() => showToast('Conversation archived')}
+                onRemove={() => {
+                  setConversations((previous) => previous.filter((item) => item.id !== conv.id))
+                  if (selectedId === conv.id) setSelectedId(null)
+                  showToast('Conversation removed')
+                }}
+              />
+            ))}
         </div>
 
         <div
@@ -497,6 +577,9 @@ export default function MessagesPage() {
       {selectedConversation ? (
         <div className="messages-right-panel">
           <div
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
             style={{
               padding: '12px 20px',
               borderBottom: '1px solid var(--color-border-default)',
@@ -504,6 +587,7 @@ export default function MessagesPage() {
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
+              touchAction: 'pan-x',
             }}
           >
             <button

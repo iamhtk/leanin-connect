@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Heart, MessageCircle, Bookmark } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
@@ -9,6 +9,7 @@ import { formatRelativeTime } from '@/lib/utils'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { getTopicCoverUrl, shouldShowPostCover, getPortraitUrl } from '@/lib/cover-images'
+import { useSwipeReveal } from '@/hooks/useSwipeReveal'
 import type { Post } from '@/lib/types'
 
 function sanitizeHtml(html: string): string {
@@ -111,23 +112,81 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
     }
   }
 
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window)
+  }, [])
+
+  const {
+    close,
+    handlers: revealHandlers,
+    style: revealStyle,
+  } = useSwipeReveal({
+    revealWidth: 72,
+    threshold: 50,
+    onBookmark: handleBookmark,
+    onLike: () => {
+      void handleLike()
+    },
+  })
+
   return (
-    <motion.article
-      layout
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-      className="card-hover"
-      aria-label={'Post by ' + post.author_name}
-      style={{
-        backgroundColor: 'var(--color-surface)',
-        border: '1px solid var(--color-border-default)',
-        borderRadius: 'var(--radius-lg)',
-        boxShadow: 'none',
-        padding: '16px',
-        marginBottom: '8px',
-      }}
-    >
+    <div style={{ position: 'relative', overflow: 'hidden', marginBottom: '8px' }}>
+      {isTouchDevice ? (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: '72px',
+            display: 'flex',
+            alignItems: 'stretch',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              handleBookmark()
+              close()
+            }}
+            aria-label="Bookmark post"
+            style={{
+              flex: 1,
+              background: 'var(--color-brand-subtle)',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--color-brand)',
+            }}
+          >
+            <Bookmark size={20} />
+          </button>
+        </div>
+      ) : null}
+
+      <motion.article
+        layout
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+        className="card-hover"
+        aria-label={'Post by ' + post.author_name}
+        {...(isTouchDevice ? revealHandlers : {})}
+        style={{
+          ...revealStyle,
+          background: 'var(--color-surface)',
+          backgroundColor: 'var(--color-surface)',
+          border: '1px solid var(--color-border-default)',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: 'none',
+          padding: '16px',
+          marginBottom: 0,
+        }}
+      >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
         <Avatar
           initials={post.author_initials}
@@ -309,5 +368,6 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
         </button>
       </div>
     </motion.article>
+    </div>
   )
 }

@@ -9,6 +9,7 @@ import { COVER_IMAGES, getPortraitUrl } from '@/lib/cover-images'
 import { showToast, formatRelativeTime } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCircleMessages } from '@/hooks/useCircleMessages'
+import { useSwipeTabs } from '@/hooks/useSwipeTabs'
 
 const CIRCLE_DETAILS: Record<
   string,
@@ -279,6 +280,17 @@ export default function CircleDetailPage() {
   const [activeTab, setActiveTab] = useState<'feed' | 'members' | 'resources'>('feed')
   const [postInput, setPostInput] = useState('')
 
+  const tabValues: Array<'feed' | 'members' | 'resources'> = ['feed', 'members', 'resources']
+  const activeIndex = tabValues.indexOf(activeTab)
+  const swipeHandlers = useSwipeTabs({
+    tabs: tabValues,
+    activeIndex,
+    onChange: (index) => {
+      const next = tabValues[index]
+      if (next) setActiveTab(next)
+    },
+  })
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
@@ -487,6 +499,7 @@ export default function CircleDetailPage() {
         ))}
       </div>
 
+      <div {...swipeHandlers} style={{ touchAction: 'pan-y' }}>
       {activeTab === 'feed' && (
         <div style={{ maxWidth: '600px' }}>
           <div
@@ -856,6 +869,7 @@ export default function CircleDetailPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }
