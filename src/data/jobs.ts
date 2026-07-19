@@ -1,4 +1,5 @@
 import { Job } from '@/lib/types'
+import { COVER_IMAGES } from '@/lib/cover-images'
 
 export const MOCK_JOBS: Job[] = [
   {
@@ -6,6 +7,7 @@ export const MOCK_JOBS: Job[] = [
     company: 'Stripe',
     company_logo_initials: 'S',
     company_logo_color: '#6B21A8',
+    company_logo_url: COVER_IMAGES.companyOffice,
     role: 'Senior Product Designer',
     location: 'San Francisco, CA',
     job_type: 'Hybrid',
@@ -22,6 +24,7 @@ export const MOCK_JOBS: Job[] = [
     company: 'Figma',
     company_logo_initials: 'F',
     company_logo_color: '#0F4C81',
+    company_logo_url: COVER_IMAGES.companyDesign,
     role: 'Design Engineer',
     location: 'Remote',
     job_type: 'Remote',
@@ -38,6 +41,7 @@ export const MOCK_JOBS: Job[] = [
     company: 'Notion',
     company_logo_initials: 'N',
     company_logo_color: '#1A1514',
+    company_logo_url: COVER_IMAGES.companyTech,
     role: 'Head of Product Design',
     location: 'New York, NY',
     job_type: 'Hybrid',
@@ -53,6 +57,7 @@ export const MOCK_JOBS: Job[] = [
     company: 'Vercel',
     company_logo_initials: 'V',
     company_logo_color: '#1A1514',
+    company_logo_url: COVER_IMAGES.companyStartup,
     role: 'Senior Frontend Engineer',
     location: 'Remote',
     job_type: 'Remote',
@@ -68,6 +73,7 @@ export const MOCK_JOBS: Job[] = [
     company: 'Linear',
     company_logo_initials: 'L',
     company_logo_color: '#4338CA',
+    company_logo_url: COVER_IMAGES.womenOffice,
     role: 'Product Designer',
     location: 'San Francisco, CA',
     job_type: 'Hybrid',
@@ -83,6 +89,7 @@ export const MOCK_JOBS: Job[] = [
     company: 'Anthropic',
     company_logo_initials: 'A',
     company_logo_color: '#CC3D55',
+    company_logo_url: COVER_IMAGES.deskWork,
     role: 'UX Researcher',
     location: 'San Francisco, CA',
     job_type: 'Hybrid',

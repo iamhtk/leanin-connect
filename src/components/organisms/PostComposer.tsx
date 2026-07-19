@@ -8,6 +8,7 @@ import { RichTextEditor } from '@/components/molecules/RichTextEditor'
 import { TOPIC_TAGS } from '@/lib/types'
 import type { Post } from '@/lib/types'
 import { useAuth } from '@/contexts/AuthContext'
+import { getPortraitUrl } from '@/lib/cover-images'
 
 export interface PostComposerProps {
   onPostCreated: (post: Post) => void
@@ -30,8 +31,11 @@ function toEditorHtml(text: string): string {
 export function PostComposer({ onPostCreated }: PostComposerProps) {
   const { profile } = useAuth()
   const authorName = profile?.full_name || 'Community Member'
+  const authorFirstName = authorName.trim().split(/\s+/)[0] || 'there'
   const authorInitials = profile?.initials || 'CM'
   const authorColor = profile?.color || '#7B2335'
+  const authorAvatarSrc = profile?.avatar_url || getPortraitUrl(authorName)
+  const composerPrompt = `Share something with the community, ${authorFirstName}...`
   const [isOpen, setIsOpen] = useState(false)
   const [editorContent, setEditorContent] = useState('')
   const [htmlContent, setHtmlContent] = useState('')
@@ -197,9 +201,15 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           transition: 'border-color 0.12s',
         }}
       >
-        <Avatar initials={authorInitials} color={authorColor} size={28} />
+        <Avatar
+          initials={authorInitials}
+          color={authorColor}
+          size={28}
+          src={authorAvatarSrc}
+          alt={authorName}
+        />
         <div style={{ color: 'var(--color-text-muted)', fontSize: '15px' }}>
-          Share something with the community...
+          {composerPrompt}
         </div>
       </div>
 
@@ -259,7 +269,13 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '16px' }}>
-                <Avatar initials={authorInitials} color={authorColor} size={36} />
+                <Avatar
+                  initials={authorInitials}
+                  color={authorColor}
+                  size={36}
+                  src={authorAvatarSrc}
+                  alt={authorName}
+                />
                 <div>
                   <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
                     {authorName}
@@ -347,7 +363,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                     setHtmlContent(html)
                     setEditorContent(text)
                   }}
-                  placeholder="Share something with the community..."
+                  placeholder={composerPrompt}
                   maxLength={MAX_LENGTH}
                 />
               </div>

@@ -5,6 +5,7 @@ import { Search, Filter, Briefcase, MapPin, Clock, Sparkles, ExternalLink, X } f
 import { MOCK_JOBS } from '@/data/jobs'
 import type { Job } from '@/lib/types'
 import { showToast } from '@/lib/utils'
+import Image from 'next/image'
 
 const JOB_TYPES = [
   { label: 'All Jobs', value: 'All' },
@@ -326,83 +327,83 @@ export default function JobsPage() {
         </p>
       </div>
 
-      <div
-        className="page-toolbar"
-        style={{
-          display: 'flex',
-          gap: '10px',
-          marginBottom: '16px',
-        }}
-      >
+      <div className="sticky-nav">
         <div
+          className="page-toolbar"
           style={{
-            flex: 1,
             display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '0 16px',
-            height: '40px',
-            minWidth: 0,
+            gap: '10px',
+            marginBottom: '12px',
           }}
         >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
-          <label htmlFor="jobs-search" className="sr-only">
-            Search roles or companies
-          </label>
-          <input
-            id="jobs-search"
-            type="search"
-            placeholder="Search roles or companies..."
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
+          <div
             style={{
               flex: 1,
-              border: 'none',
-              outline: 'none',
-              fontSize: '14px',
-              color: 'var(--color-text-default)',
-              background: 'transparent',
-              fontFamily: 'inherit',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '0 16px',
+              height: '40px',
+              minWidth: 0,
             }}
-          />
+          >
+            <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+            <label htmlFor="jobs-search" className="sr-only">
+              Search roles or companies
+            </label>
+            <input
+              id="jobs-search"
+              type="search"
+              placeholder="Search roles or companies..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                fontSize: '14px',
+                color: 'var(--color-text-default)',
+                background: 'transparent',
+                fontFamily: 'inherit',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => showToast('Filters coming soon')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'transparent',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
+              color: 'var(--color-text-default)',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            <Filter size={14} aria-hidden="true" />
+            Filters
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => showToast('Filters coming soon')}
+
+        <div
+          className="pills-scroll"
           style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'transparent',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            color: 'var(--color-text-default)',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
+            gap: '4px',
+            overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch',
           }}
         >
-          <Filter size={14} aria-hidden="true" />
-          Filters
-        </button>
-      </div>
-
-      <div
-        className="pills-scroll"
-        style={{
-          display: 'flex',
-          gap: '4px',
-          marginBottom: '16px',
-          overflowX: 'auto',
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
         {JOB_TYPES.map((type) => {
           const isActive = selectedType === type.value
 
@@ -477,6 +478,7 @@ export default function JobsPage() {
             </button>
           )
         })}
+      </div>
       </div>
 
       {isMatchLoading && (
@@ -578,25 +580,49 @@ function JobCard({ job, onApply }: JobCardProps) {
         }}
       >
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              minWidth: '40px',
-              minHeight: '40px',
-              borderRadius: '10px',
-              background: job.company_logo_color,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '14px',
-              fontWeight: '700',
-              flexShrink: 0,
-            }}
-          >
-            {job.company_logo_initials}
-          </div>
+          {job.company_logo_url ? (
+            <div
+              style={{
+                position: 'relative',
+                width: '40px',
+                height: '40px',
+                minWidth: '40px',
+                minHeight: '40px',
+                borderRadius: '10px',
+                overflow: 'hidden',
+                flexShrink: 0,
+                background: 'var(--color-muted)',
+              }}
+            >
+              <Image
+                src={job.company_logo_url}
+                alt={`${job.company} logo`}
+                fill
+                sizes="40px"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+          ) : (
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                minWidth: '40px',
+                minHeight: '40px',
+                borderRadius: '10px',
+                background: job.company_logo_color,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '700',
+                flexShrink: 0,
+              }}
+            >
+              {job.company_logo_initials}
+            </div>
+          )}
           <div>
             <div
               style={{

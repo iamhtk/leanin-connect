@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Users, Calendar, Send } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
+import { CoverImage } from '@/components/atoms/CoverImage'
+import { COVER_IMAGES, getPortraitUrl } from '@/lib/cover-images'
 import { showToast, formatRelativeTime } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCircleMessages } from '@/hooks/useCircleMessages'
@@ -15,6 +17,7 @@ const CIRCLE_DETAILS: Record<
     name: string
     category: string
     color: string
+    cover_url: string
     description: string
     members: Array<{
       name: string
@@ -39,6 +42,7 @@ const CIRCLE_DETAILS: Record<
     name: 'Women in Finance',
     category: 'FINANCE',
     color: '#7B2335',
+    cover_url: COVER_IMAGES.womenFinance,
     description:
       'We get together on the 3rd Tuesday of every month to talk about our careers, our aspirations and how we can best support each other.',
     members: [
@@ -83,6 +87,7 @@ const CIRCLE_DETAILS: Record<
     name: 'The Balance Collective',
     category: 'LEADERSHIP',
     color: '#1A6B3C',
+    cover_url: COVER_IMAGES.womenBalance,
     description: 'A monthly Circle for women working through the work-life balance question.',
     members: [
       {
@@ -124,6 +129,7 @@ const CIRCLE_DETAILS: Record<
     name: 'Leaning into AI',
     category: 'TECH',
     color: '#1E4A8C',
+    cover_url: COVER_IMAGES.womenCoding,
     description: 'An open virtual Circle for women curious about AI.',
     members: [
       {
@@ -173,6 +179,7 @@ const CIRCLE_DETAILS: Record<
     name: 'Early-career professionals',
     category: 'CAREER',
     color: '#6B21A8',
+    cover_url: COVER_IMAGES.womenEarlyCareer,
     description: 'Starting your career can feel exciting, overwhelming, and everything in between.',
     members: [
       {
@@ -207,6 +214,7 @@ const CIRCLE_DETAILS: Record<
     name: 'The Latina Coalition of Silicon Valley',
     category: 'LEADERSHIP',
     color: '#B45309',
+    cover_url: COVER_IMAGES.womenLeadership,
     description: 'Part of the Lean In Latinas Network. Bay Area Latinas in tech, finance, and beyond.',
     members: [
       {
@@ -234,6 +242,7 @@ const CIRCLE_DETAILS: Record<
     name: 'Mechanical Engineering Circle Delhi',
     category: 'TECH',
     color: '#065F46',
+    cover_url: COVER_IMAGES.womenIndia,
     description: 'A Circle for Mechanical Engineering students at IGDTUW in Delhi.',
     members: [
       {
@@ -339,23 +348,29 @@ export default function CircleDetailPage() {
 
       <div
         style={{
-          background: circle.color,
           borderRadius: '14px',
-          padding: '28px 24px',
           marginBottom: '20px',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
+        <CoverImage
+          src={circle.cover_url}
+          alt=""
+          height={220}
+          sizes="(max-width: 768px) 100vw, 800px"
+          priority
+        />
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(135deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0) 100%)',
+            padding: '28px 24px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
           }}
-          aria-hidden="true"
-        />
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        >
           <span
             style={{
               fontSize: '10px',
@@ -367,6 +382,7 @@ export default function CircleDetailPage() {
               padding: '3px 10px',
               borderRadius: '9999px',
               backdropFilter: 'blur(4px)',
+              alignSelf: 'flex-start',
             }}
           >
             {circle.category}
@@ -429,10 +445,12 @@ export default function CircleDetailPage() {
       </div>
 
       <div
+        className="sticky-nav"
         style={{
           display: 'flex',
           borderBottom: '1px solid var(--color-border-default)',
           marginBottom: '20px',
+          paddingBottom: 0,
         }}
         role="tablist"
         aria-label="Circle sections"
@@ -504,6 +522,8 @@ export default function CircleDetailPage() {
                 initials={profile?.initials || 'HS'}
                 color={profile?.color || '#7B2335'}
                 size={36}
+                src={profile?.avatar_url || getPortraitUrl(profile?.full_name || 'Hrithik Sanyal')}
+                alt={profile?.full_name || 'You'}
               />
               <textarea
                 value={postInput}
@@ -595,6 +615,8 @@ export default function CircleDetailPage() {
                       initials={message.author_initials}
                       color={message.author_color}
                       size={36}
+                      src={getPortraitUrl(message.author_name || message.author_initials)}
+                      alt={message.author_name}
                     />
                     <div>
                       <div
@@ -654,7 +676,13 @@ export default function CircleDetailPage() {
               }}
               role="listitem"
             >
-              <Avatar initials={member.initials} color={member.color} size={40} />
+              <Avatar
+                initials={member.initials}
+                color={member.color}
+                size={40}
+                src={getPortraitUrl(member.name || member.initials)}
+                alt={member.name}
+              />
               <div>
                 <div
                   style={{
@@ -689,7 +717,13 @@ export default function CircleDetailPage() {
             }}
             role="listitem"
           >
-            <Avatar initials="HS" color="#7B2335" size={40} />
+            <Avatar
+              initials="HS"
+              color="#7B2335"
+              size={40}
+              src={getPortraitUrl('Hrithik Sanyal')}
+              alt="Hrithik Sanyal"
+            />
             <div>
               <div
                 style={{

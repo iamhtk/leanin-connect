@@ -8,6 +8,8 @@ import { showToast, formatRelativeTime } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications'
+import { Avatar } from '@/components/atoms/Avatar'
+import { getPortraitUrl } from '@/lib/cover-images'
 
 interface SearchResultsData {
   results: {
@@ -433,20 +435,24 @@ export function Topbar() {
             width: '30px',
             height: '30px',
             borderRadius: 'var(--radius-full)',
-            backgroundColor: profile?.color || '#7B2335',
+            backgroundColor: 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '11px',
-            fontWeight: '600',
-            color: 'var(--color-text-inverse)',
+            padding: 0,
             cursor: 'pointer',
             border: 'none',
             fontFamily: 'inherit',
-            transition: 'background-color 0.12s',
+            overflow: 'hidden',
           }}
         >
-          {profile?.initials || 'HS'}
+          <Avatar
+            initials={profile?.initials || 'HS'}
+            color={profile?.color || '#7B2335'}
+            size={30}
+            src={profile?.avatar_url || getPortraitUrl(profile?.full_name || 'Hrithik Sanyal')}
+            alt={profile?.full_name || 'Profile'}
+          />
         </button>
 
 
@@ -519,23 +525,15 @@ export function Topbar() {
                         : 'var(--color-brand-subtle)',
                     }}
                   >
-                    <div
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '9999px',
-                        background: notification.from_user_color || 'var(--color-brand)',
-                        color: 'var(--color-text-inverse)',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {notification.from_user_initials || '?'}
-                    </div>
+                    <Avatar
+                      initials={notification.from_user_initials || '?'}
+                      color={notification.from_user_color || 'var(--color-brand)'}
+                      size={32}
+                      src={getPortraitUrl(
+                        notification.from_user_name || notification.from_user_initials || notification.id
+                      )}
+                      alt={notification.from_user_name || 'Member'}
+                    />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p
                         style={{

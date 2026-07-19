@@ -3,6 +3,8 @@
 import { useMemo, useState } from 'react'
 import { Search, Filter, UserPlus, MapPin, X } from 'lucide-react'
 import { showToast } from '@/lib/utils'
+import { COVER_IMAGES, getPortraitUrl } from '@/lib/cover-images'
+import { PortraitImage } from '@/components/atoms/PortraitImage'
 
 interface Member {
   id: number
@@ -12,6 +14,7 @@ interface Member {
   location: string
   initials: string
   color: string
+  avatar_url: string
 }
 
 const MOCK_MEMBERS: Member[] = [
@@ -23,6 +26,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'San Jose, CA, USA',
     initials: 'PS',
     color: '#7B2D8B',
+    avatar_url: COVER_IMAGES.portrait1,
   },
   {
     id: 2,
@@ -32,6 +36,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'San Francisco, CA, USA',
     initials: 'AO',
     color: '#1A6B3C',
+    avatar_url: COVER_IMAGES.portrait2,
   },
   {
     id: 3,
@@ -41,6 +46,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'San Francisco, CA, USA',
     initials: 'SC',
     color: '#B45309',
+    avatar_url: COVER_IMAGES.portrait3,
   },
   {
     id: 4,
@@ -50,6 +56,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'San Francisco, CA, USA',
     initials: 'FA',
     color: '#0F4C81',
+    avatar_url: COVER_IMAGES.portrait4,
   },
   {
     id: 5,
@@ -59,6 +66,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'Remote',
     initials: 'MR',
     color: '#6B21A8',
+    avatar_url: COVER_IMAGES.portrait5,
   },
   {
     id: 6,
@@ -68,6 +76,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'San Francisco, CA, USA',
     initials: 'JP',
     color: '#065F46',
+    avatar_url: COVER_IMAGES.portrait6,
   },
   {
     id: 7,
@@ -77,6 +86,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'San Francisco, CA, USA',
     initials: 'AP',
     color: '#9F1239',
+    avatar_url: COVER_IMAGES.portrait7,
   },
   {
     id: 8,
@@ -86,6 +96,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'San Francisco, CA, USA',
     initials: 'KW',
     color: '#1E40AF',
+    avatar_url: COVER_IMAGES.portrait8,
   },
   {
     id: 9,
@@ -95,6 +106,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'Remote',
     initials: 'NO',
     color: '#164E63',
+    avatar_url: COVER_IMAGES.portrait9,
   },
   {
     id: 10,
@@ -104,6 +116,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'Boston, MA, USA',
     initials: 'LF',
     color: '#7C2D12',
+    avatar_url: COVER_IMAGES.portrait10,
   },
   {
     id: 11,
@@ -113,6 +126,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'San Francisco, CA, USA',
     initials: 'ZM',
     color: '#3730A3',
+    avatar_url: COVER_IMAGES.portrait11,
   },
   {
     id: 12,
@@ -122,6 +136,7 @@ const MOCK_MEMBERS: Member[] = [
     location: 'San Francisco, CA, USA',
     initials: 'DM',
     color: '#065F46',
+    avatar_url: COVER_IMAGES.portrait12,
   },
 ]
 
@@ -191,114 +206,116 @@ export default function DirectoryPage() {
         </p>
       </div>
 
-      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '0 16px',
-            height: '40px',
-          }}
-        >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
-          <label htmlFor="directory-search" className="sr-only">
-            Search members
-          </label>
-          <input
-            id="directory-search"
-            type="search"
-            placeholder="Search members..."
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
+      <div className="sticky-nav">
+        <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+          <div
             style={{
               flex: 1,
-              border: 'none',
-              outline: 'none',
-              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '0 16px',
+              height: '40px',
+            }}
+          >
+            <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+            <label htmlFor="directory-search" className="sr-only">
+              Search members
+            </label>
+            <input
+              id="directory-search"
+              type="search"
+              placeholder="Search members..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                fontSize: '14px',
+                background: 'transparent',
+                color: 'var(--color-text-default)',
+                fontFamily: 'inherit',
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => showToast('Filters coming soon')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
               background: 'transparent',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
               color: 'var(--color-text-default)',
+              cursor: 'pointer',
               fontFamily: 'inherit',
             }}
-          />
+          >
+            <Filter size={14} />
+            Filters
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsInviteOpen(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'var(--color-brand)',
+              color: 'white',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
+              fontWeight: '600',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            <UserPlus size={14} />
+            Invite a new member
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => showToast('Filters coming soon')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'transparent',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            color: 'var(--color-text-default)',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <Filter size={14} />
-          Filters
-        </button>
-        <button
-          type="button"
-          onClick={() => setIsInviteOpen(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'var(--color-brand)',
-            color: 'white',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            fontWeight: '600',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <UserPlus size={14} />
-          Invite a new member
-        </button>
-      </div>
 
-      <div style={{ display: 'flex', gap: '8px' }}>
-        {(
-          [
-            { label: 'All', value: 'all' },
-            { label: 'In your Circles', value: 'circles' },
-            { label: 'In your Networks', value: 'networks' },
-          ] as const
-        ).map((tab) => {
-          const isActive = activeTab === tab.value
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => setActiveTab(tab.value)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '9999px',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                border: isActive ? 'none' : '1px solid var(--color-border-default)',
-                background: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
-              }}
-            >
-              {tab.label}
-            </button>
-          )
-        })}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {(
+            [
+              { label: 'All', value: 'all' },
+              { label: 'In your Circles', value: 'circles' },
+              { label: 'In your Networks', value: 'networks' },
+            ] as const
+          ).map((tab) => {
+            const isActive = activeTab === tab.value
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setActiveTab(tab.value)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  border: isActive ? 'none' : '1px solid var(--color-border-default)',
+                  background: isActive ? 'var(--color-text-default)' : 'transparent',
+                  color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
+                }}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       <div className="page-grid-3" style={{ marginTop: '20px' }}>
@@ -320,23 +337,15 @@ export default function DirectoryPage() {
                 boxShadow: 'none',
               }}
             >
-              <div
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '9999px',
-                  background: member.color,
-                  color: 'white',
-                  fontSize: '15px',
-                  fontWeight: '700',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                {member.initials}
-              </div>
+              {member.avatar_url ? (
+                <PortraitImage src={member.avatar_url} alt={member.name} size={44} />
+              ) : (
+                <PortraitImage
+                  src={getPortraitUrl(member.name || member.initials)}
+                  alt={member.name}
+                  size={44}
+                />
+              )}
               <div style={{ minWidth: 0, flex: 1 }}>
                 <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
                   {member.name}

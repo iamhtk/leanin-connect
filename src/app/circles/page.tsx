@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Filter, Plus, X, Sparkles } from 'lucide-react'
+import { CoverImage } from '@/components/atoms/CoverImage'
+import { PortraitImage } from '@/components/atoms/PortraitImage'
+import { COVER_IMAGES, getPortraitUrl } from '@/lib/cover-images'
 import { showToast } from '@/lib/utils'
 
 interface CircleRecommendation {
@@ -20,6 +23,7 @@ const MOCK_CIRCLES = [
     members: 1,
     status: 'Leading',
     color: '#7B2335',
+    cover_url: COVER_IMAGES.womenFinance,
   },
   {
     id: 2,
@@ -30,6 +34,7 @@ const MOCK_CIRCLES = [
     members: 3,
     status: 'Join',
     color: '#1A6B3C',
+    cover_url: COVER_IMAGES.womenBalance,
   },
   {
     id: 3,
@@ -40,6 +45,7 @@ const MOCK_CIRCLES = [
     members: 108,
     status: 'Join',
     color: '#1E4A8C',
+    cover_url: COVER_IMAGES.womenCoding,
   },
   {
     id: 4,
@@ -49,6 +55,7 @@ const MOCK_CIRCLES = [
     members: 64,
     status: 'Join',
     color: '#6B21A8',
+    cover_url: COVER_IMAGES.womenEarlyCareer,
   },
   {
     id: 5,
@@ -58,6 +65,7 @@ const MOCK_CIRCLES = [
     members: 37,
     status: 'Join',
     color: '#B45309',
+    cover_url: COVER_IMAGES.womenLeadership,
   },
   {
     id: 6,
@@ -67,6 +75,7 @@ const MOCK_CIRCLES = [
     members: 12,
     status: 'Join',
     color: '#065F46',
+    cover_url: COVER_IMAGES.womenIndia,
   },
 ]
 
@@ -141,113 +150,115 @@ export default function CirclesPage() {
         </p>
       </div>
 
-      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '0 16px',
-            height: '40px',
-          }}
-        >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
-          <label htmlFor="circles-search" className="sr-only">
-            Search Circles
-          </label>
-          <input
-            id="circles-search"
-            type="search"
-            placeholder="Search Circles..."
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
+      <div className="sticky-nav">
+        <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+          <div
             style={{
               flex: 1,
-              border: 'none',
-              outline: 'none',
-              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '0 16px',
+              height: '40px',
+            }}
+          >
+            <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+            <label htmlFor="circles-search" className="sr-only">
+              Search Circles
+            </label>
+            <input
+              id="circles-search"
+              type="search"
+              placeholder="Search Circles..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                fontSize: '14px',
+                background: 'transparent',
+                color: 'var(--color-text-default)',
+                fontFamily: 'inherit',
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => showToast('Filters coming soon')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
               background: 'transparent',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
               color: 'var(--color-text-default)',
+              cursor: 'pointer',
               fontFamily: 'inherit',
             }}
-          />
+          >
+            <Filter size={14} />
+            Filters
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsOpen(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'var(--color-brand)',
+              color: 'white',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
+              fontWeight: '600',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            <Plus size={14} />
+            Start a Circle
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => showToast('Filters coming soon')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'transparent',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            color: 'var(--color-text-default)',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <Filter size={14} />
-          Filters
-        </button>
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'var(--color-brand)',
-            color: 'white',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            fontWeight: '600',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <Plus size={14} />
-          Start a Circle
-        </button>
-      </div>
 
-      <div style={{ display: 'flex', gap: '8px' }}>
-        {(
-          [
-            { label: 'My Circles', value: 'my' },
-            { label: 'All Circles', value: 'all' },
-          ] as const
-        ).map((tab) => {
-          const isActive = activeTab === tab.value
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => setActiveTab(tab.value)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '9999px',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                border: isActive ? 'none' : '1px solid var(--color-border-default)',
-                background: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
-              }}
-            >
-              {tab.label}
-            </button>
-          )
-        })}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {(
+            [
+              { label: 'My Circles', value: 'my' },
+              { label: 'All Circles', value: 'all' },
+            ] as const
+          ).map((tab) => {
+            const isActive = activeTab === tab.value
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setActiveTab(tab.value)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  border: isActive ? 'none' : '1px solid var(--color-border-default)',
+                  background: isActive ? 'var(--color-text-default)' : 'transparent',
+                  color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
+                }}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {activeTab === 'my' ? (
@@ -333,10 +344,18 @@ export default function CirclesPage() {
                         border: '1px solid var(--color-brand-muted)',
                         borderLeft: '3px solid var(--color-brand)',
                         borderRadius: '12px',
-                        padding: '14px',
+                        overflow: 'hidden',
                         cursor: 'pointer',
                       }}
                     >
+                      <CoverImage
+                        src={circle.cover_url}
+                        alt=""
+                        height={96}
+                        overlayOpacity={0.25}
+                        sizes="260px"
+                      />
+                      <div style={{ padding: '14px' }}>
                       <span
                         style={{
                           fontSize: '10px',
@@ -389,6 +408,7 @@ export default function CirclesPage() {
                       >
                         {isLeading ? 'Leading' : isJoined ? 'Joined' : 'Join'}
                       </button>
+                      </div>
                     </div>
                   )
                 })}
@@ -414,38 +434,28 @@ export default function CirclesPage() {
                   boxShadow: 'none',
                 }}
               >
-                <div
-                  style={{
-                    height: '160px',
-                    background: circle.color,
-                    position: 'relative',
-                  }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%)',
-                    }}
-                  />
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: '10px',
-                      left: '10px',
-                      background: 'rgba(255,255,255,0.2)',
-                      color: 'white',
-                      fontSize: '10px',
-                      fontWeight: '600',
-                      letterSpacing: '0.08em',
-                      padding: '3px 8px',
-                      borderRadius: '9999px',
-                      textTransform: 'uppercase',
-                      backdropFilter: 'blur(4px)',
-                    }}
-                  >
-                    {circle.category}
-                  </span>
+                <div style={{ position: 'relative' }}>
+                  <CoverImage src={circle.cover_url} alt="" height={160} />
+                  <div style={{ position: 'absolute', inset: 0 }}>
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        left: '10px',
+                        background: 'rgba(255,255,255,0.2)',
+                        color: 'white',
+                        fontSize: '10px',
+                        fontWeight: '600',
+                        letterSpacing: '0.08em',
+                        padding: '3px 8px',
+                        borderRadius: '9999px',
+                        textTransform: 'uppercase',
+                        backdropFilter: 'blur(4px)',
+                      }}
+                    >
+                      {circle.category}
+                    </span>
+                  </div>
                 </div>
                 <div style={{ padding: '16px' }}>
                   <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
@@ -475,23 +485,23 @@ export default function CirclesPage() {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        {['var(--color-brand)', 'var(--color-brand-muted)', 'var(--color-muted)'].map(
-                          (avatarColor, index) => (
-                            <div
-                              key={avatarColor}
-                              style={{
-                                width: '20px',
-                                height: '20px',
-                                borderRadius: '9999px',
-                                background:
-                                  avatarColor === 'var(--color-muted)' ? 'var(--color-brand-subtle)' : avatarColor,
-                                border: '1.5px solid var(--color-surface)',
-                                marginLeft: index === 0 ? 0 : '-6px',
-                                zIndex: 3 - index,
-                              }}
+                        {[0, 1, 2].map((index) => (
+                          <div
+                            key={index}
+                            style={{
+                              marginLeft: index === 0 ? 0 : '-6px',
+                              zIndex: 3 - index,
+                              border: '1.5px solid var(--color-surface)',
+                              borderRadius: '9999px',
+                            }}
+                          >
+                            <PortraitImage
+                              src={getPortraitUrl(`${circle.name}-member-${index}`)}
+                              alt=""
+                              size={20}
                             />
-                          )
-                        )}
+                          </div>
+                        ))}
                       </div>
                       <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
                         {circle.members} {circle.members === 1 ? 'member' : 'members'}

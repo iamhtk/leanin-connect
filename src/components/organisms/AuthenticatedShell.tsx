@@ -27,7 +27,7 @@ export function AuthenticatedShell({ children }: AuthenticatedShellProps) {
         <Sidebar />
         <div className="app-shell-content">
           <Topbar />
-          <main id="main-content" className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
+          <main id="main-content" className="flex-1 overflow-y-auto overflow-x-clip min-w-0">
             <PageTransition>{children}</PageTransition>
           </main>
         </div>

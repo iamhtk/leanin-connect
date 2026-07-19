@@ -7,6 +7,8 @@ import { Avatar } from '@/components/atoms/Avatar'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
+import { COVER_IMAGES, getPortraitUrl } from '@/lib/cover-images'
+import { CoverImage } from '@/components/atoms/CoverImage'
 
 const DEFAULT_NAME = 'Hrithik Sanyal'
 const DEFAULT_TITLE = 'Design Engineer'
@@ -138,11 +140,12 @@ export default function ProfilePage() {
 
   return (
     <main aria-label="Profile">
-      <div
-        style={{
-          height: '140px',
-          background: 'linear-gradient(135deg, oklch(.85 .04 17) 0%, oklch(.92 .025 17) 100%)',
-        }}
+      <CoverImage
+        src={COVER_IMAGES.profileCover}
+        alt=""
+        height={140}
+        priority
+        overlayOpacity={0.2}
       />
 
       <div
@@ -185,7 +188,13 @@ export default function ProfilePage() {
                 }}
               />
             ) : (
-              <Avatar initials={avatarInitials} color={avatarColor} size={56} />
+              <Avatar
+                initials={avatarInitials}
+                color={avatarColor}
+                size={56}
+                src={getPortraitUrl(name)}
+                alt={name}
+              />
             )}
             <button
               type="button"

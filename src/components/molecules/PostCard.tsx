@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Heart, MessageCircle, Bookmark } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
+import { CoverImage } from '@/components/atoms/CoverImage'
 import { formatRelativeTime } from '@/lib/utils'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { getTopicCoverUrl, shouldShowPostCover, getPortraitUrl } from '@/lib/cover-images'
 import type { Post } from '@/lib/types'
 
 function sanitizeHtml(html: string): string {
@@ -113,7 +115,13 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-        <Avatar initials={post.author_initials} color={post.author_avatar_color} size={36} />
+        <Avatar
+          initials={post.author_initials}
+          color={post.author_avatar_color}
+          size={36}
+          src={getPortraitUrl(post.author_name || post.author_initials)}
+          alt={post.author_name}
+        />
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
             {post.author_name}
@@ -163,6 +171,24 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
           {post.content}
         </p>
       )}
+
+      {shouldShowPostCover(post.id) ? (
+        <div
+          style={{
+            marginTop: '12px',
+            borderRadius: 'var(--radius-md)',
+            overflow: 'hidden',
+          }}
+        >
+          <CoverImage
+            src={getTopicCoverUrl(post.topic_tag, post.id)}
+            alt=""
+            height={180}
+            overlay={false}
+            sizes="(max-width: 1279px) 100vw, 800px"
+          />
+        </div>
+      ) : null}
 
       <div
         style={{

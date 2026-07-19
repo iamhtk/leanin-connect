@@ -17,6 +17,7 @@ export interface Post {
     company: string
     company_logo_initials: string
     company_logo_color: string
+    company_logo_url?: string
     role: string
     location: string
     job_type: 'Full-time' | 'Remote' | 'Hybrid' | 'Contract'
@@ -36,6 +37,7 @@ export interface Post {
     participant_company: string
     participant_initials: string
     participant_avatar_color: string
+    participant_avatar_url?: string
     last_message: string
     last_message_at: string
     unread_count: number

@@ -4,8 +4,28 @@ import { useState, useEffect, useRef } from 'react'
 import { Plus, Search, Send, Sparkles, X, Loader2, ArrowLeft } from 'lucide-react'
 import { MOCK_CONVERSATIONS } from '@/data/conversations'
 import type { Conversation, Message } from '@/lib/types'
-import { Avatar } from '@/components/atoms/Avatar'
+import { PortraitImage } from '@/components/atoms/PortraitImage'
 import { formatRelativeTime, showToast } from '@/lib/utils'
+import { getPortraitUrl } from '@/lib/cover-images'
+
+function ConversationAvatar({
+  conversation,
+  size,
+}: {
+  conversation: Conversation
+  size: number
+}) {
+  return (
+    <PortraitImage
+      src={
+        conversation.participant_avatar_url ||
+        getPortraitUrl(conversation.participant_name || conversation.participant_initials)
+      }
+      alt={conversation.participant_name}
+      size={size}
+    />
+  )
+}
 
 export default function MessagesPage() {
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_CONVERSATIONS)
@@ -17,9 +37,64 @@ export default function MessagesPage() {
   const [showNewMessage, setShowNewMessage] = useState(false)
   const [memberSearch, setMemberSearch] = useState('')
   const [listTab, setListTab] = useState<'All' | 'Unread'>('All')
+  const [leftPanelWidth, setLeftPanelWidth] = useState(300)
+  const [isResizing, setIsResizing] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const layoutRef = useRef<HTMLElement>(null)
+  const leftPanelWidthRef = useRef(300)
 
   const selectedConversation = conversations.find((c) => c.id === selectedId)
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('lean_in_messages_left_width')
+      if (saved) {
+        const parsed = Number(saved)
+        if (!Number.isNaN(parsed) && parsed >= 220 && parsed <= 520) {
+          setLeftPanelWidth(parsed)
+          leftPanelWidthRef.current = parsed
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isResizing) return
+
+    const handleMouseMove = (event: MouseEvent) => {
+      const layout = layoutRef.current
+      if (!layout) return
+      const bounds = layout.getBoundingClientRect()
+      const nextWidth = Math.min(520, Math.max(220, event.clientX - bounds.left))
+      leftPanelWidthRef.current = nextWidth
+      setLeftPanelWidth(nextWidth)
+    }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+      try {
+        localStorage.setItem('lean_in_messages_left_width', String(leftPanelWidthRef.current))
+      } catch {
+        // ignore
+      }
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+  }, [isResizing])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -159,11 +234,15 @@ export default function MessagesPage() {
 
   return (
     <main
+      ref={layoutRef}
       className="messages-layout"
       aria-label="Messages"
       data-selected={selectedId ? 'true' : 'false'}
     >
-      <div className="messages-left-panel">
+      <div
+        className="messages-left-panel"
+        style={{ width: leftPanelWidth, minWidth: leftPanelWidth, maxWidth: leftPanelWidth }}
+      >
         <div
           style={{
             padding: '16px',
@@ -293,11 +372,7 @@ export default function MessagesPage() {
                 transition: 'background 0.12s',
               }}
             >
-              <Avatar
-                initials={conv.participant_initials}
-                color={conv.participant_avatar_color}
-                size={38}
-              />
+              <ConversationAvatar conversation={conv} size={38} />
               <div style={{ flex: 1, minWidth: 0, pointerEvents: 'none' }}>
                 <div
                   style={{
@@ -391,6 +466,17 @@ export default function MessagesPage() {
         </div>
       </div>
 
+      <div
+        className="messages-resize-handle"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize conversation list"
+        onMouseDown={(event) => {
+          event.preventDefault()
+          setIsResizing(true)
+        }}
+      />
+
       {selectedConversation ? (
         <div className="messages-right-panel">
           <div
@@ -423,11 +509,7 @@ export default function MessagesPage() {
             >
               <ArrowLeft size={18} />
             </button>
-            <Avatar
-              initials={selectedConversation.participant_initials}
-              color={selectedConversation.participant_avatar_color}
-              size={36}
-            />
+            <ConversationAvatar conversation={selectedConversation} size={36} />
             <div style={{ flex: 1 }}>
               <div
                 style={{
@@ -580,11 +662,7 @@ export default function MessagesPage() {
                 }}
               >
                 {!message.is_sent && (
-                  <Avatar
-                    initials={selectedConversation.participant_initials}
-                    color={selectedConversation.participant_avatar_color}
-                    size={28}
-                  />
+                  <ConversationAvatar conversation={selectedConversation} size={28} />
                 )}
                 <div
                   style={{
@@ -910,11 +988,7 @@ export default function MessagesPage() {
                       fontFamily: 'inherit',
                     }}
                   >
-                    <Avatar
-                      initials={conversation.participant_initials}
-                      color={conversation.participant_avatar_color}
-                      size={36}
-                    />
+                    <ConversationAvatar conversation={conversation} size={36} />
                     <div>
                       <p
                         style={{

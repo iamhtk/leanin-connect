@@ -1,4 +1,5 @@
 import { Conversation } from '@/lib/types'
+import { COVER_IMAGES } from '@/lib/cover-images'
 
 export const MOCK_CONVERSATIONS: Conversation[] = [
   {
@@ -8,6 +9,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     participant_company: 'Figma',
     participant_initials: 'SC',
     participant_avatar_color: '#B45309',
+    participant_avatar_url: COVER_IMAGES.portrait1,
     last_message: 'That negotiation script you shared worked perfectly. I got the offer!',
     last_message_at: '2026-07-18T20:30:00Z',
     unread_count: 2,
@@ -51,6 +53,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     participant_company: 'Stripe',
     participant_initials: 'PS',
     participant_avatar_color: '#7B2D8B',
+    participant_avatar_url: COVER_IMAGES.portrait2,
     last_message: 'Would love to grab coffee and hear more about your journey into PM.',
     last_message_at: '2026-07-18T15:00:00Z',
     unread_count: 0,
@@ -82,6 +85,7 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     participant_company: 'Notion',
     participant_initials: 'AO',
     participant_avatar_color: '#1A6B3C',
+    participant_avatar_url: COVER_IMAGES.portrait3,
     last_message: 'The Circle meeting is Thursday at 7pm PT. See you there!',
     last_message_at: '2026-07-17T10:00:00Z',
     unread_count: 1,

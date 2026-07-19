@@ -293,6 +293,134 @@ button {
   background-color: var(--color-background);
 }
 
+/* Full-width greeting banner above feed columns */
+.feed-page {
+  width: 100%;
+}
+
+.feed-greeting-banner-wrap {
+  width: 100%;
+  padding: 20px 20px 16px 32px;
+  box-sizing: border-box;
+}
+
+.feed-page .feed-left-column {
+  padding-top: 0;
+}
+
+.feed-page .feed-right-column {
+  padding-top: 0;
+  /* Keep a gap under the Topbar when this column sticks */
+  top: 16px;
+  height: calc(100vh - 16px);
+}
+
+.feed-greeting-banner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 1;
+  min-height: 240px;
+  max-height: 240px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.feed-greeting-banner__image {
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.feed-greeting-banner__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    105deg,
+    rgba(26, 21, 20, 0.62) 0%,
+    rgba(26, 21, 20, 0.38) 42%,
+    rgba(26, 21, 20, 0.18) 100%
+  );
+}
+
+.feed-greeting-banner__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 28px 32px;
+  pointer-events: none;
+}
+
+.feed-greeting-banner__date {
+  margin: 0 0 6px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-inverse);
+  opacity: 0.92;
+}
+
+.feed-greeting-banner__greeting {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3.2vw, 34px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-text-inverse);
+}
+
+.feed-greeting-banner__greeting em {
+  font-style: italic;
+  font-weight: 400;
+}
+
+@media (max-width: 1439px) {
+  .feed-greeting-banner-wrap {
+    padding: 20px 20px 16px 24px;
+  }
+}
+
+@media (max-width: 1279px) {
+  .feed-greeting-banner-wrap {
+    padding: 16px 16px 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .feed-greeting-banner-wrap {
+    padding: 12px 12px 10px;
+  }
+
+  .feed-page .feed-left-column {
+    padding-top: 0 !important;
+  }
+
+  .feed-page .feed-right-column {
+    padding-top: 0 !important;
+  }
+
+  .feed-greeting-banner {
+    aspect-ratio: 16 / 7;
+    min-height: 120px;
+    max-height: 180px;
+  }
+
+  .feed-greeting-banner__content {
+    padding: 20px 20px;
+  }
+
+  .feed-greeting-banner__greeting {
+    font-size: 24px;
+  }
+}
+
 /* ============================================
    RESPONSIVE TOKENS
    Mobile: 0-767px (default)
@@ -487,11 +615,28 @@ button {
 
 .messages-left-panel {
   width: 300px;
-  min-width: 300px;
-  border-right: 1px solid var(--color-border-default);
+  min-width: 220px;
+  border-right: none;
   display: flex;
   flex-direction: column;
   background: var(--color-surface);
+  flex-shrink: 0;
+}
+
+.messages-resize-handle {
+  width: 6px;
+  flex-shrink: 0;
+  cursor: col-resize;
+  background: transparent;
+  border-right: 1px solid var(--color-border-default);
+  position: relative;
+  z-index: 2;
+  transition: background-color 0.12s;
+}
+
+.messages-resize-handle:hover,
+.messages-resize-handle:active {
+  background: var(--color-brand-muted);
 }
 
 .messages-right-panel {
@@ -506,7 +651,12 @@ button {
   .messages-left-panel {
     width: 100% !important;
     min-width: 100% !important;
+    max-width: 100% !important;
     border-right: none !important;
+  }
+
+  .messages-resize-handle {
+    display: none !important;
   }
 
   .messages-right-panel {
@@ -572,7 +722,26 @@ button {
   padding: var(--space-page-y) var(--space-page-x) 80px;
   max-width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden;
+  /* clip avoids creating a scroll container that breaks position:sticky */
+  overflow-x: clip;
+}
+
+/* Sticky page filters / search bars — pins under Topbar while scrolling #main-content */
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background-color: var(--color-background);
+  padding-top: 4px;
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+}
+
+.sticky-nav--feed {
+  margin-left: -4px;
+  margin-right: -4px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .search-bar-desktop {

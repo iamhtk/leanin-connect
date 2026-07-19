@@ -17,7 +17,7 @@ export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
           display: 'flex',
           gap: '4px',
           overflowX: 'auto',
-          paddingBottom: '12px',
+          paddingBottom: '0',
           scrollbarWidth: 'none',
         }}
         className="[&::-webkit-scrollbar]:hidden"

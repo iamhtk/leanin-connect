@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState, type MouseEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Filter, Bookmark } from 'lucide-react'
 import { showToast } from '@/lib/utils'
+import { COVER_IMAGES } from '@/lib/cover-images'
+import { CoverImage } from '@/components/atoms/CoverImage'
 
 interface Resource {
   id: number
@@ -14,6 +16,7 @@ interface Resource {
   authorInitials: string
   readTime: string
   color: string
+  cover_url: string
   featured: boolean
 }
 
@@ -27,6 +30,7 @@ const MOCK_RESOURCES: Resource[] = [
     authorInitials: 'LI',
     readTime: '5 min',
     color: '#7B2335',
+    cover_url: COVER_IMAGES.womenWorkshop,
     featured: true,
   },
   {
@@ -38,6 +42,7 @@ const MOCK_RESOURCES: Resource[] = [
     authorInitials: 'LT',
     readTime: '4 min',
     color: '#1E4A8C',
+    cover_url: COVER_IMAGES.notebookDesk,
     featured: true,
   },
   {
@@ -49,6 +54,7 @@ const MOCK_RESOURCES: Resource[] = [
     authorInitials: 'SC',
     readTime: '8 min',
     color: '#065F46',
+    cover_url: COVER_IMAGES.bookLearning,
     featured: false,
   },
   {
@@ -60,6 +66,7 @@ const MOCK_RESOURCES: Resource[] = [
     authorInitials: 'DK',
     readTime: '4 min',
     color: '#B45309',
+    cover_url: COVER_IMAGES.womenPresentation,
     featured: false,
   },
   {
@@ -71,6 +78,7 @@ const MOCK_RESOURCES: Resource[] = [
     authorInitials: 'AP',
     readTime: '7 min',
     color: '#6B21A8',
+    cover_url: COVER_IMAGES.womenWriting,
     featured: false,
   },
   {
@@ -82,6 +90,7 @@ const MOCK_RESOURCES: Resource[] = [
     authorInitials: 'SC',
     readTime: '4 min',
     color: '#1A6B3C',
+    cover_url: COVER_IMAGES.deskWork,
     featured: false,
   },
   {
@@ -93,6 +102,7 @@ const MOCK_RESOURCES: Resource[] = [
     authorInitials: 'AP',
     readTime: '7 min',
     color: '#7B2335',
+    cover_url: COVER_IMAGES.womenMentorship,
     featured: false,
   },
   {
@@ -104,6 +114,7 @@ const MOCK_RESOURCES: Resource[] = [
     authorInitials: 'PS',
     readTime: '6 min',
     color: '#0F4C81',
+    cover_url: COVER_IMAGES.womenLeadership,
     featured: false,
   },
   {
@@ -115,6 +126,7 @@ const MOCK_RESOURCES: Resource[] = [
     authorInitials: 'JP',
     readTime: '32 min',
     color: '#065F46',
+    cover_url: COVER_IMAGES.womenLaptop,
     featured: false,
   },
 ]
@@ -214,95 +226,97 @@ export default function ResourcesPage() {
         </p>
       </div>
 
-      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '0 16px',
-            height: '40px',
-          }}
-        >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
-          <label htmlFor="resources-search" className="sr-only">
-            Search resources
-          </label>
-          <input
-            id="resources-search"
-            type="search"
-            placeholder="Search resources..."
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
+      <div className="sticky-nav">
+        <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+          <div
             style={{
               flex: 1,
-              border: 'none',
-              outline: 'none',
-              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '0 16px',
+              height: '40px',
+            }}
+          >
+            <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+            <label htmlFor="resources-search" className="sr-only">
+              Search resources
+            </label>
+            <input
+              id="resources-search"
+              type="search"
+              placeholder="Search resources..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                fontSize: '14px',
+                background: 'transparent',
+                color: 'var(--color-text-default)',
+                fontFamily: 'inherit',
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => showToast('Filters coming soon')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
               background: 'transparent',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
               color: 'var(--color-text-default)',
+              cursor: 'pointer',
               fontFamily: 'inherit',
             }}
-          />
+          >
+            <Filter size={14} />
+            Filters
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => showToast('Filters coming soon')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'transparent',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            color: 'var(--color-text-default)',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <Filter size={14} />
-          Filters
-        </button>
-      </div>
 
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-        {(
-          [
-            { label: 'All', value: 'all' },
-            { label: 'Leadership Library', value: 'library' },
-            { label: 'Circle Leader Tips', value: 'tips' },
-            { label: 'Learning Tracks', value: 'tracks' },
-            { label: 'Saved', value: 'saved' },
-          ] as const
-        ).map((tab) => {
-          const isActive = activeTab === tab.value
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => setActiveTab(tab.value)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '9999px',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                border: isActive ? 'none' : '1px solid var(--color-border-default)',
-                background: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
-              }}
-            >
-              {tab.label}
-            </button>
-          )
-        })}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {(
+            [
+              { label: 'All', value: 'all' },
+              { label: 'Leadership Library', value: 'library' },
+              { label: 'Circle Leader Tips', value: 'tips' },
+              { label: 'Learning Tracks', value: 'tracks' },
+              { label: 'Saved', value: 'saved' },
+            ] as const
+          ).map((tab) => {
+            const isActive = activeTab === tab.value
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setActiveTab(tab.value)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  border: isActive ? 'none' : '1px solid var(--color-border-default)',
+                  background: isActive ? 'var(--color-text-default)' : 'transparent',
+                  color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
+                }}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {activeTab === 'saved' && resources.length === 0 ? (
@@ -345,7 +359,13 @@ export default function ResourcesPage() {
                   boxShadow: 'none',
                 }}
               >
-                <div style={{ height: '100px', background: resource.color, position: 'relative' }}>
+                <div style={{ position: 'relative' }}>
+                  <CoverImage
+                    src={resource.cover_url}
+                    alt={resource.title}
+                    height={120}
+                    overlayOpacity={0.25}
+                  />
                   <span
                     style={{
                       position: 'absolute',
@@ -358,6 +378,7 @@ export default function ResourcesPage() {
                       fontWeight: '600',
                       textTransform: 'uppercase',
                       color: 'var(--color-text-default)',
+                      zIndex: 1,
                     }}
                   >
                     {showTrackBadge ? 'Track' : resource.type}
@@ -374,6 +395,7 @@ export default function ResourcesPage() {
                         fontSize: '10px',
                         fontWeight: '600',
                         color: 'var(--color-text-default)',
+                        zIndex: 1,
                       }}
                     >
                       Featured
@@ -392,6 +414,7 @@ export default function ResourcesPage() {
                       cursor: 'pointer',
                       display: 'flex',
                       padding: isSaved ? '4px' : 0,
+                      zIndex: 1,
                     }}
                   >
                     <Bookmark

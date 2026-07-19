@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { Search, Filter, Plus } from 'lucide-react'
+import { CoverImage } from '@/components/atoms/CoverImage'
+import { COVER_IMAGES } from '@/lib/cover-images'
 import { showToast } from '@/lib/utils'
 
 const MOCK_NETWORKS = [
@@ -12,6 +14,7 @@ const MOCK_NETWORKS = [
     members: 311,
     circles: 0,
     color: '#7B2335',
+    cover_url: COVER_IMAGES.womenCity,
     description:
       "Empowering women to lead by bringing Lean In's mission to life locally through Circles, events, and resources.",
   },
@@ -22,6 +25,7 @@ const MOCK_NETWORKS = [
     members: 4,
     circles: 0,
     color: '#1E4A8C',
+    cover_url: COVER_IMAGES.womenIndia,
     description:
       'WiTi focuses on the technology sector and supports women in technology with various backgrounds.',
   },
@@ -32,6 +36,7 @@ const MOCK_NETWORKS = [
     members: 130,
     circles: 0,
     color: '#065F46',
+    cover_url: COVER_IMAGES.womenLeadership,
     description:
       'This space is exclusively built just for our volunteers who are running existing Lean In Networks.',
   },
@@ -42,6 +47,7 @@ const MOCK_NETWORKS = [
     members: 89,
     circles: 2,
     color: '#6B21A8',
+    cover_url: COVER_IMAGES.womenLondon,
     description:
       "Empowering women to lead by bringing Lean In's mission to life locally through Circles, events, and resources.",
   },
@@ -52,6 +58,7 @@ const MOCK_NETWORKS = [
     members: 214,
     circles: 0,
     color: '#B45309',
+    cover_url: COVER_IMAGES.womenSingapore,
     description:
       'Lean In Women in Tech Singapore aims to connect extraordinary women across the tech industry.',
   },
@@ -62,6 +69,7 @@ const MOCK_NETWORKS = [
     members: 420,
     circles: 5,
     color: '#1A6B3C',
+    cover_url: COVER_IMAGES.womenNyc,
     description: 'NYC Network bringing together Lean In Circles and women in the Lean In community.',
   },
 ]
@@ -99,113 +107,115 @@ export default function NetworksPage() {
         </p>
       </div>
 
-      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '0 16px',
-            height: '40px',
-          }}
-        >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
-          <label htmlFor="networks-search" className="sr-only">
-            Search Networks
-          </label>
-          <input
-            id="networks-search"
-            type="search"
-            placeholder="Search Networks..."
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
+      <div className="sticky-nav">
+        <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+          <div
             style={{
               flex: 1,
-              border: 'none',
-              outline: 'none',
-              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '0 16px',
+              height: '40px',
+            }}
+          >
+            <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+            <label htmlFor="networks-search" className="sr-only">
+              Search Networks
+            </label>
+            <input
+              id="networks-search"
+              type="search"
+              placeholder="Search Networks..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                fontSize: '14px',
+                background: 'transparent',
+                color: 'var(--color-text-default)',
+                fontFamily: 'inherit',
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => showToast('Filters coming soon')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
               background: 'transparent',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
               color: 'var(--color-text-default)',
+              cursor: 'pointer',
               fontFamily: 'inherit',
             }}
-          />
+          >
+            <Filter size={14} />
+            Filters
+          </button>
+          <button
+            type="button"
+            onClick={() => showToast('Starting a Network — coming soon')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'var(--color-brand)',
+              color: 'white',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
+              fontWeight: '600',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            <Plus size={14} />
+            Start a Network
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => showToast('Filters coming soon')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'transparent',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            color: 'var(--color-text-default)',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <Filter size={14} />
-          Filters
-        </button>
-        <button
-          type="button"
-          onClick={() => showToast('Starting a Network — coming soon')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'var(--color-brand)',
-            color: 'white',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            fontWeight: '600',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <Plus size={14} />
-          Start a Network
-        </button>
-      </div>
 
-      <div style={{ display: 'flex', gap: '8px' }}>
-        {(
-          [
-            { label: 'My Networks', value: 'my' },
-            { label: 'All Networks', value: 'all' },
-          ] as const
-        ).map((tab) => {
-          const isActive = activeTab === tab.value
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => setActiveTab(tab.value)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '9999px',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                border: isActive ? 'none' : '1px solid var(--color-border-default)',
-                background: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
-              }}
-            >
-              {tab.label}
-            </button>
-          )
-        })}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {(
+            [
+              { label: 'My Networks', value: 'my' },
+              { label: 'All Networks', value: 'all' },
+            ] as const
+          ).map((tab) => {
+            const isActive = activeTab === tab.value
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setActiveTab(tab.value)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  border: isActive ? 'none' : '1px solid var(--color-border-default)',
+                  background: isActive ? 'var(--color-text-default)' : 'transparent',
+                  color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
+                }}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {activeTab === 'my' ? (
@@ -258,34 +268,24 @@ export default function NetworksPage() {
                   boxShadow: 'none',
                 }}
               >
-                <div
-                  style={{
-                    height: '160px',
-                    background: network.color,
-                    position: 'relative',
-                  }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'linear-gradient(to top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 60%)',
-                    }}
-                  />
-                  <span
-                    style={{
-                      position: 'absolute',
-                      bottom: '12px',
-                      left: '16px',
-                      fontSize: '11px',
-                      fontWeight: '700',
-                      letterSpacing: '0.12em',
-                      color: 'rgba(255,255,255,0.9)',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    LEAN IN NETWORK
-                  </span>
+                <div style={{ position: 'relative' }}>
+                  <CoverImage src={network.cover_url} alt="" height={160} />
+                  <div style={{ position: 'absolute', inset: 0 }}>
+                    <span
+                      style={{
+                        position: 'absolute',
+                        bottom: '12px',
+                        left: '16px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        letterSpacing: '0.12em',
+                        color: 'rgba(255,255,255,0.9)',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      LEAN IN NETWORK
+                    </span>
+                  </div>
                 </div>
                 <div style={{ padding: '16px' }}>
                   <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>

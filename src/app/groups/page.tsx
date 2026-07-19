@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { Search } from 'lucide-react'
+import { CoverImage } from '@/components/atoms/CoverImage'
+import { COVER_IMAGES } from '@/lib/cover-images'
 import { showToast } from '@/lib/utils'
 
 const MOCK_GROUPS = [
@@ -9,6 +11,7 @@ const MOCK_GROUPS = [
     id: 1,
     name: 'Growing careers and families',
     color: '#6B21A8',
+    cover_url: COVER_IMAGES.womenBalance,
     members: 71,
     posts: 1,
     description: "We're navigating deadlines, daycare, and everything in between.",
@@ -17,6 +20,7 @@ const MOCK_GROUPS = [
     id: 2,
     name: 'Early-career professionals',
     color: '#065F46',
+    cover_url: COVER_IMAGES.womenEarlyCareer,
     members: 64,
     posts: 1,
     description: 'Starting your career can feel exciting, overwhelming, and everything in between.',
@@ -25,6 +29,7 @@ const MOCK_GROUPS = [
     id: 3,
     name: "Let's talk AI",
     color: '#7B2335',
+    cover_url: COVER_IMAGES.womenCoding,
     members: 163,
     posts: 8,
     description: 'A space to explore AI together — honestly, practically, and without judgment.',
@@ -33,6 +38,7 @@ const MOCK_GROUPS = [
     id: 4,
     name: 'Circle Leaders Hub',
     color: '#1E4A8C',
+    cover_url: COVER_IMAGES.womenMentorship,
     members: 1,
     posts: 1,
     description: 'A space for Circle Leaders to learn from one another, share ideas, and connect.',
@@ -75,70 +81,72 @@ export default function GroupsPage() {
         </p>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          background: 'var(--color-surface)',
-          border: '1px solid var(--color-border-default)',
-          borderRadius: '9999px',
-          padding: '0 16px',
-          height: '40px',
-          marginBottom: '16px',
-        }}
-      >
-        <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
-        <label htmlFor="groups-search" className="sr-only">
-          Search Groups
-        </label>
-        <input
-          id="groups-search"
-          type="search"
-          placeholder="Search Groups..."
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
+      <div className="sticky-nav">
+        <div
           style={{
-            flex: 1,
-            border: 'none',
-            outline: 'none',
-            fontSize: '14px',
-            background: 'transparent',
-            color: 'var(--color-text-default)',
-            fontFamily: 'inherit',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-border-default)',
+            borderRadius: '9999px',
+            padding: '0 16px',
+            height: '40px',
+            marginBottom: '12px',
           }}
-        />
-      </div>
+        >
+          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+          <label htmlFor="groups-search" className="sr-only">
+            Search Groups
+          </label>
+          <input
+            id="groups-search"
+            type="search"
+            placeholder="Search Groups..."
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            style={{
+              flex: 1,
+              border: 'none',
+              outline: 'none',
+              fontSize: '14px',
+              background: 'transparent',
+              color: 'var(--color-text-default)',
+              fontFamily: 'inherit',
+            }}
+          />
+        </div>
 
-      <div style={{ display: 'flex', gap: '8px' }}>
-        {(
-          [
-            { label: 'My Groups', value: 'my' },
-            { label: 'All Groups', value: 'all' },
-          ] as const
-        ).map((tab) => {
-          const isActive = activeTab === tab.value
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => setActiveTab(tab.value)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '9999px',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                border: isActive ? 'none' : '1px solid var(--color-border-default)',
-                background: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
-              }}
-            >
-              {tab.label}
-            </button>
-          )
-        })}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {(
+            [
+              { label: 'My Groups', value: 'my' },
+              { label: 'All Groups', value: 'all' },
+            ] as const
+          ).map((tab) => {
+            const isActive = activeTab === tab.value
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setActiveTab(tab.value)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  border: isActive ? 'none' : '1px solid var(--color-border-default)',
+                  background: isActive ? 'var(--color-text-default)' : 'transparent',
+                  color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
+                }}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {activeTab === 'my' && myGroups.length === 0 ? (
@@ -191,37 +199,30 @@ export default function GroupsPage() {
                   boxShadow: 'none',
                 }}
               >
-                <div
-                  style={{
-                    height: '160px',
-                    background: group.color,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '16px',
-                    position: 'relative',
-                  }}
-                >
+                <div style={{ position: 'relative' }}>
+                  <CoverImage src={group.cover_url} alt="" height={160} />
                   <div
                     style={{
                       position: 'absolute',
                       inset: 0,
-                      background: 'rgba(0,0,0,0.15)',
-                    }}
-                  />
-                  <p
-                    style={{
-                      color: 'white',
-                      fontSize: '20px',
-                      fontWeight: '700',
-                      textAlign: 'center',
-                      lineHeight: '1.3',
-                      position: 'relative',
-                      zIndex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '16px',
                     }}
                   >
-                    {group.name}
-                  </p>
+                    <p
+                      style={{
+                        color: 'white',
+                        fontSize: '20px',
+                        fontWeight: '700',
+                        textAlign: 'center',
+                        lineHeight: '1.3',
+                      }}
+                    >
+                      {group.name}
+                    </p>
+                  </div>
                 </div>
                 <div style={{ padding: '16px' }}>
                   <p

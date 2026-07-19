@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications'
 import { formatRelativeTime } from '@/lib/utils'
+import { Avatar } from '@/components/atoms/Avatar'
+import { getPortraitUrl } from '@/lib/cover-images'
 
 type NotificationsTab = 'all' | 'circles' | 'networks'
 
@@ -97,36 +99,38 @@ export default function NotificationsPage() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-        {(
-          [
-            { label: 'All', value: 'all' },
-            { label: 'Circles', value: 'circles' },
-            { label: 'Networks', value: 'networks' },
-          ] as const
-        ).map((tab) => {
-          const isActive = activeTab === tab.value
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => setActiveTab(tab.value)}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '9999px',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                border: isActive ? 'none' : '1px solid var(--color-border-default)',
-                background: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
-              }}
-            >
-              {tab.label}
-            </button>
-          )
-        })}
+      <div className="sticky-nav" style={{ marginTop: '20px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {(
+            [
+              { label: 'All', value: 'all' },
+              { label: 'Circles', value: 'circles' },
+              { label: 'Networks', value: 'networks' },
+            ] as const
+          ).map((tab) => {
+            const isActive = activeTab === tab.value
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setActiveTab(tab.value)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  border: isActive ? 'none' : '1px solid var(--color-border-default)',
+                  background: isActive ? 'var(--color-text-default)' : 'transparent',
+                  color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
+                }}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {isLoading ? (
@@ -259,23 +263,15 @@ export default function NotificationsPage() {
                   : 'var(--color-brand-subtle)',
               }}
             >
-              <div
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '9999px',
-                  background: notification.from_user_color || 'var(--color-brand)',
-                  color: 'var(--color-text-inverse)',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                {notification.from_user_initials || '?'}
-              </div>
+              <Avatar
+                initials={notification.from_user_initials || '?'}
+                color={notification.from_user_color || 'var(--color-brand)'}
+                size={40}
+                src={getPortraitUrl(
+                  notification.from_user_name || notification.from_user_initials || notification.id
+                )}
+                alt={notification.from_user_name || 'Member'}
+              />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p
                   style={{

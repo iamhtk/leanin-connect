@@ -6,15 +6,22 @@ const supabaseHostname = process.env.NEXT_PUBLIC_SUPABASE_URL
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: supabaseHostname
-      ? [
-          {
-            protocol: 'https',
-            hostname: supabaseHostname,
-            pathname: '/storage/v1/object/public/**',
-          },
-        ]
-      : [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+      ...(supabaseHostname
+        ? [
+            {
+              protocol: 'https' as const,
+              hostname: supabaseHostname,
+              pathname: '/storage/v1/object/public/**',
+            },
+          ]
+        : []),
+    ],
   },
 }
 

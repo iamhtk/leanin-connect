@@ -2,14 +2,17 @@
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Clock, User, Sparkles, Loader2 } from 'lucide-react'
+import { COVER_IMAGES } from '@/lib/cover-images'
+import { CoverImage } from '@/components/atoms/CoverImage'
 
 const RESOURCE_DETAILS: Record<string, {
   id: number, type: string, title: string,
-  author: string, readTime: string, color: string, content: string
+  author: string, readTime: string, color: string, cover_url: string, content: string
 }> = {
   '1': {
     id:1, type:'Workshop', title:'Your first Circle meeting',
     author:'Lean In', readTime:'5 min', color:'#7B2335',
+    cover_url: COVER_IMAGES.womenWorkshop,
     content:`Starting strong sets the tone for everything that follows. Your first Circle meeting is about one thing: connection.
 
 Introductions (20 minutes)
@@ -32,6 +35,7 @@ The magic is not in the agenda. It is in the room. Trust the group.`
   '3': {
     id:3, type:'Video', title:'How to negotiate so everyone wins',
     author:'Sara Chen', readTime:'8 min', color:'#065F46',
+    cover_url: COVER_IMAGES.bookLearning,
     content:`Negotiation is not a battle. It is a conversation about value.
 
 The three things you need before any negotiation:
@@ -56,6 +60,7 @@ You are not being difficult. You are being professional.`
   '6': {
     id:6, type:'Toolkit', title:'Negotiation prep template',
     author:'Sara Chen', readTime:'4 min', color:'#1A6B3C',
+    cover_url: COVER_IMAGES.deskWork,
     content:`Use this template before every salary or scope negotiation.
 
 My target number
@@ -85,6 +90,7 @@ My walk-away number: ___`
   '4': {
     id:4, type:'Article', title:'Make stress work for you',
     author:'Diane Kasprowicz', readTime:'4 min', color:'#B45309',
+    cover_url: COVER_IMAGES.womenPresentation,
     content:`Your mindset shapes stress. The latest research shows that stress itself is not harmful. How you think about stress determines its impact.
 
 The reframe
@@ -106,6 +112,7 @@ You do not need to eliminate stress. You need to change your relationship with i
   '5': {
     id:5, type:'Video', title:'Why stories beat data at work',
     author:'Aisha Patel', readTime:'7 min', color:'#6B21A8',
+    cover_url: COVER_IMAGES.womenWriting,
     content:`Data convinces minds. Stories move people.
 
 The research is clear: people remember stories up to 22 times more than facts alone. If you want your ideas to stick, you need to tell a story.
@@ -133,6 +140,7 @@ The most persuasive people in any room are not the ones with the most data. They
   '2': {
     id:2, type:'Article', title:'Lean In Connect FAQs',
     author:'Lean In Team', readTime:'4 min', color:'#1E4A8C',
+    cover_url: COVER_IMAGES.notebookDesk,
     content:`Everything you need to know about Lean In Connect.
 
 What is Lean In Connect?
@@ -156,6 +164,7 @@ Join a Circle, post in the feed, follow people doing interesting work, and atten
   '7': {
     id:7, type:'Article', title:'Managing up when your manager changes',
     author:'Aisha Patel', readTime:'7 min', color:'#7B2335',
+    cover_url: COVER_IMAGES.womenMentorship,
     content:`The first 30 days under a new manager set the tone for the next 18 months.
 
 What most people do wrong
@@ -180,6 +189,7 @@ The goal of the first 30 days is not to impress. It is to establish trust. Trust
   '8': {
     id:8, type:'Article', title:'5 ways to fight burnout at work',
     author:'Priya Sharma', readTime:'6 min', color:'#0F4C81',
+    cover_url: COVER_IMAGES.womenLeadership,
     content:`Burnout is not a character flaw. It is a system problem. But while systems change slowly, you need strategies that work now.
 
 Five things that actually help:
@@ -204,6 +214,7 @@ You cannot perform your way out of burnout. You have to change something.`
   '9': {
     id:9, type:'Podcast', title:'How to lead with data and courage',
     author:'Jennifer Park', readTime:'32 min', color:'#065F46',
+    cover_url: COVER_IMAGES.womenLaptop,
     content:`Leadership is not a personality type. It is a practice.
 
 From the conversation with Google's former VP of People Operations:
@@ -294,38 +305,58 @@ export default function ResourceDetailPage() {
       </button>
 
       <div style={{
-        background: resource.color,
-        borderRadius:'14px',padding:'24px',marginBottom:'24px'
-      }} aria-hidden="true">
-        <span style={{
-          fontSize:'10px',fontWeight:'700',letterSpacing:'0.1em',
-          textTransform:'uppercase',color:'rgba(255,255,255,0.8)',
-          background:'rgba(255,255,255,0.2)',padding:'3px 10px',
-          borderRadius:'9999px'
+        position: 'relative',
+        borderRadius: '14px',
+        overflow: 'hidden',
+        marginBottom: '24px',
+      }}>
+        <CoverImage
+          src={resource.cover_url}
+          alt={resource.title}
+          height={200}
+          overlayOpacity={0.55}
+          priority
+        />
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          padding: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          zIndex: 1,
         }}>
-          {resource.type}
-        </span>
-        <h1 style={{
-          fontSize:'22px',fontWeight:'700',color:'white',
-          marginTop:'10px',lineHeight:'1.3'
-        }}>
-          {resource.title}
-        </h1>
-        <div style={{display:'flex',gap:'16px',marginTop:'12px'}}>
           <span style={{
-            display:'flex',alignItems:'center',gap:'5px',
-            color:'rgba(255,255,255,0.8)',fontSize:'13px'
+            fontSize:'10px',fontWeight:'700',letterSpacing:'0.1em',
+            textTransform:'uppercase',color:'rgba(255,255,255,0.8)',
+            background:'rgba(255,255,255,0.2)',padding:'3px 10px',
+            borderRadius:'9999px',
+            alignSelf: 'flex-start',
           }}>
-            <User size={13} aria-hidden="true" />
-            {resource.author}
+            {resource.type}
           </span>
-          <span style={{
-            display:'flex',alignItems:'center',gap:'5px',
-            color:'rgba(255,255,255,0.8)',fontSize:'13px'
+          <h1 style={{
+            fontSize:'22px',fontWeight:'700',color:'white',
+            marginTop:'10px',lineHeight:'1.3'
           }}>
-            <Clock size={13} aria-hidden="true" />
-            {resource.readTime} read
-          </span>
+            {resource.title}
+          </h1>
+          <div style={{display:'flex',gap:'16px',marginTop:'12px'}}>
+            <span style={{
+              display:'flex',alignItems:'center',gap:'5px',
+              color:'rgba(255,255,255,0.8)',fontSize:'13px'
+            }}>
+              <User size={13} aria-hidden="true" />
+              {resource.author}
+            </span>
+            <span style={{
+              display:'flex',alignItems:'center',gap:'5px',
+              color:'rgba(255,255,255,0.8)',fontSize:'13px'
+            }}>
+              <Clock size={13} aria-hidden="true" />
+              {resource.readTime} read
+            </span>
+          </div>
         </div>
       </div>
 

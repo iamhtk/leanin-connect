@@ -3,6 +3,8 @@
 import { useMemo, useState } from 'react'
 import { Search, Filter, Plus, Calendar, Users, X } from 'lucide-react'
 import { showToast } from '@/lib/utils'
+import { COVER_IMAGES } from '@/lib/cover-images'
+import { CoverImage } from '@/components/atoms/CoverImage'
 
 interface MockEvent {
   id: number
@@ -13,6 +15,7 @@ interface MockEvent {
   host: string
   attendees: number
   color: string
+  cover_url: string
 }
 
 const MOCK_EVENTS: MockEvent[] = [
@@ -25,6 +28,7 @@ const MOCK_EVENTS: MockEvent[] = [
     host: 'Lean In',
     attendees: 342,
     color: '#7B2335',
+    cover_url: COVER_IMAGES.womenConference,
   },
   {
     id: 2,
@@ -35,6 +39,7 @@ const MOCK_EVENTS: MockEvent[] = [
     host: 'Lean In Network SF',
     attendees: 89,
     color: '#1E4A8C',
+    cover_url: COVER_IMAGES.womenVirtual,
   },
   {
     id: 3,
@@ -45,6 +50,7 @@ const MOCK_EVENTS: MockEvent[] = [
     host: 'Lean In',
     attendees: 500,
     color: '#065F46',
+    cover_url: COVER_IMAGES.womenPanel,
   },
 ]
 
@@ -114,156 +120,158 @@ export default function EventsPage() {
         </p>
       </div>
 
-      <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '0 16px',
-            height: '40px',
-          }}
-        >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
-          <label htmlFor="events-search" className="sr-only">
-            Search events
-          </label>
-          <input
-            id="events-search"
-            type="search"
-            placeholder="Search events..."
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
+      <div className="sticky-nav">
+        <div className="page-toolbar" style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+          <div
             style={{
               flex: 1,
-              border: 'none',
-              outline: 'none',
-              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '0 16px',
+              height: '40px',
+            }}
+          >
+            <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+            <label htmlFor="events-search" className="sr-only">
+              Search events
+            </label>
+            <input
+              id="events-search"
+              type="search"
+              placeholder="Search events..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                fontSize: '14px',
+                background: 'transparent',
+                color: 'var(--color-text-default)',
+                fontFamily: 'inherit',
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => showToast('Filters coming soon')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
               background: 'transparent',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
               color: 'var(--color-text-default)',
+              cursor: 'pointer',
               fontFamily: 'inherit',
             }}
-          />
-        </div>
-        <button
-          type="button"
-          onClick={() => showToast('Filters coming soon')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'transparent',
-            border: '1px solid var(--color-border-default)',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            color: 'var(--color-text-default)',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <Filter size={14} />
-          Filters
-        </button>
-        <button
-          type="button"
-          onClick={openProposeModal}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'var(--color-brand)',
-            color: 'white',
-            borderRadius: '9999px',
-            padding: '8px 20px',
-            fontSize: '13px',
-            fontWeight: '600',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <Plus size={14} />
-          New event
-        </button>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {(
-            [
-              { label: 'My Events', value: 'my' },
-              { label: 'Circle Meetings', value: 'circles' },
-              { label: 'Network Events', value: 'networks' },
-              { label: 'Lean In Events', value: 'leanin' },
-            ] as const
-          ).map((tab) => {
-            const isActive = activeTab === tab.value
-            return (
-              <button
-                key={tab.value}
-                type="button"
-                onClick={() => setActiveTab(tab.value)}
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: '9999px',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  border: isActive ? 'none' : '1px solid var(--color-border-default)',
-                  background: isActive ? 'var(--color-text-default)' : 'transparent',
-                  color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
-                }}
-              >
-                {tab.label}
-              </button>
-            )
-          })}
+          >
+            <Filter size={14} />
+            Filters
+          </button>
+          <button
+            type="button"
+            onClick={openProposeModal}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'var(--color-brand)',
+              color: 'white',
+              borderRadius: '9999px',
+              padding: '8px 20px',
+              fontSize: '13px',
+              fontWeight: '600',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            <Plus size={14} />
+            New event
+          </button>
         </div>
 
-        <div
-          style={{
-            display: 'inline-flex',
-            background: 'var(--color-subtle)',
-            borderRadius: '9999px',
-            padding: '2px',
-            flexShrink: 0,
-          }}
-        >
-          {(
-            [
-              { label: 'Upcoming', value: 'upcoming' },
-              { label: 'Past', value: 'past' },
-            ] as const
-          ).map((option) => {
-            const isActive = timeFilter === option.value
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setTimeFilter(option.value)}
-                style={{
-                  padding: '5px 14px',
-                  borderRadius: '9999px',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  border: 'none',
-                  background: isActive ? 'var(--color-surface)' : 'transparent',
-                  color: isActive ? 'var(--color-text-default)' : 'var(--color-text-muted)',
-                  boxShadow: isActive ? 'var(--shadow-card)' : 'none',
-                }}
-              >
-                {option.label}
-              </button>
-            )
-          })}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {(
+              [
+                { label: 'My Events', value: 'my' },
+                { label: 'Circle Meetings', value: 'circles' },
+                { label: 'Network Events', value: 'networks' },
+                { label: 'Lean In Events', value: 'leanin' },
+              ] as const
+            ).map((tab) => {
+              const isActive = activeTab === tab.value
+              return (
+                <button
+                  key={tab.value}
+                  type="button"
+                  onClick={() => setActiveTab(tab.value)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '9999px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    border: isActive ? 'none' : '1px solid var(--color-border-default)',
+                    background: isActive ? 'var(--color-text-default)' : 'transparent',
+                    color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
+                  }}
+                >
+                  {tab.label}
+                </button>
+              )
+            })}
+          </div>
+
+          <div
+            style={{
+              display: 'inline-flex',
+              background: 'var(--color-subtle)',
+              borderRadius: '9999px',
+              padding: '2px',
+              flexShrink: 0,
+            }}
+          >
+            {(
+              [
+                { label: 'Upcoming', value: 'upcoming' },
+                { label: 'Past', value: 'past' },
+              ] as const
+            ).map((option) => {
+              const isActive = timeFilter === option.value
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setTimeFilter(option.value)}
+                  style={{
+                    padding: '5px 14px',
+                    borderRadius: '9999px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    border: 'none',
+                    background: isActive ? 'var(--color-surface)' : 'transparent',
+                    color: isActive ? 'var(--color-text-default)' : 'var(--color-text-muted)',
+                    boxShadow: isActive ? 'var(--shadow-card)' : 'none',
+                  }}
+                >
+                  {option.label}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
 
@@ -483,85 +491,108 @@ export default function EventsPage() {
                   borderRadius: '14px',
                   padding: '16px',
                   boxShadow: 'none',
+                  display: 'flex',
+                  gap: '14px',
+                  alignItems: 'stretch',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                  <span
-                    style={{
-                      background: 'var(--color-brand-subtle)',
-                      color: 'var(--color-text-brand)',
-                      borderRadius: '9999px',
-                      padding: '4px 10px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {event.date} · {event.time}
-                  </span>
-                  <span
-                    style={{
-                      background: 'var(--color-subtle)',
-                      color: 'var(--color-text-secondary)',
-                      borderRadius: '9999px',
-                      padding: '4px 10px',
-                      fontSize: '12px',
-                      fontWeight: '500',
-                    }}
-                  >
-                    {event.type}
-                  </span>
-                </div>
-                <p
-                  style={{
-                    fontSize: '15px',
-                    fontWeight: '600',
-                    color: 'var(--color-text-default)',
-                    marginTop: '8px',
-                  }}
-                >
-                  {event.title}
-                </p>
-                <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                  Hosted by {event.host}
-                </p>
                 <div
                   style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginTop: '12px',
+                    width: '96px',
+                    height: '72px',
+                    flexShrink: 0,
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    alignSelf: 'center',
                   }}
                 >
-                  <span
+                  <CoverImage
+                    src={event.cover_url}
+                    alt={event.title}
+                    height={72}
+                    overlay={false}
+                    sizes="96px"
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                    <span
+                      style={{
+                        background: 'var(--color-brand-subtle)',
+                        color: 'var(--color-text-brand)',
+                        borderRadius: '9999px',
+                        padding: '4px 10px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {event.date} · {event.time}
+                    </span>
+                    <span
+                      style={{
+                        background: 'var(--color-subtle)',
+                        color: 'var(--color-text-secondary)',
+                        borderRadius: '9999px',
+                        padding: '4px 10px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                      }}
+                    >
+                      {event.type}
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      color: 'var(--color-text-default)',
+                      marginTop: '8px',
+                    }}
+                  >
+                    {event.title}
+                  </p>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                    Hosted by {event.host}
+                  </p>
+                  <div
                     style={{
                       display: 'flex',
+                      justifyContent: 'space-between',
                       alignItems: 'center',
-                      gap: '4px',
-                      fontSize: '12px',
-                      color: 'var(--color-text-muted)',
+                      marginTop: '12px',
                     }}
                   >
-                    <Users size={12} />
-                    {event.attendees} attendees
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => toggleRsvp(event)}
-                    style={{
-                      background: isRsvpd ? 'var(--color-status-success)' : 'var(--color-brand)',
-                      color: 'white',
-                      borderRadius: '9999px',
-                      padding: '4px 14px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                      transition: 'background 0.12s',
-                    }}
-                  >
-                    {isRsvpd ? 'RSVPd ✓' : 'RSVP'}
-                  </button>
+                    <span
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '12px',
+                        color: 'var(--color-text-muted)',
+                      }}
+                    >
+                      <Users size={12} />
+                      {event.attendees} attendees
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleRsvp(event)}
+                      style={{
+                        background: isRsvpd ? 'var(--color-status-success)' : 'var(--color-brand)',
+                        color: 'white',
+                        borderRadius: '9999px',
+                        padding: '4px 14px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
+                        transition: 'background 0.12s',
+                      }}
+                    >
+                      {isRsvpd ? 'RSVPd ✓' : 'RSVP'}
+                    </button>
+                  </div>
                 </div>
               </div>
             )

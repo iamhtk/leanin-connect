@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { showToast } from '@/lib/utils'
 import { Avatar } from '@/components/atoms/Avatar'
+import { PortraitImage } from '@/components/atoms/PortraitImage'
+import { COVER_IMAGES } from '@/lib/cover-images'
 import { MOCK_CONVERSATIONS } from '@/data/conversations'
 
 interface SuggestedMember {
@@ -14,6 +16,7 @@ interface SuggestedMember {
   company: string
   initials: string
   color: string
+  avatar_url?: string
 }
 
 const SUGGESTED_MEMBERS: SuggestedMember[] = [
@@ -24,6 +27,7 @@ const SUGGESTED_MEMBERS: SuggestedMember[] = [
     company: conversation.participant_company,
     initials: conversation.participant_initials,
     color: conversation.participant_avatar_color,
+    avatar_url: conversation.participant_avatar_url,
   })),
   {
     id: 'extra-nina-okonkwo',
@@ -32,6 +36,7 @@ const SUGGESTED_MEMBERS: SuggestedMember[] = [
     company: 'Shopify',
     initials: 'NO',
     color: 'var(--color-status-info)',
+    avatar_url: COVER_IMAGES.portrait4,
   },
 ]
 
@@ -106,7 +111,11 @@ export function SuggestedMembers() {
                 transition: 'background-color 0.12s',
               }}
             >
-              <Avatar initials={member.initials} color={member.color} size={32} />
+              {member.avatar_url ? (
+                <PortraitImage src={member.avatar_url} alt={member.name} size={32} />
+              ) : (
+                <Avatar initials={member.initials} color={member.color} size={32} />
+              )}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text-default)' }}>
                   {member.name}
