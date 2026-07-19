@@ -57,7 +57,7 @@ export default function FeedPage() {
   const filteredPosts = selectedTag === 'all' ? posts : posts.filter((post) => post.topic_tag === selectedTag)
 
   return (
-    <div style={{ maxWidth: '680px', margin: '0 auto', paddingTop: '32px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div style={{ maxWidth: '680px', margin: '0 auto', padding: '32px 24px 0' }}>
       <PostComposer onPostCreated={handlePostCreated} />
       <TopicFilter selectedTag={selectedTag} onTagChange={setSelectedTag} />
       {loading ? (

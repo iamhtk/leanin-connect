@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { X, Sparkles } from 'lucide-react'
+import { X, Sparkles, Loader2 } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
 import { TOPIC_TAGS } from '@/lib/types'
 import type { Post } from '@/lib/types'
@@ -25,10 +25,48 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
   const [content, setContent] = useState('')
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isVoiceCoachOpen, setIsVoiceCoachOpen] = useState(false)
+  const [voiceCoachNotes, setVoiceCoachNotes] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
 
   const resetForm = () => {
     setContent('')
     setSelectedTopic(null)
+    setIsVoiceCoachOpen(false)
+    setVoiceCoachNotes('')
+  }
+
+  const handleGenerateDraft = async () => {
+    if (!voiceCoachNotes.trim()) return
+
+    setIsGenerating(true)
+    try {
+      const response = await fetch('/api/ai/voice-coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roughNotes: voiceCoachNotes, topic: selectedTopic }),
+      })
+
+      if (!response.body) return
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let accumulated = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        accumulated += decoder.decode(value, { stream: true })
+        setContent(accumulated.slice(0, MAX_LENGTH))
+      }
+
+      setIsVoiceCoachOpen(false)
+      setVoiceCoachNotes('')
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   const closeModal = () => {
@@ -156,6 +194,69 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                 </div>
               </div>
 
+              <AnimatePresence>
+                {isVoiceCoachOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    <div style={{ marginTop: '16px' }}>
+                      <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>
+                        Describe your experience in rough notes
+                      </p>
+                      <textarea
+                        value={voiceCoachNotes}
+                        onChange={(event) => setVoiceCoachNotes(event.target.value)}
+                        placeholder="e.g. got promoted after 3 years, almost didn't apply, manager didn't believe in me at first..."
+                        style={{
+                          width: '100%',
+                          minHeight: '80px',
+                          border: 'none',
+                          outline: 'none',
+                          resize: 'none',
+                          fontSize: '14px',
+                          fontFamily: 'inherit',
+                          color: 'var(--color-text-default)',
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleGenerateDraft}
+                        disabled={isGenerating || !voiceCoachNotes.trim()}
+                        style={{
+                          width: '100%',
+                          backgroundColor: 'var(--color-brand)',
+                          color: 'var(--color-text-inverse)',
+                          border: 'none',
+                          borderRadius: 'var(--radius-md)',
+                          padding: '8px',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          cursor: isGenerating || !voiceCoachNotes.trim() ? 'not-allowed' : 'pointer',
+                          opacity: isGenerating || !voiceCoachNotes.trim() ? 0.6 : 1,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                        }}
+                      >
+                        {isGenerating ? (
+                          <>
+                            <Loader2 size={14} className="animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          'Generate draft'
+                        )}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <textarea
                 value={content}
                 onChange={(event) => setContent(event.target.value.slice(0, MAX_LENGTH))}
@@ -216,6 +317,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <button
                   type="button"
+                  onClick={() => setIsVoiceCoachOpen((previous) => !previous)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',

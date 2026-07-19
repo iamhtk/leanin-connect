@@ -1,36 +1,9 @@
 import { PostCard } from '@/components/molecules/PostCard'
+import { CareerPulseCard } from '@/components/molecules/CareerPulseCard'
 import type { Post } from '@/lib/types'
 
 export interface FeedListProps {
   posts: Post[]
-}
-
-function CareerPulseCard() {
-  return (
-    <div
-      style={{
-        backgroundColor: 'var(--color-brand-subtle)',
-        border: '1px solid var(--color-brand-muted)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '20px',
-        marginBottom: '12px',
-      }}
-    >
-      <p
-        style={{
-          fontSize: '10px',
-          fontWeight: '600',
-          color: 'var(--color-text-brand)',
-          letterSpacing: '0.08em',
-        }}
-      >
-        ✦ AI CAREER PULSE
-      </p>
-      <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', marginTop: '8px' }}>
-        Fetching community insights...
-      </p>
-    </div>
-  )
 }
 
 export function FeedList({ posts }: FeedListProps) {
