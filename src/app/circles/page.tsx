@@ -336,7 +336,15 @@ export default function CirclesPage() {
                   return (
                     <div
                       key={rec.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => router.push('/circles/' + circle.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          router.push('/circles/' + circle.id)
+                        }
+                      }}
                       style={{
                         width: '260px',
                         minWidth: '260px',
@@ -424,7 +432,15 @@ export default function CirclesPage() {
             return (
               <div
                 key={circle.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => router.push('/circles/' + circle.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    router.push('/circles/' + circle.id)
+                  }
+                }}
                 className="card-hover"
                 style={{
                   background: 'var(--color-surface)',
@@ -561,7 +577,13 @@ export default function CirclesPage() {
 
       {isOpen && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Create a new Circle"
           onClick={closeModal}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') closeModal()
+          }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -589,6 +611,7 @@ export default function CirclesPage() {
               </p>
               <button
                 type="button"
+                aria-label="Close create circle dialog"
                 onClick={closeModal}
                 style={{
                   background: 'none',
@@ -608,6 +631,7 @@ export default function CirclesPage() {
 
             <input
               type="text"
+              aria-label="Circle name"
               placeholder="Circle name"
               value={circleName}
               onChange={(event) => setCircleName(event.target.value)}
@@ -626,6 +650,7 @@ export default function CirclesPage() {
             />
 
             <textarea
+              aria-label="About this circle"
               placeholder="What is your Circle about?"
               value={circleAbout}
               onChange={(event) => setCircleAbout(event.target.value)}

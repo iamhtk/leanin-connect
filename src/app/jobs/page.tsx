@@ -61,6 +61,9 @@ function SalaryCoachModal({ job, onClose }: SalaryCoachModalProps) {
   return (
     <div
       onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') onClose()
+      }}
       style={{
         position: 'fixed',
         inset: 0,

@@ -349,7 +349,15 @@ export default function ResourcesPage() {
             return (
               <div
                 key={resource.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => router.push('/resources/' + resource.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    router.push('/resources/' + resource.id)
+                  }
+                }}
                 className="card-hover"
                 style={{
                   background: 'var(--color-surface)',

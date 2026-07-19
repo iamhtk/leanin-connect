@@ -602,7 +602,13 @@ export default function EventsPage() {
 
       {isProposeOpen && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Propose an event"
           onClick={closeProposeModal}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') closeProposeModal()
+          }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -630,6 +636,7 @@ export default function EventsPage() {
               </p>
               <button
                 type="button"
+                aria-label="Close propose event dialog"
                 onClick={closeProposeModal}
                 style={{
                   background: 'none',
@@ -645,6 +652,7 @@ export default function EventsPage() {
 
             <input
               type="text"
+              aria-label="Event title"
               placeholder="Event title"
               value={proposeTitle}
               onChange={(event) => setProposeTitle(event.target.value)}
@@ -664,6 +672,7 @@ export default function EventsPage() {
 
             <input
               type="text"
+              aria-label="Event date and time"
               placeholder="Date and time"
               value={proposeDateTime}
               onChange={(event) => setProposeDateTime(event.target.value)}
@@ -682,6 +691,7 @@ export default function EventsPage() {
             />
 
             <select
+              aria-label="Event format"
               value={proposeFormat}
               onChange={(event) => setProposeFormat(event.target.value as EventFormat)}
               style={{
@@ -703,6 +713,7 @@ export default function EventsPage() {
             </select>
 
             <textarea
+              aria-label="Event description"
               placeholder="Description"
               value={proposeDescription}
               onChange={(event) => setProposeDescription(event.target.value)}

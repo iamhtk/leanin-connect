@@ -199,6 +199,7 @@ export default function SettingsPage() {
               <input
                 value={draftName}
                 onChange={(event) => setDraftName(event.target.value)}
+                aria-label="Name"
                 placeholder="Name"
                 style={inputStyle}
                 onFocus={(event) => {
@@ -211,6 +212,7 @@ export default function SettingsPage() {
               <input
                 value={draftJobTitle}
                 onChange={(event) => setDraftJobTitle(event.target.value)}
+                aria-label="Job title"
                 placeholder="Job title"
                 style={inputStyle}
                 onFocus={(event) => {
@@ -223,6 +225,7 @@ export default function SettingsPage() {
               <input
                 value={draftLocation}
                 onChange={(event) => setDraftLocation(event.target.value)}
+                aria-label="Location"
                 placeholder="Location"
                 style={inputStyle}
                 onFocus={(event) => {

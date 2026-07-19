@@ -252,7 +252,7 @@ export default function MessagesPage() {
             justifyContent: 'space-between',
           }}
         >
-          <h2
+          <h1
             style={{
               fontSize: '16px',
               fontWeight: '600',
@@ -260,9 +260,10 @@ export default function MessagesPage() {
             }}
           >
             Messages
-          </h2>
+          </h1>
           <button
             type="button"
+            aria-label="New message"
             onClick={() => setShowNewMessage(true)}
             style={{
               width: '28px',
@@ -453,16 +454,21 @@ export default function MessagesPage() {
             borderTop: '1px solid var(--color-border-default)',
           }}
         >
-          <span
+          <button
+            type="button"
             onClick={() => showToast('Blocking tools coming soon')}
             style={{
               fontSize: '12px',
               color: 'var(--color-text-muted)',
               cursor: 'pointer',
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              fontFamily: 'inherit',
             }}
           >
             Manage blocked
-          </span>
+          </button>
         </div>
       </div>
 
@@ -582,6 +588,7 @@ export default function MessagesPage() {
                 </span>
                 <button
                   type="button"
+                  aria-label="Close conversation starters"
                   onClick={() => setShowStarters(false)}
                   style={{
                     background: 'transparent',
@@ -777,6 +784,7 @@ export default function MessagesPage() {
                     handleSendMessage()
                   }
                 }}
+                aria-label="Write a message"
                 placeholder="Write a message..."
                 rows={1}
                 style={{
@@ -794,6 +802,7 @@ export default function MessagesPage() {
             </div>
             <button
               type="button"
+              aria-label="Send message"
               onClick={handleSendMessage}
               disabled={!messageInput.trim()}
               style={{
@@ -863,6 +872,9 @@ export default function MessagesPage() {
 
       {showNewMessage && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="New message"
           style={{
             position: 'fixed',
             inset: 0,
@@ -873,6 +885,9 @@ export default function MessagesPage() {
             justifyContent: 'center',
           }}
           onClick={() => setShowNewMessage(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setShowNewMessage(false)
+          }}
         >
           <div
             onClick={(event) => event.stopPropagation()}
@@ -903,6 +918,7 @@ export default function MessagesPage() {
               </h3>
               <button
                 type="button"
+                aria-label="Close new message dialog"
                 onClick={() => setShowNewMessage(false)}
                 style={{
                   background: 'transparent',

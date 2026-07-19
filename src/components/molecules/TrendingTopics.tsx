@@ -54,7 +54,15 @@ export function TrendingTopics() {
         {TRENDING_TOPICS.map((item, index) => (
           <div
             key={item.topic}
+            role="button"
+            tabIndex={0}
             onClick={() => handleTopicClick(item.topic)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                handleTopicClick(item.topic)
+              }
+            }}
             className="group"
             style={{
               display: 'flex',

@@ -97,7 +97,15 @@ export function SuggestedMembers() {
           return (
             <div
               key={member.id}
+              role="button"
+              tabIndex={0}
               onClick={() => router.push('/directory')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  router.push('/directory')
+                }
+              }}
               className="hover:bg-subtle"
               style={{
                 display: 'flex',

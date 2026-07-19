@@ -232,11 +232,13 @@ export default function ProfilePage() {
             {isEditing ? (
               <>
                 <input
+                  aria-label="Display name"
                   value={draftName}
                   onChange={(event) => setDraftName(event.target.value)}
                   style={{ ...inputStyle, fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}
                 />
                 <input
+                  aria-label="Job title"
                   value={draftTitle}
                   onChange={(event) => setDraftTitle(event.target.value)}
                   style={{ ...inputStyle, fontSize: '14px', marginTop: '2px' }}
@@ -244,6 +246,7 @@ export default function ProfilePage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                   <Globe size={13} />
                   <input
+                    aria-label="Location"
                     value={draftLocation}
                     onChange={(event) => setDraftLocation(event.target.value)}
                     style={{ ...inputStyle, fontSize: '13px' }}
@@ -252,9 +255,9 @@ export default function ProfilePage() {
               </>
             ) : (
               <>
-                <p style={{ fontSize: '20px', fontWeight: '700', color: 'var(--color-text-default)' }}>
+                <h1 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--color-text-default)' }}>
                   {name}
-                </p>
+                </h1>
                 <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
                   {title}
                 </p>

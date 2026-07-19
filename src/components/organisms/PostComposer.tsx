@@ -232,6 +232,9 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
           >
             <motion.div
               onClick={(event) => event.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') closeModal()
+              }}
               role="dialog"
               aria-modal="true"
               aria-label="Create post"
@@ -300,6 +303,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                       <textarea
                         value={voiceCoachNotes}
                         onChange={(event) => setVoiceCoachNotes(event.target.value)}
+                        aria-label="Enter rough notes for AI Voice Coach"
                         placeholder="e.g. got promoted after 3 years, almost didn't apply, manager didn't believe in me at first..."
                         style={{
                           width: '100%',

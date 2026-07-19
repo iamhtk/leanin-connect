@@ -400,7 +400,13 @@ export default function DirectoryPage() {
 
       {isInviteOpen && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Invite a member"
           onClick={closeInviteModal}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') closeInviteModal()
+          }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -428,6 +434,7 @@ export default function DirectoryPage() {
               </p>
               <button
                 type="button"
+                aria-label="Close invite dialog"
                 onClick={closeInviteModal}
                 style={{
                   background: 'none',
@@ -443,6 +450,7 @@ export default function DirectoryPage() {
 
             <input
               type="email"
+              aria-label="Email address to invite"
               placeholder="Email address"
               value={inviteEmail}
               onChange={(event) => setInviteEmail(event.target.value)}
@@ -461,6 +469,7 @@ export default function DirectoryPage() {
             />
 
             <textarea
+              aria-label="Personal message"
               placeholder="Personal message (optional)"
               value={inviteMessage}
               onChange={(event) => setInviteMessage(event.target.value)}

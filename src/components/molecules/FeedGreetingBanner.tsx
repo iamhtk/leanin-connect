@@ -51,9 +51,9 @@ export function FeedGreetingBanner() {
       <div className="feed-greeting-banner__overlay" aria-hidden />
       <div className="feed-greeting-banner__content">
         <p className="feed-greeting-banner__date">{dateLabel}</p>
-        <h2 className="feed-greeting-banner__greeting">
+        <h1 className="feed-greeting-banner__greeting">
           {greeting}, <em>{firstName}.</em>
-        </h2>
+        </h1>
       </div>
     </section>
   )

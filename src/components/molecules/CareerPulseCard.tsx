@@ -140,8 +140,9 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
 
         <div>
           {data.questions.map((question, index) => (
-            <p
+            <button
               key={question}
+              type="button"
               onClick={() => handleQuestionClick(question)}
               className="hover:text-[var(--color-brand)]"
               style={{
@@ -149,16 +150,21 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
                 color: 'var(--color-text-default)',
                 lineHeight: '1.5',
                 padding: '7px 0',
+                border: 'none',
                 borderBottom:
                   index === data.questions.length - 1
                     ? 'none'
                     : '1px solid var(--color-border-default)',
+                background: 'none',
                 cursor: 'pointer',
                 transition: 'color 0.12s',
+                textAlign: 'left',
+                fontFamily: 'inherit',
+                width: '100%',
               }}
             >
               {question}
-            </p>
+            </button>
           ))}
         </div>
       </div>
