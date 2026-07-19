@@ -1,0 +1,291 @@
+'use client'
+
+import { useState } from 'react'
+import { Search, Filter, UserPlus, MapPin } from 'lucide-react'
+import { Avatar } from '@/components/atoms/Avatar'
+
+const MOCK_MEMBERS = [
+  {
+    id: 1,
+    name: 'Priya Sharma',
+    role: 'Senior Product Manager',
+    company: 'Stripe',
+    location: 'San Jose, CA, USA',
+    initials: 'PS',
+    color: '#7B2D8B',
+  },
+  {
+    id: 2,
+    name: 'Amara Okafor',
+    role: 'Engineering Manager',
+    company: 'Notion',
+    location: 'San Francisco, CA, USA',
+    initials: 'AO',
+    color: '#1A6B3C',
+  },
+  {
+    id: 3,
+    name: 'Sarah Chen',
+    role: 'Director of Marketing',
+    company: 'Figma',
+    location: 'San Francisco, CA, USA',
+    initials: 'SC',
+    color: '#B45309',
+  },
+  {
+    id: 4,
+    name: 'Fatima Al-Hassan',
+    role: 'UX Research Lead',
+    company: 'Airbnb',
+    location: 'San Francisco, CA, USA',
+    initials: 'FA',
+    color: '#0F4C81',
+  },
+  {
+    id: 5,
+    name: 'Maya Rodriguez',
+    role: 'Software Engineer',
+    company: 'Linear',
+    location: 'Remote',
+    initials: 'MR',
+    color: '#6B21A8',
+  },
+  {
+    id: 6,
+    name: 'Jennifer Park',
+    role: 'VP of Operations',
+    company: 'Rippling',
+    location: 'San Francisco, CA, USA',
+    initials: 'JP',
+    color: '#065F46',
+  },
+  {
+    id: 7,
+    name: 'Aisha Patel',
+    role: 'Head of Product',
+    company: 'Vercel',
+    location: 'San Francisco, CA, USA',
+    initials: 'AP',
+    color: '#9F1239',
+  },
+  {
+    id: 8,
+    name: 'Kezia Williams',
+    role: 'Associate Product Manager',
+    company: 'Salesforce',
+    location: 'San Francisco, CA, USA',
+    initials: 'KW',
+    color: '#1E40AF',
+  },
+  {
+    id: 9,
+    name: 'Nina Okonkwo',
+    role: 'Staff Engineer',
+    company: 'Shopify',
+    location: 'Remote',
+    initials: 'NO',
+    color: '#164E63',
+  },
+  {
+    id: 10,
+    name: 'Lucia Fernandez',
+    role: 'Sales Director',
+    company: 'HubSpot',
+    location: 'Boston, MA, USA',
+    initials: 'LF',
+    color: '#7C2D12',
+  },
+  {
+    id: 11,
+    name: 'Zoe Mitchell',
+    role: 'Design Engineer',
+    company: 'Anthropic',
+    location: 'San Francisco, CA, USA',
+    initials: 'ZM',
+    color: '#3730A3',
+  },
+  {
+    id: 12,
+    name: 'Divya Menon',
+    role: 'Chief of Staff',
+    company: 'OpenAI',
+    location: 'San Francisco, CA, USA',
+    initials: 'DM',
+    color: '#065F46',
+  },
+]
+
+type DirectoryTab = 'all' | 'circles' | 'networks'
+
+export default function DirectoryPage() {
+  const [activeTab, setActiveTab] = useState<DirectoryTab>('all')
+
+  const members =
+    activeTab === 'circles'
+      ? MOCK_MEMBERS.slice(0, 4)
+      : activeTab === 'networks'
+        ? MOCK_MEMBERS.slice(0, 8)
+        : MOCK_MEMBERS
+
+  return (
+    <div style={{ padding: '24px 32px 48px 32px' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Directory</h1>
+        <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+          All members can decide whether to opt-in to the directory in their privacy settings.
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-border-default)',
+            borderRadius: '9999px',
+            padding: '0 16px',
+            height: '40px',
+          }}
+        >
+          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+          <input
+            type="text"
+            placeholder="Search members..."
+            style={{
+              flex: 1,
+              border: 'none',
+              outline: 'none',
+              fontSize: '14px',
+              background: 'transparent',
+              color: 'var(--color-text-default)',
+              fontFamily: 'inherit',
+            }}
+          />
+        </div>
+        <button
+          type="button"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'transparent',
+            border: '1px solid var(--color-border-default)',
+            borderRadius: '9999px',
+            padding: '8px 20px',
+            fontSize: '13px',
+            color: 'var(--color-text-default)',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          <Filter size={14} />
+          Filters
+        </button>
+        <button
+          type="button"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'var(--color-brand)',
+            color: 'white',
+            borderRadius: '9999px',
+            padding: '8px 20px',
+            fontSize: '13px',
+            fontWeight: '600',
+            border: 'none',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          <UserPlus size={14} />
+          Invite a new member
+        </button>
+      </div>
+
+      <div style={{ display: 'flex', gap: '8px' }}>
+        {(
+          [
+            { label: 'All', value: 'all' },
+            { label: 'In your Circles', value: 'circles' },
+            { label: 'In your Networks', value: 'networks' },
+          ] as const
+        ).map((tab) => {
+          const isActive = activeTab === tab.value
+          return (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => setActiveTab(tab.value)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '9999px',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                border: isActive ? 'none' : '1px solid var(--color-border-default)',
+                background: isActive ? 'var(--color-text-default)' : 'transparent',
+                color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
+              }}
+            >
+              {tab.label}
+            </button>
+          )
+        })}
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          gap: '12px',
+          marginTop: '20px',
+        }}
+      >
+        {members.map((member) => (
+          <div
+            key={member.id}
+            style={{
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border-default)',
+              borderRadius: '14px',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: '12px',
+              boxShadow: 'none',
+            }}
+          >
+            <Avatar initials={member.initials} color={member.color} size={40} />
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontSize: '14px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+                {member.name}
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                {member.role} · {member.company}
+              </p>
+              <p
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--color-text-muted)',
+                  marginTop: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                <MapPin size={12} />
+                {member.location}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
