@@ -127,7 +127,7 @@ export default function ProfilePage() {
     border: '1px solid var(--color-border-default)',
     borderRadius: '8px',
     padding: '6px 10px',
-    fontSize: '14px',
+    fontSize: '16px',
     fontFamily: 'inherit',
     outline: 'none',
     background: 'var(--color-surface)',
@@ -241,7 +241,7 @@ export default function ProfilePage() {
                   aria-label="Job title"
                   value={draftTitle}
                   onChange={(event) => setDraftTitle(event.target.value)}
-                  style={{ ...inputStyle, fontSize: '14px', marginTop: '2px' }}
+                  style={{ ...inputStyle, fontSize: '16px', marginTop: '2px' }}
                 />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                   <Globe size={13} />
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                     aria-label="Location"
                     value={draftLocation}
                     onChange={(event) => setDraftLocation(event.target.value)}
-                    style={{ ...inputStyle, fontSize: '13px' }}
+                    style={{ ...inputStyle, fontSize: '16px' }}
                   />
                 </div>
               </>

@@ -147,7 +147,7 @@ export function Topbar() {
             }}
             placeholder="Search topics, members, Circles..."
             style={{
-              fontSize: '14px',
+              fontSize: '16px',
               color: 'var(--color-text-default)',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
@@ -316,8 +316,10 @@ export function Topbar() {
           onClick={() => window.dispatchEvent(new Event('open-assistant'))}
           aria-label="Open AI Assistant"
           style={{
-            width: '32px',
-            height: '32px',
+            minWidth: '44px',
+            minHeight: '44px',
+            width: '44px',
+            height: '44px',
             borderRadius: '8px',
             border: 'none',
             backgroundColor: 'transparent',
@@ -327,6 +329,7 @@ export function Topbar() {
             cursor: 'pointer',
             color: 'var(--color-text-muted)',
             transition: 'background-color 0.12s',
+            padding: '10px',
           }}
         >
           <Sparkles size={16} />
@@ -338,8 +341,10 @@ export function Topbar() {
           aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           className="hover:bg-subtle"
           style={{
-            width: '32px',
-            height: '32px',
+            minWidth: '44px',
+            minHeight: '44px',
+            width: '44px',
+            height: '44px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -349,6 +354,7 @@ export function Topbar() {
             color: 'var(--color-text-muted)',
             cursor: 'pointer',
             transition: 'background-color 0.12s',
+            padding: '10px',
           }}
         >
           {theme === 'dark' ? (
@@ -374,8 +380,10 @@ export function Topbar() {
           aria-haspopup="true"
           aria-expanded={showNotifications}
           style={{
-            width: '32px',
-            height: '32px',
+            minWidth: '44px',
+            minHeight: '44px',
+            width: '44px',
+            height: '44px',
             borderRadius: '8px',
             border: 'none',
             backgroundColor: showNotifications ? 'var(--color-subtle)' : 'transparent',
@@ -386,6 +394,7 @@ export function Topbar() {
             color: 'var(--color-text-muted)',
             transition: 'background-color 0.12s',
             position: 'relative',
+            padding: '10px',
           }}
           className="hover:bg-subtle"
         >
@@ -432,14 +441,16 @@ export function Topbar() {
           aria-haspopup="true"
           aria-expanded={showProfileMenu}
           style={{
-            width: '30px',
-            height: '30px',
+            minWidth: '44px',
+            minHeight: '44px',
+            width: '44px',
+            height: '44px',
             borderRadius: 'var(--radius-full)',
             backgroundColor: 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 0,
+            padding: '10px',
             cursor: 'pointer',
             border: 'none',
             fontFamily: 'inherit',

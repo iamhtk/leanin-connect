@@ -255,7 +255,7 @@ export default function ResourcesPage() {
                 flex: 1,
                 border: 'none',
                 outline: 'none',
-                fontSize: '14px',
+                fontSize: '16px',
                 background: 'transparent',
                 color: 'var(--color-text-default)',
                 fontFamily: 'inherit',

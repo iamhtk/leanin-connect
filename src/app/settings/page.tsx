@@ -103,7 +103,7 @@ export default function SettingsPage() {
     border: '1px solid var(--color-border-default)',
     borderRadius: '10px',
     padding: '10px 14px',
-    fontSize: '14px',
+    fontSize: '16px',
     fontFamily: 'inherit',
     outline: 'none',
     background: 'var(--color-surface)',
