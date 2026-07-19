@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Bell, Sparkles, User, Settings, LogOut, Loader2, X, Moon, Sun } from 'lucide-react'
-import { showToast } from '@/lib/utils'
+import { showToast, formatRelativeTime } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications'
 
 interface SearchResultsData {
   results: {
@@ -21,6 +22,7 @@ export function Topbar() {
   const router = useRouter()
   const { user, profile, signOut } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const { unreadCount, notifications, markAllRead } = useRealtimeNotifications(user?.id)
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -356,7 +358,13 @@ export function Topbar() {
         <button
           type="button"
           onClick={() => {
-            setShowNotifications((previous) => !previous)
+            setShowNotifications((previous) => {
+              const next = !previous
+              if (next) {
+                void markAllRead()
+              }
+              return next
+            })
             setShowProfileMenu(false)
           }}
           aria-label="Notifications"
@@ -374,10 +382,35 @@ export function Topbar() {
             cursor: 'pointer',
             color: 'var(--color-text-muted)',
             transition: 'background-color 0.12s',
+            position: 'relative',
           }}
           className="hover:bg-subtle"
         >
           <Bell size={16} aria-hidden="true" />
+          {unreadCount > 0 && (
+            <span
+              aria-label={unreadCount + ' unread notifications'}
+              style={{
+                position: 'absolute',
+                top: '2px',
+                right: '2px',
+                minWidth: '14px',
+                height: '14px',
+                borderRadius: '9999px',
+                background: 'var(--color-brand)',
+                color: 'var(--color-text-inverse)',
+                fontSize: '9px',
+                fontWeight: '700',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 3px',
+                lineHeight: 1,
+              }}
+            >
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
         </button>
 
         <button
@@ -439,7 +472,10 @@ export function Topbar() {
               </span>
               <button
                 type="button"
-                onClick={() => showToast('All notifications marked as read')}
+                onClick={() => {
+                  void markAllRead()
+                  showToast('All notifications marked as read')
+                }}
                 style={{
                   background: 'transparent',
                   border: 'none',
@@ -454,28 +490,83 @@ export function Topbar() {
               </button>
             </div>
 
-            <div style={{ padding: '32px 16px', textAlign: 'center' }}>
-              <div
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '9999px',
-                  background: 'var(--color-brand-subtle)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 12px',
-                }}
-              >
-                <Bell size={24} style={{ color: 'var(--color-brand)' }} />
+            {notifications.length === 0 ? (
+              <div style={{ padding: '32px 16px', textAlign: 'center' }}>
+                <p style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>
+                  No notifications yet
+                </p>
               </div>
-              <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text-default)' }}>
-                You&apos;re all caught up
-              </p>
-              <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                New notifications will appear here.
-              </p>
-            </div>
+            ) : (
+              <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
+                {notifications.slice(0, 5).map((notification) => (
+                  <div
+                    key={notification.id}
+                    style={{
+                      padding: '12px 16px',
+                      borderBottom: '1px solid var(--color-border-default)',
+                      display: 'flex',
+                      gap: '10px',
+                      alignItems: 'flex-start',
+                      background: notification.is_read
+                        ? 'transparent'
+                        : 'var(--color-brand-subtle)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '9999px',
+                        background: notification.from_user_color || 'var(--color-brand)',
+                        color: 'var(--color-text-inverse)',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {notification.from_user_initials || '?'}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p
+                        style={{
+                          fontSize: '13px',
+                          color: 'var(--color-text-default)',
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {notification.content}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: '11px',
+                          color: 'var(--color-text-muted)',
+                          marginTop: '4px',
+                        }}
+                      >
+                        {notification.from_user_name || 'Someone'} ·{' '}
+                        {formatRelativeTime(notification.created_at)}
+                      </p>
+                    </div>
+                    {!notification.is_read && (
+                      <span
+                        aria-label="Unread"
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '9999px',
+                          background: 'var(--color-brand)',
+                          flexShrink: 0,
+                          marginTop: '6px',
+                        }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div
               style={{
@@ -541,94 +632,92 @@ export function Topbar() {
                 {profile?.full_name || user?.email || 'My Account'}
               </p>
             </div>
+            <button
+              type="button"
+              onClick={() => {
+                setShowProfileMenu(false)
+                router.push('/profile')
+              }}
+              className="hover:bg-subtle"
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '8px 12px',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                color: 'var(--color-text-default)',
+                background: 'transparent',
+                border: 'none',
+                fontFamily: 'inherit',
+                textAlign: 'left',
+              }}
+            >
+              <User size={15} />
+              View profile
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowProfileMenu(false)
+                router.push('/settings')
+              }}
+              className="hover:bg-subtle"
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '8px 12px',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                color: 'var(--color-text-default)',
+                background: 'transparent',
+                border: 'none',
+                fontFamily: 'inherit',
+                textAlign: 'left',
+              }}
+            >
+              <Settings size={15} />
+              Settings
+            </button>
+            <div
+              style={{
+                height: '1px',
+                background: 'var(--color-border-default)',
+                margin: '4px 0',
+              }}
+            />
             {user ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowProfileMenu(false)
-                    router.push('/profile')
-                  }}
-                  className="hover:bg-subtle"
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '8px 12px',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    color: 'var(--color-text-default)',
-                    background: 'transparent',
-                    border: 'none',
-                    fontFamily: 'inherit',
-                    textAlign: 'left',
-                  }}
-                >
-                  <User size={15} />
-                  View profile
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowProfileMenu(false)
-                    router.push('/settings')
-                  }}
-                  className="hover:bg-subtle"
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '8px 12px',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    color: 'var(--color-text-default)',
-                    background: 'transparent',
-                    border: 'none',
-                    fontFamily: 'inherit',
-                    textAlign: 'left',
-                  }}
-                >
-                  <Settings size={15} />
-                  Settings
-                </button>
-                <div
-                  style={{
-                    height: '1px',
-                    background: 'var(--color-border-default)',
-                    margin: '4px 0',
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowProfileMenu(false)
-                    void signOut()
-                  }}
-                  className="hover:bg-subtle"
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '8px 12px',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    color: 'var(--color-brand)',
-                    background: 'transparent',
-                    border: 'none',
-                    fontFamily: 'inherit',
-                    textAlign: 'left',
-                  }}
-                >
-                  <LogOut size={15} />
-                  Sign out
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowProfileMenu(false)
+                  void signOut()
+                }}
+                className="hover:bg-subtle"
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 12px',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  color: 'var(--color-brand)',
+                  background: 'transparent',
+                  border: 'none',
+                  fontFamily: 'inherit',
+                  textAlign: 'left',
+                }}
+              >
+                <LogOut size={15} />
+                Sign out
+              </button>
             ) : (
               <button
                 type="button"

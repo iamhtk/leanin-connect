@@ -1,16 +1,21 @@
 import { createBrowserClient } from '@supabase/ssr'
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+let browserClient: SupabaseClient | null = null
 
 export function createClient() {
-  return createBrowserClient(
+  if (browserClient) {
+    return browserClient
+  }
+
+  browserClient = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
+
+  return browserClient
 }
 
-// Default export for backwards compatibility
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+const supabase = createClient()
 
 export default supabase

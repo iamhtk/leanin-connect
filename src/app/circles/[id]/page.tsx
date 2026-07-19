@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Users, Calendar, Send } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
-import { showToast } from '@/lib/utils'
+import { showToast, formatRelativeTime } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
+import { useCircleMessages } from '@/hooks/useCircleMessages'
 
 const CIRCLE_DETAILS: Record<
   string,
@@ -261,9 +263,16 @@ export default function CircleDetailPage() {
   const router = useRouter()
   const id = params.id as string
   const circle = CIRCLE_DETAILS[id]
+  const { user, profile } = useAuth()
+  const circleIdNum = parseInt(id, 10)
+  const { messages, isLoading: messagesLoading, sendMessage } = useCircleMessages(circleIdNum)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   const [activeTab, setActiveTab] = useState<'feed' | 'members' | 'resources'>('feed')
   const [postInput, setPostInput] = useState('')
-  const [posts, setPosts] = useState(() => circle?.posts ?? [])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   if (!circle) {
     return (
@@ -288,20 +297,20 @@ export default function CircleDetailPage() {
     )
   }
 
-  const handlePost = () => {
-    if (!postInput.trim()) return
-    setPosts((prev) => [
-      {
-        id: Date.now().toString(),
-        author: 'Hrithik Sanyal',
-        initials: 'HS',
-        color: '#7B2335',
-        content: postInput.trim(),
-        time: 'just now',
-      },
-      ...prev,
-    ])
-    setPostInput('')
+  const handlePost = async () => {
+    if (!postInput.trim() || !user || !profile) return
+    const success = await sendMessage({
+      userId: user.id,
+      authorName: profile.full_name || 'Community Member',
+      authorInitials: profile.initials || 'CM',
+      authorColor: profile.color || '#7B2335',
+      content: postInput.trim(),
+    })
+    if (success) {
+      setPostInput('')
+    } else {
+      showToast('Could not send message. Try again.')
+    }
   }
 
   return (
@@ -461,6 +470,28 @@ export default function CircleDetailPage() {
         <div style={{ maxWidth: '600px' }}>
           <div
             style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginBottom: '12px',
+            }}
+          >
+            <span
+              aria-hidden="true"
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '9999px',
+                background: 'var(--color-status-success)',
+              }}
+            />
+            <span style={{ fontSize: '10px', fontWeight: '600', color: 'var(--color-text-muted)' }}>
+              Live
+            </span>
+          </div>
+
+          <div
+            style={{
               background: 'var(--color-surface)',
               border: '1px solid var(--color-border-default)',
               borderRadius: '14px',
@@ -469,7 +500,11 @@ export default function CircleDetailPage() {
             }}
           >
             <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-              <Avatar initials="HS" color="#7B2335" size={36} />
+              <Avatar
+                initials={profile?.initials || 'HS'}
+                color={profile?.color || '#7B2335'}
+                size={36}
+              />
               <textarea
                 value={postInput}
                 onChange={(event) => setPostInput(event.target.value)}
@@ -500,21 +535,24 @@ export default function CircleDetailPage() {
             >
               <button
                 type="button"
-                onClick={handlePost}
-                disabled={!postInput.trim()}
+                onClick={() => {
+                  void handlePost()
+                }}
+                disabled={!postInput.trim() || !user}
                 aria-label="Post to circle"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  background: postInput.trim() ? 'var(--color-brand)' : 'var(--color-muted)',
+                  background:
+                    postInput.trim() && user ? 'var(--color-brand)' : 'var(--color-muted)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '9999px',
                   padding: '7px 16px',
                   fontSize: '13px',
                   fontWeight: '600',
-                  cursor: postInput.trim() ? 'pointer' : 'not-allowed',
+                  cursor: postInput.trim() && user ? 'pointer' : 'not-allowed',
                   fontFamily: 'inherit',
                 }}
               >
@@ -524,47 +562,70 @@ export default function CircleDetailPage() {
             </div>
           </div>
 
-          {posts.map((post) => (
-            <article
-              key={post.id}
-              style={{
-                background: 'var(--color-surface)',
-                border: '1px solid var(--color-border-default)',
-                borderRadius: '14px',
-                padding: '16px',
-                marginBottom: '8px',
-              }}
-              aria-label={'Post by ' + post.author}
-            >
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <Avatar initials={post.initials} color={post.color} size={36} />
-                <div>
-                  <div
+          {messagesLoading ? (
+            <div>
+              {[0, 1, 2].map((index) => (
+                <div
+                  key={index}
+                  className="skeleton"
+                  style={{
+                    height: '96px',
+                    marginBottom: '8px',
+                    borderRadius: '14px',
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <>
+              {messages.map((message) => (
+                <article
+                  key={message.id}
+                  style={{
+                    background: 'var(--color-surface)',
+                    border: '1px solid var(--color-border-default)',
+                    borderRadius: '14px',
+                    padding: '16px',
+                    marginBottom: '8px',
+                  }}
+                  aria-label={'Post by ' + message.author_name}
+                >
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <Avatar
+                      initials={message.author_initials}
+                      color={message.author_color}
+                      size={36}
+                    />
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: 'var(--color-text-default)',
+                        }}
+                      >
+                        {message.author_name}
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                        {formatRelativeTime(message.created_at)}
+                      </div>
+                    </div>
+                  </div>
+                  <p
                     style={{
                       fontSize: '14px',
-                      fontWeight: '600',
                       color: 'var(--color-text-default)',
+                      lineHeight: '1.6',
+                      marginTop: '10px',
                     }}
                   >
-                    {post.author}
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                    {post.time}
-                  </div>
-                </div>
-              </div>
-              <p
-                style={{
-                  fontSize: '14px',
-                  color: 'var(--color-text-default)',
-                  lineHeight: '1.6',
-                  marginTop: '10px',
-                }}
-              >
-                {post.content}
-              </p>
-            </article>
-          ))}
+                    {message.content}
+                  </p>
+                </article>
+              ))}
+              <div ref={messagesEndRef} />
+            </>
+          )}
         </div>
       )}
 

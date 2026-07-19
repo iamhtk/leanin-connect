@@ -39,9 +39,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClient()
 
   const fetchProfile = async (userId: string) => {
+    const supabase = createClient()
     const { data } = await supabase.from('profiles').select('*').eq('id', userId).single()
     if (data) {
       setProfile(data as Profile)
@@ -55,38 +55,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+    const supabase = createClient()
+    let isMounted = true
+
+    const applySession = (nextSession: Session | null) => {
+      if (!isMounted) return
       setSession(nextSession)
       setUser(nextSession?.user ?? null)
-      if (nextSession?.user) {
-        await fetchProfile(nextSession.user.id)
-      } else {
+      if (!nextSession?.user) {
         setProfile(null)
       }
       setIsLoading(false)
-    })
+    }
 
     const loadSession = async () => {
       const {
         data: { session: currentSession },
       } = await supabase.auth.getSession()
-      setSession(currentSession)
-      setUser(currentSession?.user ?? null)
+      applySession(currentSession)
       if (currentSession?.user) {
         await fetchProfile(currentSession.user.id)
       }
-      setIsLoading(false)
     }
 
     void loadSession()
 
-    return () => subscription.unsubscribe()
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- supabase client is stable for session lifetime
+    // Do not await Supabase calls inside this callback — it deadlocks the auth lock.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      applySession(nextSession)
+      if (nextSession?.user) {
+        const userId = nextSession.user.id
+        window.setTimeout(() => {
+          void fetchProfile(userId)
+        }, 0)
+      }
+    })
+
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signOut = async () => {
+    const supabase = createClient()
     await supabase.auth.signOut()
     setUser(null)
     setSession(null)
