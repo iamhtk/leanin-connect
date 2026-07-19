@@ -27,31 +27,40 @@ export function useRealtimeNotifications(userId: string | undefined) {
       setIsLoading(false)
       return
     }
-    const { data } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(20)
-    if (data) {
-      const rows = data as Notification[]
-      setNotifications(rows)
-      setUnreadCount(rows.filter((notification) => !notification.is_read).length)
+    try {
+      const { data } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(20)
+      if (data) {
+        const rows = data as Notification[]
+        setNotifications(rows)
+        setUnreadCount(rows.filter((notification) => !notification.is_read).length)
+      }
+    } catch (err) {
+      console.error('Failed to fetch notifications:', err)
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }, [userId, supabase])
 
   const markAllRead = useCallback(async () => {
     if (!userId) return
-    await supabase
-      .from('notifications')
-      .update({ is_read: true })
-      .eq('user_id', userId)
-      .eq('is_read', false)
-    setNotifications((previous) =>
-      previous.map((notification) => ({ ...notification, is_read: true }))
-    )
-    setUnreadCount(0)
+    try {
+      await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('user_id', userId)
+        .eq('is_read', false)
+      setNotifications((previous) =>
+        previous.map((notification) => ({ ...notification, is_read: true }))
+      )
+      setUnreadCount(0)
+    } catch (err) {
+      console.error('Failed to mark notifications read:', err)
+    }
   }, [userId, supabase])
 
   useEffect(() => {

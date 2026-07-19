@@ -27,14 +27,19 @@ export function useCircleMessages(
       setIsLoading(false)
       return
     }
-    const { data } = await supabase
-      .from('circle_messages')
-      .select('*')
-      .eq('circle_id', circleId)
-      .order('created_at', { ascending: true })
-      .limit(50)
-    if (data) setMessages(data as CircleMessage[])
-    setIsLoading(false)
+    try {
+      const { data } = await supabase
+        .from('circle_messages')
+        .select('*')
+        .eq('circle_id', circleId)
+        .order('created_at', { ascending: true })
+        .limit(50)
+      if (data) setMessages(data as CircleMessage[])
+    } catch (err) {
+      console.error('Failed to fetch circle messages:', err)
+    } finally {
+      setIsLoading(false)
+    }
   }, [circleId, supabase])
 
   const sendMessage = useCallback(
@@ -51,15 +56,20 @@ export function useCircleMessages(
       authorColor: string
       content: string
     }) => {
-      const { error } = await supabase.from('circle_messages').insert({
-        circle_id: circleId,
-        user_id: userId,
-        author_name: authorName,
-        author_initials: authorInitials,
-        author_color: authorColor,
-        content,
-      })
-      return !error
+      try {
+        const { error } = await supabase.from('circle_messages').insert({
+          circle_id: circleId,
+          user_id: userId,
+          author_name: authorName,
+          author_initials: authorInitials,
+          author_color: authorColor,
+          content,
+        })
+        return !error
+      } catch (err) {
+        console.error('Failed to send circle message:', err)
+        return false
+      }
     },
     [circleId, supabase]
   )

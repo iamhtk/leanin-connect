@@ -14,6 +14,14 @@ export async function POST(request: NextRequest) {
       history?: HistoryEntry[]
     }
 
+    const MAX_INPUT = 2000
+    const inputs = Object.values(body as Record<string, unknown>).filter(
+      (v): v is string => typeof v === 'string'
+    )
+    if (inputs.some((v) => v.length > MAX_INPUT)) {
+      return NextResponse.json({ error: 'Input too long' }, { status: 400 })
+    }
+
     const client = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
     })

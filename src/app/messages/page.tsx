@@ -123,7 +123,7 @@ export default function MessagesPage() {
       const result = await response.json()
       if (result.data) setAiStarters(result.data)
     } catch (error) {
-      console.error(error)
+      if (process.env.NODE_ENV === 'development') console.error(error)
     } finally {
       setIsLoadingStarters(false)
     }
@@ -214,7 +214,7 @@ export default function MessagesPage() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
       }, 50)
     } catch (err) {
-      console.error('AI reply failed:', err)
+      if (process.env.NODE_ENV === 'development') console.error('AI reply failed:', err)
       setConversations((prev) =>
         prev.map((c) => {
           if (c.id !== conversationId) return c

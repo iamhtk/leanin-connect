@@ -41,10 +41,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchProfile = async (userId: string) => {
-    const supabase = createClient()
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single()
-    if (data) {
-      setProfile(data as Profile)
+    try {
+      const supabase = createClient()
+      const { data } = await supabase.from('profiles').select('*').eq('id', userId).single()
+      if (data) {
+        setProfile(data as Profile)
+      }
+    } catch (err) {
+      console.error('Failed to fetch profile:', err)
     }
   }
 
@@ -101,11 +105,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     const supabase = createClient()
-    await supabase.auth.signOut()
-    setUser(null)
-    setSession(null)
-    setProfile(null)
-    window.location.href = '/auth/login'
+    try {
+      await supabase.auth.signOut()
+    } catch (err) {
+      console.error('Sign out error:', err)
+    } finally {
+      setUser(null)
+      setSession(null)
+      setProfile(null)
+      window.location.href = '/auth/login'
+    }
   }
 
   return (

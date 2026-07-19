@@ -280,7 +280,8 @@ export function CommandPalette() {
 
   useEffect(() => {
     if (isOpen) {
-      window.setTimeout(() => inputRef.current?.focus(), 50)
+      const timer = setTimeout(() => inputRef.current?.focus(), 50)
+      return () => clearTimeout(timer)
     }
   }, [isOpen])
 
