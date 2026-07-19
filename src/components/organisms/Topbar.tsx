@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Bell, Sparkles, User, Settings, LogOut } from 'lucide-react'
 import { showToast } from '@/lib/utils'
+import { AIAssistant } from '@/components/organisms/AIAssistant'
 
 export function Topbar() {
   const router = useRouter()
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [showAssistant, setShowAssistant] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const rightSectionRef = useRef<HTMLDivElement>(null)
 
@@ -106,13 +108,13 @@ export function Topbar() {
       >
         <button
           type="button"
-          onClick={() => showToast('AI Assistant coming soon')}
+          onClick={() => setShowAssistant(true)}
           style={{
             width: '32px',
             height: '32px',
             borderRadius: '8px',
             border: 'none',
-            backgroundColor: 'transparent',
+            backgroundColor: showAssistant ? 'var(--color-subtle)' : 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -371,6 +373,8 @@ export function Topbar() {
           </div>
         )}
       </div>
+
+      <AIAssistant isOpen={showAssistant} onClose={() => setShowAssistant(false)} />
     </header>
   )
 }
