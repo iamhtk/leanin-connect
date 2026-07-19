@@ -157,21 +157,21 @@ export function Topbar() {
               fontFamily: 'inherit',
             }}
           />
-          <span
+          <kbd
             style={{
-              marginLeft: 'auto',
               fontSize: '11px',
               color: 'var(--color-text-muted)',
-              backgroundColor: 'var(--color-subtle)',
+              background: 'var(--color-subtle)',
               border: '1px solid var(--color-border-default)',
-              borderRadius: 'var(--radius-sm)',
-              padding: '1px 5px',
-              flexShrink: 0,
+              borderRadius: '6px',
+              padding: '2px 7px',
+              fontFamily: 'inherit',
               whiteSpace: 'nowrap',
+              flexShrink: 0,
             }}
           >
-            ⌘K
-          </span>
+            ⌘ K
+          </kbd>
         </div>
 
         {showResults && (

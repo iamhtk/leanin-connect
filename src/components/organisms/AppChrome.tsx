@@ -11,7 +11,11 @@ export function AppChrome() {
   useEffect(() => {
     const open = () => setShowAssistant(true)
     window.addEventListener('open-assistant', open)
-    return () => window.removeEventListener('open-assistant', open)
+    window.addEventListener('open-ai-assistant', open)
+    return () => {
+      window.removeEventListener('open-assistant', open)
+      window.removeEventListener('open-ai-assistant', open)
+    }
   }, [])
 
   return (

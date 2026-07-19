@@ -3,6 +3,7 @@ import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { AuthenticatedShell } from '@/components/organisms/AuthenticatedShell'
+import { CommandPalette } from '@/components/organisms/CommandPalette'
 
 export const metadata: Metadata = {
   title: 'Lean In Connect',
@@ -46,6 +47,7 @@ export default function RootLayout({
         <AuthProvider>
           <ThemeProvider>
             <AuthenticatedShell>{children}</AuthenticatedShell>
+            <CommandPalette />
           </ThemeProvider>
         </AuthProvider>
       </body>
