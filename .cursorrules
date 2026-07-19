@@ -1,0 +1,72 @@
+# Lean In Connect — Cursor Rules
+# Design Engineer Assessment by Hrithik Sanyal
+
+## Stack
+Next.js 14 App Router, TypeScript strict, Tailwind CSS, shadcn/ui Nova preset,
+Framer Motion, Supabase, Anthropic Claude claude-sonnet-4-6, Vercel, Lucide React, DM Sans font.
+
+## Absolute Rules
+1. Zero hardcoded hex values. All colors via Tailwind token classes.
+2. Zero inline styles.
+3. Named exports only. No default exports from components.
+4. No 'any' TypeScript types. Ever.
+5. All AI calls in API routes only. Never in client components.
+6. No .then(). Always async/await.
+7. No console.log in final code.
+8. No <img> tags. Always next/image.
+
+## Component Structure
+- atoms/ → single element, no composition
+- molecules/ → 2+ atoms, single responsibility
+- organisms/ → full sections
+- ui/ → shadcn components, never manually edited
+
+## Props Pattern
+Every component gets a named Props interface:
+interface ButtonProps { ... }
+export function Button({ ... }: ButtonProps) { ... }
+
+## Tailwind Token Classes
+Use these class names (configured in tailwind.config.ts):
+Colors: bg-brand, bg-brand-hover, bg-surface, bg-subtle, bg-muted
+Text: text-default, text-secondary, text-muted, text-inverse, text-brand
+Border: border-default, border-strong, border-brand, border-focus
+Shadows: shadow-card, shadow-card-hover, shadow-modal
+
+## Framer Motion Pattern
+Card entrance:
+  initial={{ opacity: 0, y: 12 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3, ease: 'easeOut' }}
+
+Stagger parent:
+  variants={{ show: { transition: { staggerChildren: 0.06 } } }}
+
+Card hover:
+  whileHover={{ y: -2 }}
+  transition={{ duration: 0.15 }}
+
+## API Route Pattern
+export async function GET() {
+  try {
+    // logic
+    return NextResponse.json({ data: result })
+  } catch (error) {
+    return NextResponse.json({ error: 'message' }, { status: 500 })
+  }
+}
+
+## AI Route Pattern
+import Anthropic from '@anthropic-ai/sdk'
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const message = await client.messages.create({
+  model: 'claude-sonnet-4-6',
+  max_tokens: 1024,
+  system: 'You are helping women advance their careers...',
+  messages: [{ role: 'user', content: prompt }]
+})
+
+## Mission
+Every output — copy, empty states, AI responses, job listings —
+should feel warm, specific, and empowering for women navigating
+their careers. Never generic. Never corporate. Always human.
