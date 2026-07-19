@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Filter, Plus, X, Sparkles } from 'lucide-react'
 import { CoverImage } from '@/components/atoms/CoverImage'
@@ -88,6 +88,7 @@ export default function CirclesPage() {
   const [circleName, setCircleName] = useState('')
   const [circleAbout, setCircleAbout] = useState('')
   const [recommendations, setRecommendations] = useState<CircleRecommendation[]>([])
+  const triggerRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -113,6 +114,7 @@ export default function CirclesPage() {
     setIsOpen(false)
     setCircleName('')
     setCircleAbout('')
+    setTimeout(() => triggerRef.current?.focus(), 50)
   }
 
   const handleCreateCircle = () => {
@@ -208,6 +210,7 @@ export default function CirclesPage() {
           </button>
           <button
             type="button"
+            ref={triggerRef}
             onClick={() => setIsOpen(true)}
             style={{
               display: 'flex',
@@ -224,7 +227,7 @@ export default function CirclesPage() {
               fontFamily: 'inherit',
             }}
           >
-            <Plus size={14} />
+            <Plus size={14} aria-hidden="true" />
             Start a Circle
           </button>
         </div>
@@ -307,7 +310,7 @@ export default function CirclesPage() {
                   alignItems: 'center',
                   gap: '6px',
                   marginBottom: '12px',
-                  fontSize: '11px',
+                  fontSize: '12px',
                   fontWeight: '600',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
@@ -366,7 +369,7 @@ export default function CirclesPage() {
                       <div style={{ padding: '14px' }}>
                       <span
                         style={{
-                          fontSize: '10px',
+                          fontSize: '12px',
                           fontWeight: '600',
                           letterSpacing: '0.08em',
                           textTransform: 'uppercase',
@@ -460,7 +463,7 @@ export default function CirclesPage() {
                         left: '10px',
                         background: 'rgba(255,255,255,0.2)',
                         color: 'white',
-                        fontSize: '10px',
+                        fontSize: '12px',
                         fontWeight: '600',
                         letterSpacing: '0.08em',
                         padding: '3px 8px',
@@ -621,7 +624,7 @@ export default function CirclesPage() {
                   display: 'flex',
                 }}
               >
-                <X size={18} />
+                <X size={18} aria-hidden="true" />
               </button>
             </div>
 

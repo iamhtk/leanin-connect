@@ -359,6 +359,8 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                   overflow: 'hidden',
                   background: 'var(--color-surface)',
                 }}
+                role="status"
+                aria-live="polite"
               >
                 <RichTextEditor
                   key={editorKey}

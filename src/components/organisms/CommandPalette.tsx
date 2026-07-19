@@ -49,6 +49,7 @@ export function CommandPalette() {
   const [activeIndex, setActiveIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
+  const lastFocusRef = useRef<HTMLElement | null>(null)
   const router = useRouter()
   const { theme, toggleTheme } = useTheme()
   const { signOut } = useAuth()
@@ -66,7 +67,7 @@ export function CommandPalette() {
     {
       id: 'feed',
       label: 'Go to Feed',
-      icon: <Home size={15} />,
+      icon: <Home size={15} aria-hidden="true" />,
       action: () => navigate('/feed'),
       group: 'Navigation',
       keywords: ['home', 'posts', 'community'],
@@ -75,7 +76,7 @@ export function CommandPalette() {
       id: 'jobs',
       label: 'Go to Opportunities',
       description: 'Browse jobs and apply',
-      icon: <Briefcase size={15} />,
+      icon: <Briefcase size={15} aria-hidden="true" />,
       action: () => navigate('/jobs'),
       group: 'Navigation',
       keywords: ['jobs', 'career', 'work', 'hiring'],
@@ -83,7 +84,7 @@ export function CommandPalette() {
     {
       id: 'messages',
       label: 'Go to Messages',
-      icon: <MessageSquare size={15} />,
+      icon: <MessageSquare size={15} aria-hidden="true" />,
       action: () => navigate('/messages'),
       group: 'Navigation',
       keywords: ['chat', 'dm', 'inbox'],
@@ -91,7 +92,7 @@ export function CommandPalette() {
     {
       id: 'circles',
       label: 'Go to Circles',
-      icon: <Users size={15} />,
+      icon: <Users size={15} aria-hidden="true" />,
       action: () => navigate('/circles'),
       group: 'Navigation',
       keywords: ['groups', 'community', 'teams'],
@@ -99,7 +100,7 @@ export function CommandPalette() {
     {
       id: 'networks',
       label: 'Go to Networks',
-      icon: <Globe size={15} />,
+      icon: <Globe size={15} aria-hidden="true" />,
       action: () => navigate('/networks'),
       group: 'Navigation',
       keywords: ['community', 'region'],
@@ -107,7 +108,7 @@ export function CommandPalette() {
     {
       id: 'groups',
       label: 'Go to Groups',
-      icon: <Grid size={15} />,
+      icon: <Grid size={15} aria-hidden="true" />,
       action: () => navigate('/groups'),
       group: 'Navigation',
     },
@@ -115,7 +116,7 @@ export function CommandPalette() {
       id: 'directory',
       label: 'Go to Directory',
       description: 'Find members',
-      icon: <Users size={15} />,
+      icon: <Users size={15} aria-hidden="true" />,
       action: () => navigate('/directory'),
       group: 'Navigation',
       keywords: ['members', 'people', 'find'],
@@ -123,7 +124,7 @@ export function CommandPalette() {
     {
       id: 'events',
       label: 'Go to Events',
-      icon: <Calendar size={15} />,
+      icon: <Calendar size={15} aria-hidden="true" />,
       action: () => navigate('/events'),
       group: 'Navigation',
       keywords: ['meetups', 'webinars'],
@@ -131,7 +132,7 @@ export function CommandPalette() {
     {
       id: 'resources',
       label: 'Go to Resources',
-      icon: <BookOpen size={15} />,
+      icon: <BookOpen size={15} aria-hidden="true" />,
       action: () => navigate('/resources'),
       group: 'Navigation',
       keywords: ['articles', 'videos', 'learn'],
@@ -139,14 +140,14 @@ export function CommandPalette() {
     {
       id: 'notifications',
       label: 'Go to Notifications',
-      icon: <Bell size={15} />,
+      icon: <Bell size={15} aria-hidden="true" />,
       action: () => navigate('/notifications'),
       group: 'Navigation',
     },
     {
       id: 'profile',
       label: 'Go to Profile',
-      icon: <User size={15} />,
+      icon: <User size={15} aria-hidden="true" />,
       action: () => navigate('/profile'),
       group: 'Navigation',
       keywords: ['account', 'me'],
@@ -154,7 +155,7 @@ export function CommandPalette() {
     {
       id: 'settings',
       label: 'Go to Settings',
-      icon: <Settings size={15} />,
+      icon: <Settings size={15} aria-hidden="true" />,
       action: () => navigate('/settings'),
       group: 'Navigation',
       keywords: ['preferences', 'account'],
@@ -162,7 +163,7 @@ export function CommandPalette() {
     {
       id: 'theme',
       label: theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode',
-      icon: theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />,
+      icon: theme === 'dark' ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />,
       action: () => {
         toggleTheme()
         setIsOpen(false)
@@ -174,7 +175,7 @@ export function CommandPalette() {
       id: 'post',
       label: 'Create a Post',
       description: 'Share with the community',
-      icon: <Hash size={15} />,
+      icon: <Hash size={15} aria-hidden="true" />,
       action: () => {
         navigate('/feed')
         window.setTimeout(() => {
@@ -188,7 +189,7 @@ export function CommandPalette() {
       id: 'ai',
       label: 'Open AI Assistant',
       description: 'Chat with your community guide',
-      icon: <Sparkles size={15} />,
+      icon: <Sparkles size={15} aria-hidden="true" />,
       action: () => {
         navigate('/feed')
         window.setTimeout(() => {
@@ -201,7 +202,7 @@ export function CommandPalette() {
     {
       id: 'signout',
       label: 'Sign Out',
-      icon: <LogOut size={15} />,
+      icon: <LogOut size={15} aria-hidden="true" />,
       action: () => {
         void signOut()
         setIsOpen(false)
@@ -212,7 +213,7 @@ export function CommandPalette() {
     {
       id: 'topic-negotiation',
       label: 'Browse Negotiation posts',
-      icon: <Hash size={15} />,
+      icon: <Hash size={15} aria-hidden="true" />,
       action: () => navigate('/feed?topic=Negotiation'),
       group: 'Topics',
       keywords: ['salary', 'negotiate', 'pay'],
@@ -220,21 +221,21 @@ export function CommandPalette() {
     {
       id: 'topic-promotions',
       label: 'Browse Promotions posts',
-      icon: <Hash size={15} />,
+      icon: <Hash size={15} aria-hidden="true" />,
       action: () => navigate('/feed?topic=Promotions'),
       group: 'Topics',
     },
     {
       id: 'topic-leadership',
       label: 'Browse Leadership posts',
-      icon: <Hash size={15} />,
+      icon: <Hash size={15} aria-hidden="true" />,
       action: () => navigate('/feed?topic=Leadership'),
       group: 'Topics',
     },
     {
       id: 'topic-bias',
       label: 'Browse Bias at Work posts',
-      icon: <Hash size={15} />,
+      icon: <Hash size={15} aria-hidden="true" />,
       action: () => navigate('/feed?topic=Bias%20at%20Work'),
       group: 'Topics',
     },
@@ -280,8 +281,15 @@ export function CommandPalette() {
 
   useEffect(() => {
     if (isOpen) {
+      lastFocusRef.current = document.activeElement as HTMLElement
       const timer = setTimeout(() => inputRef.current?.focus(), 50)
       return () => clearTimeout(timer)
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen && lastFocusRef.current) {
+      lastFocusRef.current.focus()
     }
   }, [isOpen])
 

@@ -42,6 +42,12 @@ export default function MessagesPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const layoutRef = useRef<HTMLElement>(null)
   const leftPanelWidthRef = useRef(300)
+  const newMessageTriggerRef = useRef<HTMLButtonElement>(null)
+
+  const closeNewMessageModal = () => {
+    setShowNewMessage(false)
+    setTimeout(() => newMessageTriggerRef.current?.focus(), 50)
+  }
 
   const selectedConversation = conversations.find((c) => c.id === selectedId)
 
@@ -263,6 +269,7 @@ export default function MessagesPage() {
           </h1>
           <button
             type="button"
+            ref={newMessageTriggerRef}
             aria-label="New message"
             onClick={() => setShowNewMessage(true)}
             style={{
@@ -280,7 +287,7 @@ export default function MessagesPage() {
               color: 'white',
             }}
           >
-            <Plus size={16} />
+            <Plus size={16} aria-hidden="true" />
           </button>
         </div>
 
@@ -515,7 +522,7 @@ export default function MessagesPage() {
                 flexShrink: 0,
               }}
             >
-              <ArrowLeft size={18} />
+              <ArrowLeft size={18} aria-hidden="true" />
             </button>
             <ConversationAvatar conversation={selectedConversation} size={36} />
             <div style={{ flex: 1 }}>
@@ -601,7 +608,7 @@ export default function MessagesPage() {
                     alignItems: 'center',
                   }}
                 >
-                  <X size={14} />
+                  <X size={14} aria-hidden="true" />
                 </button>
               </div>
               {isLoadingStarters ? (
@@ -692,7 +699,12 @@ export default function MessagesPage() {
                     }}
                   >
                     {!message.is_sent && message.content === '...' ? (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', minHeight: '18px' }}>
+                      <span
+                        role="status"
+                        aria-live="polite"
+                        aria-label="Recipient is typing"
+                        style={{ display: 'inline-flex', alignItems: 'center', minHeight: '18px' }}
+                      >
                         <span
                           className="typing-dot"
                           style={{
@@ -822,7 +834,7 @@ export default function MessagesPage() {
                 transition: 'background 0.12s',
               }}
             >
-              <Send size={16} />
+              <Send size={16} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -886,9 +898,9 @@ export default function MessagesPage() {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onClick={() => setShowNewMessage(false)}
+          onClick={closeNewMessageModal}
           onKeyDown={(e) => {
-            if (e.key === 'Escape') setShowNewMessage(false)
+            if (e.key === 'Escape') closeNewMessageModal()
           }}
         >
           <div
@@ -921,7 +933,7 @@ export default function MessagesPage() {
               <button
                 type="button"
                 aria-label="Close new message dialog"
-                onClick={() => setShowNewMessage(false)}
+                onClick={closeNewMessageModal}
                 style={{
                   background: 'transparent',
                   border: 'none',
@@ -931,7 +943,7 @@ export default function MessagesPage() {
                   padding: '4px',
                 }}
               >
-                <X size={18} />
+                <X size={18} aria-hidden="true" />
               </button>
             </div>
 
@@ -988,7 +1000,7 @@ export default function MessagesPage() {
                     type="button"
                     onClick={() => {
                       setSelectedId(conversation.id)
-                      setShowNewMessage(false)
+                      closeNewMessageModal()
                       setMemberSearch('')
                     }}
                     className="hover:bg-subtle"

@@ -162,7 +162,7 @@ export function Topbar() {
           />
           <kbd
             style={{
-              fontSize: '11px',
+              fontSize: '12px',
               color: 'var(--color-text-muted)',
               background: 'var(--color-subtle)',
               border: '1px solid var(--color-border-default)',
@@ -179,6 +179,8 @@ export function Topbar() {
 
         {showResults && (
           <div
+            aria-live="polite"
+            aria-atomic="true"
             style={{
               position: 'absolute',
               top: '46px',
@@ -221,7 +223,9 @@ export function Topbar() {
                   style={{ color: 'var(--color-brand)', animation: 'spin 1s linear infinite' }}
                   aria-hidden="true"
                 />
-                <span style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Searching...</span>
+                <span aria-live="polite" style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>
+                  Searching...
+                </span>
               </div>
             )}
 
@@ -247,7 +251,7 @@ export function Topbar() {
                     <div key={category.key} style={{ marginBottom: '12px' }}>
                       <p
                         style={{
-                          fontSize: '10px',
+                          fontSize: '12px',
                           fontWeight: '600',
                           textTransform: 'uppercase',
                           color: 'var(--color-text-muted)',
@@ -557,7 +561,7 @@ export function Topbar() {
                       </p>
                       <p
                         style={{
-                          fontSize: '11px',
+                          fontSize: '12px',
                           color: 'var(--color-text-muted)',
                           marginTop: '4px',
                         }}

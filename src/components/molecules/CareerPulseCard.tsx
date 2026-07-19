@@ -27,10 +27,14 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
 
   if (!data) {
     return (
-      <div style={{ ...CONTAINER_STYLE, padding: '16px' }}>
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        style={{ ...CONTAINER_STYLE, padding: '16px' }}
+      >
         <p
           style={{
-            fontSize: '11px',
+            fontSize: '12px',
             fontWeight: '600',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
@@ -63,7 +67,7 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
         overlayOpacity={0.4}
         sizes="(max-width: 1279px) 100vw, 320px"
       />
-      <div style={{ padding: '16px' }}>
+      <div style={{ padding: '16px' }} aria-live="polite">
         <div
           style={{
             display: 'flex',
@@ -74,7 +78,7 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
         >
           <p
             style={{
-              fontSize: '11px',
+              fontSize: '12px',
               fontWeight: '600',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
@@ -85,7 +89,7 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
           </p>
           <span
             style={{
-              fontSize: '10px',
+              fontSize: '12px',
               fontWeight: '500',
               backgroundColor: 'var(--color-brand-subtle)',
               color: 'var(--color-brand)',
@@ -108,7 +112,7 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
         >
           {data.stat}
         </p>
-        <p style={{ fontSize: '10px', color: 'var(--color-text-muted)', marginBottom: '10px' }}>
+        <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '10px' }}>
           {data.stat_source}
         </p>
 
@@ -127,7 +131,7 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
 
         <p
           style={{
-            fontSize: '10px',
+            fontSize: '12px',
             fontWeight: '600',
             letterSpacing: '0.06em',
             color: 'var(--color-text-muted)',

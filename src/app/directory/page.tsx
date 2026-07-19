@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { Search, Filter, UserPlus, MapPin, X } from 'lucide-react'
 import { showToast } from '@/lib/utils'
 import { COVER_IMAGES, getPortraitUrl } from '@/lib/cover-images'
@@ -161,6 +161,7 @@ export default function DirectoryPage() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteMessage, setInviteMessage] = useState('')
   const [connectedIds, setConnectedIds] = useState<Set<number>>(new Set())
+  const triggerRef = useRef<HTMLButtonElement>(null)
 
   const baseMembers = useMemo(() => {
     if (activeTab === 'circles') return MOCK_MEMBERS.slice(0, 3)
@@ -177,6 +178,7 @@ export default function DirectoryPage() {
     setIsInviteOpen(false)
     setInviteEmail('')
     setInviteMessage('')
+    setTimeout(() => triggerRef.current?.focus(), 50)
   }
 
   const handleSendInvitation = () => {
@@ -264,6 +266,7 @@ export default function DirectoryPage() {
           </button>
           <button
             type="button"
+            ref={triggerRef}
             onClick={() => setIsInviteOpen(true)}
             style={{
               display: 'flex',
@@ -280,7 +283,7 @@ export default function DirectoryPage() {
               fontFamily: 'inherit',
             }}
           >
-            <UserPlus size={14} />
+            <UserPlus size={14} aria-hidden="true" />
             Invite a new member
           </button>
         </div>
@@ -444,7 +447,7 @@ export default function DirectoryPage() {
                   display: 'flex',
                 }}
               >
-                <X size={18} />
+                <X size={18} aria-hidden="true" />
               </button>
             </div>
 

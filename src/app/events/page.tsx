@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { Search, Filter, Plus, Calendar, Users, X } from 'lucide-react'
 import { showToast } from '@/lib/utils'
 import { COVER_IMAGES } from '@/lib/cover-images'
@@ -75,6 +75,7 @@ export default function EventsPage() {
   const [proposeFormat, setProposeFormat] = useState<EventFormat>('Virtual')
   const [proposeDescription, setProposeDescription] = useState('')
   const [rsvpIds, setRsvpIds] = useState<Set<number>>(new Set())
+  const triggerRef = useRef<HTMLButtonElement>(null)
 
   const filteredEvents = useMemo(
     () => filterEventsByTitle(MOCK_EVENTS, searchQuery),
@@ -87,6 +88,7 @@ export default function EventsPage() {
     setProposeDateTime('')
     setProposeFormat('Virtual')
     setProposeDescription('')
+    setTimeout(() => triggerRef.current?.focus(), 50)
   }
 
   const handleSubmitProposal = () => {
@@ -178,6 +180,7 @@ export default function EventsPage() {
           </button>
           <button
             type="button"
+            ref={triggerRef}
             onClick={openProposeModal}
             style={{
               display: 'flex',
@@ -194,7 +197,7 @@ export default function EventsPage() {
               fontFamily: 'inherit',
             }}
           >
-            <Plus size={14} />
+            <Plus size={14} aria-hidden="true" />
             New event
           </button>
         </div>
@@ -646,7 +649,7 @@ export default function EventsPage() {
                   display: 'flex',
                 }}
               >
-                <X size={18} />
+                <X size={18} aria-hidden="true" />
               </button>
             </div>
 

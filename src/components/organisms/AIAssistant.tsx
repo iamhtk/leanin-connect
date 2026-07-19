@@ -133,11 +133,11 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
             className="ai-assistant-close"
             aria-label="Close assistant"
           >
-            <X size={16} />
+            <X size={16} aria-hidden="true" />
           </button>
         </div>
 
-        <div className="ai-assistant-messages">
+        <div className="ai-assistant-messages" aria-live="polite" aria-atomic="false">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -222,9 +222,9 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
             aria-label="Send message"
           >
             {isLoading ? (
-              <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+              <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} aria-hidden="true" />
             ) : (
-              <Send size={16} />
+              <Send size={16} aria-hidden="true" />
             )}
           </button>
         </div>

@@ -34,7 +34,7 @@ export function MobileNav() {
               gap: '2px',
               color: isActive ? 'var(--color-brand)' : 'var(--color-text-muted)',
               textDecoration: 'none',
-              fontSize: '10px',
+              fontSize: '12px',
               fontWeight: isActive ? '600' : '500',
               minHeight: '44px',
               letterSpacing: '-0.01em',
