@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { MessageSquare, Edit, Globe, Sparkles } from 'lucide-react'
+import { useEffect, useRef, useState, type ChangeEvent, type MouseEvent } from 'react'
+import { MessageSquare, Edit, Globe, Sparkles, Camera, Loader2 } from 'lucide-react'
+import Image from 'next/image'
 import { Avatar } from '@/components/atoms/Avatar'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
 
 const DEFAULT_NAME = 'Hrithik Sanyal'
 const DEFAULT_TITLE = 'Design Engineer'
@@ -22,6 +24,7 @@ interface ProfileStrength {
 
 export default function ProfilePage() {
   const router = useRouter()
+  const { profile, refreshProfile } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [name, setName] = useState(DEFAULT_NAME)
   const [title, setTitle] = useState(DEFAULT_TITLE)
@@ -31,6 +34,13 @@ export default function ProfilePage() {
   const [draftLocation, setDraftLocation] = useState(location)
   const [profileStrength, setProfileStrength] = useState<ProfileStrength | null>(null)
   const [isLoadingStrength, setIsLoadingStrength] = useState(true)
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (profile?.full_name) setName(profile.full_name)
+    if (profile?.role) setTitle(profile.role)
+  }, [profile])
 
   useEffect(() => {
     const fetchStrength = async () => {
@@ -49,6 +59,44 @@ export default function ProfilePage() {
 
     void fetchStrength()
   }, [])
+
+  const handlePhotoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    setIsUploadingPhoto(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const response = await fetch('/api/profile-photo', {
+        method: 'POST',
+        body: formData,
+      })
+      const data = (await response.json()) as { data?: { url: string }; error?: string }
+      if (data.data?.url) {
+        await refreshProfile()
+        showToast('Profile photo updated')
+      } else {
+        showToast('Upload failed: ' + (data.error || 'Unknown error'))
+      }
+    } catch {
+      showToast('Upload failed')
+    } finally {
+      setIsUploadingPhoto(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const handleAvatarMouseEnter = (event: MouseEvent<HTMLButtonElement>) => {
+    event.currentTarget.style.background = 'color-mix(in srgb, var(--color-text-default) 40%, transparent)'
+    const icon = event.currentTarget.querySelector('svg')
+    if (icon) icon.style.opacity = '1'
+  }
+
+  const handleAvatarMouseLeave = (event: MouseEvent<HTMLButtonElement>) => {
+    event.currentTarget.style.background = 'transparent'
+    const icon = event.currentTarget.querySelector('svg')
+    if (icon && !isUploadingPhoto) icon.style.opacity = '0'
+  }
 
   const startEditing = () => {
     setDraftName(name)
@@ -85,6 +133,9 @@ export default function ProfilePage() {
     boxSizing: 'border-box' as const,
   }
 
+  const avatarInitials = profile?.initials || 'HS'
+  const avatarColor = profile?.color || '#7B2335'
+
   return (
     <main aria-label="Profile">
       <div
@@ -110,7 +161,64 @@ export default function ProfilePage() {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'center' }}>
-          <Avatar initials="HS" color="#7B2335" size={56} />
+          <div style={{ position: 'relative', width: '56px', height: '56px', flexShrink: 0 }}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              onChange={handlePhotoUpload}
+              style={{ display: 'none' }}
+              aria-label="Upload profile photo"
+            />
+            {profile?.avatar_url ? (
+              <Image
+                src={profile.avatar_url}
+                alt={name + ' profile photo'}
+                width={56}
+                height={56}
+                unoptimized
+                style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '9999px',
+                  objectFit: 'cover',
+                }}
+              />
+            ) : (
+              <Avatar initials={avatarInitials} color={avatarColor} size={56} />
+            )}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploadingPhoto}
+              aria-label="Change profile photo"
+              onMouseEnter={handleAvatarMouseEnter}
+              onMouseLeave={handleAvatarMouseLeave}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '50%',
+                background: 'transparent',
+                border: 'none',
+                cursor: isUploadingPhoto ? 'wait' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background 0.15s',
+              }}
+            >
+              {isUploadingPhoto ? (
+                <Loader2
+                  size={20}
+                  color="white"
+                  style={{ animation: 'spin 1s linear infinite' }}
+                  aria-hidden="true"
+                />
+              ) : (
+                <Camera size={20} color="white" style={{ opacity: 0 }} aria-hidden="true" />
+              )}
+            </button>
+          </div>
           <div>
             {isEditing ? (
               <>

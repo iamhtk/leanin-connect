@@ -30,6 +30,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
   const [isVoiceCoachOpen, setIsVoiceCoachOpen] = useState(false)
   const [voiceCoachNotes, setVoiceCoachNotes] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [pulsingTopic, setPulsingTopic] = useState<string | null>(null)
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -72,6 +73,26 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
         if (done) break
         accumulated += decoder.decode(value, { stream: true })
         setContent(accumulated.slice(0, MAX_LENGTH))
+      }
+
+      const streamedText = accumulated.trim()
+      if (streamedText) {
+        const classifyResponse = await fetch('/api/ai/classify-topic', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: streamedText }),
+        })
+        const classifyResult = (await classifyResponse.json()) as {
+          data?: { topic: string | null }
+        }
+        const topic = classifyResult.data?.topic
+        if (topic) {
+          setSelectedTopic(topic)
+          setPulsingTopic(topic)
+          window.setTimeout(() => {
+            setPulsingTopic(null)
+          }, 1500)
+        }
       }
 
       setIsVoiceCoachOpen(false)
@@ -323,6 +344,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {SELECTABLE_TOPICS.map((tag) => {
                   const isSelected = selectedTopic === tag.value
+                  const isPulsing = pulsingTopic === tag.value
 
                   return (
                     <button
@@ -331,12 +353,20 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                       onClick={() => setSelectedTopic(tag.value)}
                       style={{
                         backgroundColor: isSelected ? 'var(--color-brand)' : 'var(--color-subtle)',
-                        color: isSelected ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
-                        border: 'none',
+                        color: isSelected
+                          ? 'var(--color-text-inverse)'
+                          : 'var(--color-text-secondary)',
+                        border: isPulsing
+                          ? '2px solid var(--color-brand)'
+                          : '2px solid transparent',
                         borderRadius: 'var(--radius-full)',
                         padding: '6px 14px',
                         fontSize: '12px',
                         cursor: 'pointer',
+                        transition: 'border-color 1.5s ease, background-color 0.12s ease',
+                        boxShadow: isPulsing
+                          ? '0 0 0 3px color-mix(in srgb, var(--color-brand) 25%, transparent)'
+                          : 'none',
                       }}
                     >
                       {tag.label}
