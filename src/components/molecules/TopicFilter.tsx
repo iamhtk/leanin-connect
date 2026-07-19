@@ -10,12 +10,14 @@ export interface TopicFilterProps {
 
 export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
   return (
-    <nav aria-label="Filter by topic">
+    <nav aria-label="Filter by topic" style={{ width: '100%' }}>
       <div
         role="tablist"
         style={{
           display: 'flex',
-          gap: '4px',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
           overflowX: 'auto',
           paddingBottom: '0',
           scrollbarWidth: 'none',
@@ -42,9 +44,9 @@ export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
                 backgroundColor: isActive ? 'var(--color-text-default)' : 'transparent',
                 color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
                 border: 'none',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: '600',
-                padding: '6px 14px',
+                padding: '6px 10px',
                 borderRadius: 'var(--radius-full)',
                 whiteSpace: 'nowrap',
                 cursor: 'pointer',

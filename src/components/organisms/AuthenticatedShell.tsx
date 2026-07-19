@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { Sidebar } from '@/components/organisms/Sidebar'
 import { Topbar } from '@/components/organisms/Topbar'
@@ -13,6 +14,34 @@ interface AuthenticatedShellProps {
 export function AuthenticatedShell({ children }: AuthenticatedShellProps) {
   const pathname = usePathname()
   const isAuthRoute = pathname.startsWith('/auth')
+  const mainRef = useRef<HTMLElement>(null)
+  const scrollHideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (isAuthRoute) return
+
+    const main = mainRef.current
+    if (!main) return
+
+    const handleScroll = () => {
+      main.classList.add('is-scrolling')
+      if (scrollHideTimeoutRef.current) {
+        clearTimeout(scrollHideTimeoutRef.current)
+      }
+      scrollHideTimeoutRef.current = setTimeout(() => {
+        main.classList.remove('is-scrolling')
+      }, 900)
+    }
+
+    main.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      main.removeEventListener('scroll', handleScroll)
+      if (scrollHideTimeoutRef.current) {
+        clearTimeout(scrollHideTimeoutRef.current)
+      }
+    }
+  }, [isAuthRoute])
 
   if (isAuthRoute) {
     return <>{children}</>
@@ -27,7 +56,11 @@ export function AuthenticatedShell({ children }: AuthenticatedShellProps) {
         <Sidebar />
         <div className="app-shell-content">
           <Topbar />
-          <main id="main-content" className="flex-1 overflow-y-auto overflow-x-clip min-w-0">
+          <main
+            ref={mainRef}
+            id="main-content"
+            className="flex-1 overflow-y-auto overflow-x-clip min-w-0"
+          >
             <PageTransition>{children}</PageTransition>
           </main>
         </div>

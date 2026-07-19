@@ -310,9 +310,11 @@ button {
 
 .feed-page .feed-right-column {
   padding-top: 0;
-  /* Keep a gap under the Topbar when this column sticks */
   top: 16px;
-  height: calc(100vh - 16px);
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  border-left: 1px solid var(--color-border-default);
 }
 
 .feed-greeting-banner {
@@ -1338,6 +1340,24 @@ button {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
+}
+
+/* Main page scroller: hidden until user scrolls, then fades away */
+#main-content {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+#main-content::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+#main-content.is-scrolling {
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+#main-content.is-scrolling::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
 }
 
 /* Button press effect */
