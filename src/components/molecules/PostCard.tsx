@@ -1,41 +1,87 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Heart, MessageCircle, Bookmark } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
 import { formatRelativeTime } from '@/lib/utils'
+import { createClient } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 import type { Post } from '@/lib/types'
 
 export interface PostCardProps {
   post: Post
   index: number
   onSave?: (postId: string) => void
+  onLike?: (postId: string, liked: boolean) => void
 }
 
-export function PostCard({ post, index, onSave }: PostCardProps) {
-  const [isSaved, setIsSaved] = useState(false)
+function readSavedIds(): string[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const saved = localStorage.getItem('lean_in_saved_posts')
+    if (!saved) return []
+    const parsed: unknown = JSON.parse(saved)
+    return Array.isArray(parsed)
+      ? parsed.filter((id): id is string => typeof id === 'string')
+      : []
+  } catch {
+    return []
+  }
+}
 
-  useEffect(() => {
+export function PostCard({ post, index, onSave, onLike }: PostCardProps) {
+  const { user } = useAuth()
+  const supabase = createClient()
+  const [isLiked, setIsLiked] = useState(false)
+  const [localLikesCount, setLocalLikesCount] = useState(post.likes_count)
+  const [isLiking, setIsLiking] = useState(false)
+  const [isSaved, setIsSaved] = useState(() => readSavedIds().includes(post.id))
+  const [bookmarkPulse, setBookmarkPulse] = useState(false)
+
+  const handleLike = async () => {
+    if (!user || isLiking) return
+    setIsLiking(true)
+
+    const optimisticLiked = !isLiked
+    const previousCount = localLikesCount
+    const optimisticCount = previousCount + (optimisticLiked ? 1 : -1)
+    setIsLiked(optimisticLiked)
+    setLocalLikesCount(optimisticCount)
+
     try {
-      const saved = localStorage.getItem('lean_in_saved_posts')
-      if (saved) {
-        const ids = JSON.parse(saved) as string[]
-        setIsSaved(ids.includes(post.id))
+      if (optimisticLiked) {
+        const { error } = await supabase
+          .from('likes')
+          .insert({ post_id: post.id, user_id: user.id })
+        if (error) throw error
+      } else {
+        const { error } = await supabase
+          .from('likes')
+          .delete()
+          .match({ post_id: post.id, user_id: user.id })
+        if (error) throw error
       }
+      onLike?.(post.id, optimisticLiked)
     } catch {
-      // ignore localStorage errors
+      setIsLiked(!optimisticLiked)
+      setLocalLikesCount(previousCount)
+    } finally {
+      setIsLiking(false)
     }
-  }, [post.id])
+  }
 
-  const handleBookmarkClick = () => {
+  const handleBookmark = () => {
     try {
-      const saved = localStorage.getItem('lean_in_saved_posts')
-      const ids: string[] = saved ? (JSON.parse(saved) as string[]) : []
-      const newIds = isSaved ? ids.filter((id) => id !== post.id) : [...ids, post.id]
-      localStorage.setItem('lean_in_saved_posts', JSON.stringify(newIds))
+      const saved = readSavedIds()
+      const newSaved = isSaved
+        ? saved.filter((id) => id !== post.id)
+        : [...saved, post.id]
+      localStorage.setItem('lean_in_saved_posts', JSON.stringify(newSaved))
       setIsSaved(!isSaved)
-      if (onSave) onSave(post.id)
+      setBookmarkPulse(true)
+      window.setTimeout(() => setBookmarkPulse(false), 200)
+      onSave?.(post.id)
     } catch {
       // ignore localStorage errors
     }
@@ -106,24 +152,35 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
       >
         <button
           type="button"
-          aria-label={'Like, ' + post.likes_count + ' likes'}
+          onClick={(event) => {
+            event.stopPropagation()
+            void handleLike()
+          }}
+          aria-label={'Like, ' + localLikesCount + ' likes'}
+          aria-pressed={isLiked}
+          disabled={!user || isLiking}
           className="hover:text-[var(--color-text-default)]"
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '5px',
             fontSize: '13px',
-            color: 'var(--color-text-muted)',
-            cursor: 'pointer',
+            color: isLiked ? 'var(--color-brand)' : 'var(--color-text-muted)',
+            cursor: !user || isLiking ? 'not-allowed' : 'pointer',
             background: 'transparent',
             border: 'none',
             padding: 0,
             fontFamily: 'inherit',
             transition: 'color 0.12s',
+            opacity: !user ? 0.5 : 1,
           }}
         >
-          <Heart size={15} aria-hidden="true" />
-          {post.likes_count}
+          <Heart
+            size={15}
+            fill={isLiked ? 'var(--color-brand)' : 'none'}
+            aria-hidden="true"
+          />
+          {localLikesCount}
         </button>
         <button
           type="button"
@@ -150,7 +207,7 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
           type="button"
           onClick={(event) => {
             event.stopPropagation()
-            handleBookmarkClick()
+            handleBookmark()
           }}
           aria-label={isSaved ? 'Remove bookmark' : 'Bookmark post'}
           aria-pressed={isSaved}
@@ -173,6 +230,10 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
             fill={isSaved ? 'var(--color-brand)' : 'none'}
             color={isSaved ? 'var(--color-brand)' : 'var(--color-text-muted)'}
             aria-hidden="true"
+            style={{
+              transform: bookmarkPulse ? 'scale(1.3)' : 'scale(1)',
+              transition: 'transform 0.2s ease',
+            }}
           />
         </button>
       </div>

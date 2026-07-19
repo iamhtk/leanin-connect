@@ -1,12 +1,28 @@
+'use client'
+
+import { useEffect } from 'react'
 import { Bookmark, Users } from 'lucide-react'
 import { PostCard } from '@/components/molecules/PostCard'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import type { Post } from '@/lib/types'
 
 export interface FeedListProps {
-  posts: Post[]
+  selectedTag: string
   scopeTab?: 'all' | 'network' | 'circle' | 'saved'
+  savedPostIds?: string[]
   onSave?: (postId: string) => void
+  onAddPostReady?: (addPost: (post: Post) => void) => void
 }
+
+const NETWORK_AUTHOR_NAMES = [
+  'Priya Sharma',
+  'Sarah Chen',
+  'Jennifer Park',
+  'Lucia Fernandez',
+  'Divya Menon',
+]
+
+const CIRCLE_AUTHOR_NAMES = ['Amara Okafor', 'Fatima Al-Hassan', 'Kezia Williams']
 
 function getEmptyCopy(scopeTab: FeedListProps['scopeTab']): { title: string; subtitle: string } {
   if (scopeTab === 'network') {
@@ -36,8 +52,47 @@ function getEmptyCopy(scopeTab: FeedListProps['scopeTab']): { title: string; sub
   }
 }
 
-export function FeedList({ posts, scopeTab = 'all', onSave }: FeedListProps) {
-  if (posts.length === 0) {
+export function FeedList({
+  selectedTag,
+  scopeTab = 'all',
+  savedPostIds = [],
+  onSave,
+  onAddPostReady,
+}: FeedListProps) {
+  const { posts, isLoading, isFetchingMore, hasMore, sentinelRef, addPost } =
+    useInfiniteScroll(selectedTag)
+
+  useEffect(() => {
+    onAddPostReady?.(addPost)
+  }, [addPost, onAddPostReady])
+
+  const displayPosts = posts.filter((post) => {
+    if (scopeTab === 'all') return true
+    if (scopeTab === 'network') return NETWORK_AUTHOR_NAMES.includes(post.author_name)
+    if (scopeTab === 'circle') return CIRCLE_AUTHOR_NAMES.includes(post.author_name)
+    if (scopeTab === 'saved') return savedPostIds.includes(post.id)
+    return true
+  })
+
+  if (isLoading) {
+    return (
+      <div>
+        {[0, 1, 2].map((index) => (
+          <div
+            key={index}
+            className="skeleton"
+            style={{
+              height: '160px',
+              borderRadius: '14px',
+              marginBottom: '8px',
+            }}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  if (displayPosts.length === 0) {
     const { title, subtitle } = getEmptyCopy(scopeTab)
     const EmptyIcon = scopeTab === 'saved' ? Bookmark : Users
 
@@ -89,9 +144,40 @@ export function FeedList({ posts, scopeTab = 'all', onSave }: FeedListProps) {
 
   return (
     <div>
-      {posts.map((post, index) => (
+      {displayPosts.map((post, index) => (
         <PostCard key={post.id} post={post} index={index} onSave={onSave} />
       ))}
+
+      <div ref={sentinelRef} style={{ height: '1px' }} aria-hidden="true" />
+
+      {isFetchingMore && (
+        <div>
+          {[0, 1, 2].map((index) => (
+            <div
+              key={index}
+              className="skeleton"
+              style={{
+                height: '160px',
+                borderRadius: '14px',
+                marginBottom: '8px',
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {!hasMore && posts.length > 0 && (
+        <p
+          style={{
+            textAlign: 'center',
+            fontSize: '13px',
+            color: 'var(--color-text-muted)',
+            padding: '24px',
+          }}
+        >
+          You are all caught up
+        </p>
+      )}
     </div>
   )
 }

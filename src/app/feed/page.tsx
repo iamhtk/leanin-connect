@@ -30,49 +30,15 @@ const SCOPE_TABS = [
 
 type ScopeTab = (typeof SCOPE_TABS)[number]['value']
 
-const NETWORK_AUTHOR_NAMES = [
-  'Priya Sharma',
-  'Sarah Chen',
-  'Jennifer Park',
-  'Lucia Fernandez',
-  'Divya Menon',
-]
-
-const CIRCLE_AUTHOR_NAMES = ['Amara Okafor', 'Fatima Al-Hassan', 'Kezia Williams']
-
 const SAVED_POST_IDS_KEY = 'lean_in_saved_posts'
-
-function SkeletonCard() {
-  return (
-    <div
-      style={{
-        backgroundColor: 'var(--color-surface)',
-        border: '1px solid var(--color-border-default)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '20px',
-        marginBottom: '8px',
-      }}
-    >
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-        <div style={{ width: '38px', height: '38px', borderRadius: 'var(--radius-full)', backgroundColor: 'var(--color-subtle)' }} />
-        <div style={{ flex: 1 }}>
-          <div style={{ width: '120px', height: '12px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-subtle)' }} />
-          <div style={{ width: '160px', height: '10px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-subtle)', marginTop: '6px' }} />
-        </div>
-      </div>
-      <div style={{ width: '100%', height: '48px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-subtle)', marginTop: '16px' }} />
-    </div>
-  )
-}
 
 function FeedPageContent() {
   const searchParams = useSearchParams()
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState('all')
   const [scopeTab, setScopeTab] = useState<ScopeTab>('all')
   const [savedPostIds, setSavedPostIds] = useState<string[]>([])
   const [careerPulseData, setCareerPulseData] = useState<CareerPulseData | null>(null)
+  const [addPost, setAddPost] = useState<((post: Post) => void) | null>(null)
 
   useEffect(() => {
     const topic = searchParams.get('topic')
@@ -91,22 +57,6 @@ function FeedPageContent() {
   }, [])
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch('/api/posts')
-        const result = await response.json()
-        setPosts(result.data ?? [])
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchPosts()
-  }, [])
-
-  useEffect(() => {
     const fetchCareerPulse = async () => {
       try {
         const response = await fetch('/api/ai/career-pulse', {
@@ -116,16 +66,16 @@ function FeedPageContent() {
         })
         const result = await response.json()
         setCareerPulseData(result.data ?? null)
-      } catch (error) {
-        console.error(error)
+      } catch {
+        // Keep null career pulse on failure
       }
     }
 
-    fetchCareerPulse()
+    void fetchCareerPulse()
   }, [])
 
   const handlePostCreated = (post: Post) => {
-    setPosts((previousPosts) => [post, ...previousPosts])
+    addPost?.(post)
   }
 
   const handleSavePost = (postId: string) => {
@@ -136,24 +86,6 @@ function FeedPageContent() {
       return next
     })
   }
-
-  const scopeFilteredPosts = posts.filter((post) => {
-    if (scopeTab === 'all') return true
-    if (scopeTab === 'network') {
-      return NETWORK_AUTHOR_NAMES.includes(post.author_name)
-    }
-    if (scopeTab === 'circle') {
-      return CIRCLE_AUTHOR_NAMES.includes(post.author_name)
-    }
-    if (scopeTab === 'saved') {
-      return savedPostIds.includes(post.id)
-    }
-    return true
-  })
-
-  const filteredPosts = scopeFilteredPosts.filter(
-    (post) => selectedTag === 'all' || post.topic_tag === selectedTag
-  )
 
   return (
     <div className="feed-layout">
@@ -202,15 +134,15 @@ function FeedPageContent() {
           })}
         </div>
         <TopicFilter selectedTag={selectedTag} onTagChange={setSelectedTag} />
-        {loading ? (
-          <div>
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-          </div>
-        ) : (
-          <FeedList posts={filteredPosts} scopeTab={scopeTab} onSave={handleSavePost} />
-        )}
+        <FeedList
+          selectedTag={selectedTag}
+          scopeTab={scopeTab}
+          savedPostIds={savedPostIds}
+          onSave={handleSavePost}
+          onAddPostReady={(nextAddPost) => {
+            setAddPost(() => nextAddPost)
+          }}
+        />
       </div>
 
       <div className="feed-right-column">

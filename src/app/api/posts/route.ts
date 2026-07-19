@@ -1,19 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createServerSupabaseClient()
-    const { data, error } = await supabase
+    const { searchParams } = new URL(request.url)
+    const limit = parseInt(searchParams.get('limit') || '10', 10)
+    const cursor = searchParams.get('cursor')
+    const tag = searchParams.get('tag')
+
+    let query = supabase
       .from('posts')
       .select('*')
       .order('created_at', { ascending: false })
+      .limit(limit + 1)
+
+    if (cursor) {
+      query = query.lt('created_at', cursor)
+    }
+
+    if (tag && tag !== 'all' && tag !== 'All') {
+      query = query.eq('topic_tag', tag)
+    }
+
+    const { data, error } = await query
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ data })
+    const rows = data ?? []
+    const hasMore = rows.length > limit
+    const posts = hasMore ? rows.slice(0, limit) : rows
+    const nextCursor = hasMore ? posts[posts.length - 1]?.created_at ?? null : null
+
+    return NextResponse.json({
+      data: posts,
+      nextCursor,
+      hasMore,
+    })
   } catch {
     return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 })
   }
