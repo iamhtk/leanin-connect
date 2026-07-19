@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Sidebar } from '@/components/organisms/Sidebar'
 import { Topbar } from '@/components/organisms/Topbar'
 import { AppChrome } from '@/components/organisms/AppChrome'
+import { PageTransition } from '@/components/providers/PageTransition'
 
 interface AuthenticatedShellProps {
   children: React.ReactNode
@@ -27,7 +28,7 @@ export function AuthenticatedShell({ children }: AuthenticatedShellProps) {
         <div className="app-shell-content">
           <Topbar />
           <main id="main-content" className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-            {children}
+            <PageTransition>{children}</PageTransition>
           </main>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
   Home,
@@ -303,40 +304,48 @@ export function CommandPalette() {
     activeElement?.scrollIntoView({ block: 'nearest' })
   }, [activeIndex])
 
-  if (!isOpen) return null
-
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Command palette"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        paddingTop: '15vh',
-        background: 'color-mix(in srgb, var(--color-text-default) 50%, transparent)',
-        backdropFilter: 'blur(4px)',
-      }}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) setIsOpen(false)
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '560px',
-          background: 'var(--color-surface)',
-          borderRadius: '16px',
-          boxShadow: 'var(--shadow-modal)',
-          border: '1px solid var(--color-border-default)',
-          overflow: 'hidden',
-          margin: '0 16px',
-        }}
-      >
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Command palette"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.12 }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            paddingTop: '15vh',
+            background: 'color-mix(in srgb, var(--color-text-default) 50%, transparent)',
+            backdropFilter: 'blur(4px)',
+          }}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) setIsOpen(false)
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: -10 }}
+            transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              background: 'var(--color-surface)',
+              borderRadius: '16px',
+              boxShadow: 'var(--shadow-modal)',
+              border: '1px solid var(--color-border-default)',
+              overflow: 'hidden',
+              margin: '0 16px',
+            }}
+          >
         <div
           style={{
             display: 'flex',
@@ -564,7 +573,9 @@ export function CommandPalette() {
             </div>
           ))}
         </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }

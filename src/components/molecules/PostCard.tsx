@@ -37,7 +37,7 @@ function readSavedIds(): string[] {
   }
 }
 
-export function PostCard({ post, index, onSave, onLike }: PostCardProps) {
+export function PostCard({ post, onSave, onLike }: PostCardProps) {
   const { user } = useAuth()
   const supabase = createClient()
   const [isLiked, setIsLiked] = useState(false)
@@ -97,9 +97,10 @@ export function PostCard({ post, index, onSave, onLike }: PostCardProps) {
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 12 }}
+      layout
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut', delay: index * 0.06 }}
+      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
       className="card-hover"
       aria-label={'Post by ' + post.author_name}
       style={{

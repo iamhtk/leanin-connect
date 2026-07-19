@@ -1155,16 +1155,6 @@ button {
   50% { opacity: 0.5; }
 }
 
-/* Smooth page transitions */
-main {
-  animation: pageFadeIn 0.2s ease-out;
-}
-
-@keyframes pageFadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;

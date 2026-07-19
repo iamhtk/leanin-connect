@@ -77,9 +77,25 @@ What is mocked: Job listings, conversations, member directory, circles, networks
 
 ---
 
-## What I Would Build Next
+## Technical Highlights
 
-Real authentication via Supabase Auth. A social graph so Your Network and Your Circle feeds show real connections. Real-time notifications via Supabase Realtime. A job board API connected to a curated partner employer feed. The AI Voice Coach would gain the ability to suggest which Circle or topic a post belongs to based on its content.
+Backend:
+- Supabase Auth with email and password authentication
+- Row Level Security policies on every table (profiles, posts, likes, notifications, circle_messages)
+- Database triggers that auto-update likes count and create notifications when posts are liked
+- Supabase Storage for profile photo uploads
+- Supabase Realtime subscriptions for live notifications and circle messages
+- Cursor-based pagination on the posts feed
+- Auto-created user profiles via Postgres trigger on auth.users
+
+Frontend:
+- CMD+K command palette with keyboard navigation across all pages and actions
+- Optimistic UI on post likes with Supabase rollback on failure
+- Tiptap rich text editor with bold, italic, lists, and character counter
+- Framer Motion page transitions, card animations, and sidebar active pill
+- Dark mode with CSS custom property token system and localStorage persistence
+- Progressive Web App manifest for installability
+- WCAG 2.1 AA accessibility throughout
 
 ---
 

@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
 import {
   Home,
   Users,
@@ -76,10 +77,11 @@ function NavLink({ item, isActive }: NavLinkProps) {
     fontSize: '14px',
     fontWeight: isActive ? '500' : '400',
     textDecoration: 'none',
-    backgroundColor: isActive ? 'var(--color-muted)' : 'transparent',
+    backgroundColor: 'transparent',
     color: 'var(--color-text-default)',
     cursor: 'pointer',
     transition: 'background-color 0.12s',
+    position: 'relative',
   }
 
   return (
@@ -89,8 +91,27 @@ function NavLink({ item, isActive }: NavLinkProps) {
       className="hover:bg-muted"
       aria-current={isActive ? 'page' : undefined}
     >
-      <Icon size={16} strokeWidth={1.5} color={isActive ? 'var(--color-brand)' : 'var(--color-text-secondary)'} />
-      <span>{item.label}</span>
+      {isActive && (
+        <motion.span
+          layoutId="sidebar-active"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'var(--color-muted)',
+            borderRadius: '9px',
+            zIndex: 0,
+          }}
+          transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+          aria-hidden="true"
+        />
+      )}
+      <Icon
+        size={16}
+        strokeWidth={1.5}
+        color={isActive ? 'var(--color-brand)' : 'var(--color-text-secondary)'}
+        style={{ position: 'relative', zIndex: 1 }}
+      />
+      <span style={{ position: 'relative', zIndex: 1 }}>{item.label}</span>
     </Link>
   )
 }

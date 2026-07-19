@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Bell, Sparkles, User, Settings, LogOut, Loader2, X, Moon, Sun } from 'lucide-react'
 import { showToast, formatRelativeTime } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
@@ -387,30 +388,36 @@ export function Topbar() {
           className="hover:bg-subtle"
         >
           <Bell size={16} aria-hidden="true" />
-          {unreadCount > 0 && (
-            <span
-              aria-label={unreadCount + ' unread notifications'}
-              style={{
-                position: 'absolute',
-                top: '2px',
-                right: '2px',
-                minWidth: '14px',
-                height: '14px',
-                borderRadius: '9999px',
-                background: 'var(--color-brand)',
-                color: 'var(--color-text-inverse)',
-                fontSize: '9px',
-                fontWeight: '700',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '0 3px',
-                lineHeight: 1,
-              }}
-            >
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
-          )}
+          <AnimatePresence>
+            {unreadCount > 0 && (
+              <motion.span
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                aria-label={unreadCount + ' unread notifications'}
+                style={{
+                  position: 'absolute',
+                  top: '-2px',
+                  right: '-2px',
+                  minWidth: '14px',
+                  height: '14px',
+                  borderRadius: '9999px',
+                  background: 'var(--color-brand)',
+                  color: 'var(--color-text-inverse)',
+                  fontSize: '9px',
+                  fontWeight: '700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0 3px',
+                  lineHeight: 1,
+                }}
+              >
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </button>
 
         <button
