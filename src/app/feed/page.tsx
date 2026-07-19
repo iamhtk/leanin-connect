@@ -116,6 +116,7 @@ function FeedPageContent() {
                     key={tab.value}
                     type="button"
                     onClick={() => setScopeTab(tab.value)}
+                    className="tab-item"
                     style={{
                       display: 'inline-flex',
                       padding: '8px 0',

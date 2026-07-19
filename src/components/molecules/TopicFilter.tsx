@@ -37,8 +37,8 @@ export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
               onClick={() => onTagChange(tag.value)}
               className={
                 isActive
-                  ? undefined
-                  : 'hover:bg-muted hover:[color:var(--color-text-default)]'
+                  ? 'pill-filter'
+                  : 'hover:bg-muted hover:[color:var(--color-text-default)] pill-filter'
               }
               style={{
                 backgroundColor: isActive ? 'var(--color-text-default)' : 'transparent',

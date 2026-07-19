@@ -207,6 +207,7 @@ export default function ProfilePage() {
               aria-label="Change profile photo"
               onMouseEnter={handleAvatarMouseEnter}
               onMouseLeave={handleAvatarMouseLeave}
+              className="btn-secondary"
               style={{
                 position: 'absolute',
                 inset: 0,
@@ -239,12 +240,14 @@ export default function ProfilePage() {
                   aria-label="Display name"
                   value={draftName}
                   onChange={(event) => setDraftName(event.target.value)}
+                  className="input-field"
                   style={{ ...inputStyle, fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}
                 />
                 <input
                   aria-label="Job title"
                   value={draftTitle}
                   onChange={(event) => setDraftTitle(event.target.value)}
+                  className="input-field"
                   style={{ ...inputStyle, fontSize: '16px', marginTop: '2px' }}
                 />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
@@ -253,6 +256,7 @@ export default function ProfilePage() {
                     aria-label="Location"
                     value={draftLocation}
                     onChange={(event) => setDraftLocation(event.target.value)}
+                    className="input-field"
                     style={{ ...inputStyle, fontSize: '16px' }}
                   />
                 </div>
@@ -287,6 +291,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={() => router.push('/messages')}
+            className="btn-ghost"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -309,6 +314,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={handleSave}
+                className="btn-primary"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -350,6 +356,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={startEditing}
+              className="btn-secondary"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -494,6 +501,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={() => showToast('Opening ' + suggestion.action)}
+                    className="btn-ghost"
                     style={{
                       marginTop: '6px',
                       background: 'none',

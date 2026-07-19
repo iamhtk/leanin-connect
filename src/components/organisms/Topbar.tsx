@@ -103,7 +103,7 @@ export function Topbar() {
     >
       <div ref={searchRef} style={{ position: 'relative', flex: '1 1 auto', minWidth: 0, maxWidth: '500px' }}>
         <div
-          className="search-bar-desktop hover:[border-color:var(--color-border-strong)]"
+          className="search-bar-desktop hover:[border-color:var(--color-border-strong)] topbar-search"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -316,7 +316,7 @@ export function Topbar() {
       >
         <button
           type="button"
-          className="topbar-sparkles hover:bg-subtle"
+          className="topbar-sparkles hover:bg-subtle icon-btn"
           onClick={() => window.dispatchEvent(new Event('open-assistant'))}
           aria-label="Open AI Assistant"
           style={{
@@ -343,7 +343,7 @@ export function Topbar() {
           type="button"
           onClick={toggleTheme}
           aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          className="hover:bg-subtle"
+          className="hover:bg-subtle icon-btn"
           style={{
             minWidth: '44px',
             minHeight: '44px',
@@ -400,7 +400,7 @@ export function Topbar() {
             position: 'relative',
             padding: '10px',
           }}
-          className="hover:bg-subtle"
+          className="hover:bg-subtle icon-btn"
         >
           <Bell size={16} aria-hidden="true" />
           <AnimatePresence>
@@ -444,6 +444,7 @@ export function Topbar() {
           aria-label="User menu"
           aria-haspopup="true"
           aria-expanded={showProfileMenu}
+          className="icon-btn"
           style={{
             minWidth: '44px',
             minHeight: '44px',

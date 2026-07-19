@@ -182,6 +182,7 @@ export default function EventsPage() {
             type="button"
             ref={triggerRef}
             onClick={openProposeModal}
+            className="btn-secondary"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -257,6 +258,7 @@ export default function EventsPage() {
                   key={option.value}
                   type="button"
                   onClick={() => setTimeFilter(option.value)}
+                  className="tab-item"
                   style={{
                     padding: '5px 14px',
                     borderRadius: '9999px',
@@ -339,6 +341,7 @@ export default function EventsPage() {
             <button
               type="button"
               onClick={openProposeModal}
+              className="btn-secondary"
               style={{
                 background: 'var(--color-brand)',
                 color: 'white',
@@ -580,6 +583,7 @@ export default function EventsPage() {
                     <button
                       type="button"
                       onClick={() => toggleRsvp(event)}
+                      className={isRsvpd ? 'btn-secondary' : 'btn-primary'}
                       style={{
                         background: isRsvpd ? 'var(--color-status-success)' : 'var(--color-brand)',
                         color: 'white',
@@ -641,6 +645,7 @@ export default function EventsPage() {
                 type="button"
                 aria-label="Close propose event dialog"
                 onClick={closeProposeModal}
+                className="icon-btn"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -659,6 +664,7 @@ export default function EventsPage() {
               placeholder="Event title"
               value={proposeTitle}
               onChange={(event) => setProposeTitle(event.target.value)}
+              className="input-field"
               style={{
                 width: '100%',
                 marginTop: '16px',
@@ -679,6 +685,7 @@ export default function EventsPage() {
               placeholder="Date and time"
               value={proposeDateTime}
               onChange={(event) => setProposeDateTime(event.target.value)}
+              className="input-field"
               style={{
                 width: '100%',
                 marginTop: '12px',
@@ -697,6 +704,7 @@ export default function EventsPage() {
               aria-label="Event format"
               value={proposeFormat}
               onChange={(event) => setProposeFormat(event.target.value as EventFormat)}
+              className="select-field"
               style={{
                 width: '100%',
                 marginTop: '12px',
@@ -721,6 +729,7 @@ export default function EventsPage() {
               value={proposeDescription}
               onChange={(event) => setProposeDescription(event.target.value)}
               rows={4}
+              className="input-field"
               style={{
                 width: '100%',
                 marginTop: '12px',
@@ -757,6 +766,7 @@ export default function EventsPage() {
               <button
                 type="button"
                 onClick={handleSubmitProposal}
+                className="btn-primary"
                 style={{
                   background: 'var(--color-brand)',
                   color: 'white',

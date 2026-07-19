@@ -130,7 +130,7 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
           <button
             type="button"
             onClick={onClose}
-            className="ai-assistant-close"
+            className="ai-assistant-close icon-btn"
             aria-label="Close assistant"
           >
             <X size={16} aria-hidden="true" />
@@ -216,7 +216,7 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
           </div>
           <button
             type="button"
-            className="ai-assistant-send"
+            className="ai-assistant-send btn-primary"
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading}
             aria-label="Send message"

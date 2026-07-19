@@ -376,7 +376,7 @@ export default function DirectoryPage() {
                   event.stopPropagation()
                   toggleConnect(member)
                 }}
-                className="hover:[border-color:var(--color-brand)] hover:[color:var(--color-brand)]"
+                className="hover:[border-color:var(--color-brand)] hover:[color:var(--color-brand)] btn-follow"
                 style={{
                   marginLeft: 'auto',
                   alignSelf: 'flex-start',
@@ -439,6 +439,7 @@ export default function DirectoryPage() {
                 type="button"
                 aria-label="Close invite dialog"
                 onClick={closeInviteModal}
+                className="icon-btn"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -457,6 +458,7 @@ export default function DirectoryPage() {
               placeholder="Email address"
               value={inviteEmail}
               onChange={(event) => setInviteEmail(event.target.value)}
+              className="input-field"
               style={{
                 width: '100%',
                 marginTop: '16px',
@@ -477,6 +479,7 @@ export default function DirectoryPage() {
               value={inviteMessage}
               onChange={(event) => setInviteMessage(event.target.value)}
               rows={4}
+              className="input-field"
               style={{
                 width: '100%',
                 marginTop: '12px',
@@ -496,6 +499,7 @@ export default function DirectoryPage() {
               <button
                 type="button"
                 onClick={closeInviteModal}
+                className="btn-ghost"
                 style={{
                   background: 'transparent',
                   border: '1px solid var(--color-border-default)',
@@ -513,6 +517,7 @@ export default function DirectoryPage() {
               <button
                 type="button"
                 onClick={handleSendInvitation}
+                className="btn-primary"
                 style={{
                   background: 'var(--color-brand)',
                   color: 'white',

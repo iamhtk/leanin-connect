@@ -460,6 +460,7 @@ export function CommandPalette() {
                     data-active={isActive}
                     onClick={command.action}
                     onMouseEnter={() => setActiveIndex(globalIndex)}
+                    className="btn-ghost"
                     style={{
                       width: '100%',
                       display: 'flex',

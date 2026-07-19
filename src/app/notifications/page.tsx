@@ -63,6 +63,7 @@ export default function NotificationsPage() {
               onClick={() => {
                 void markAllRead()
               }}
+              className="btn-ghost"
               style={{
                 background: 'transparent',
                 border: '1px solid var(--color-border-brand)',
@@ -248,6 +249,7 @@ export default function NotificationsPage() {
           {filteredNotifications.map((notification) => (
             <div
               key={notification.id}
+              className="notif-item"
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',

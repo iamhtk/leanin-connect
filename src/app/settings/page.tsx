@@ -41,6 +41,7 @@ function ToggleSwitch({ checked, onChange }: ToggleSwitchProps) {
           onChange(!checked)
         }
       }}
+      className="toggle-switch"
       style={{
         width: '36px',
         height: '20px',
@@ -135,7 +136,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => toggleSection('profile')}
-            className="hover:bg-subtle"
+            className="hover:bg-subtle settings-row"
             style={{
               width: '100%',
               display: 'flex',
@@ -201,6 +202,7 @@ export default function SettingsPage() {
                 onChange={(event) => setDraftName(event.target.value)}
                 aria-label="Name"
                 placeholder="Name"
+                className="input-field"
                 style={inputStyle}
                 onFocus={(event) => {
                   event.currentTarget.style.borderColor = 'var(--color-border-focus)'
@@ -214,6 +216,7 @@ export default function SettingsPage() {
                 onChange={(event) => setDraftJobTitle(event.target.value)}
                 aria-label="Job title"
                 placeholder="Job title"
+                className="input-field"
                 style={inputStyle}
                 onFocus={(event) => {
                   event.currentTarget.style.borderColor = 'var(--color-border-focus)'
@@ -227,6 +230,7 @@ export default function SettingsPage() {
                 onChange={(event) => setDraftLocation(event.target.value)}
                 aria-label="Location"
                 placeholder="Location"
+                className="input-field"
                 style={inputStyle}
                 onFocus={(event) => {
                   event.currentTarget.style.borderColor = 'var(--color-border-focus)'
@@ -245,6 +249,7 @@ export default function SettingsPage() {
                     showToast('Changes saved!')
                     setExpanded(null)
                   }}
+                  className="btn-primary"
                   style={{
                     background: 'var(--color-brand)',
                     color: 'var(--color-text-inverse)',
@@ -262,6 +267,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={() => setExpanded(null)}
+                  className="btn-ghost"
                   style={{
                     background: 'var(--color-subtle)',
                     color: 'var(--color-text-default)',
@@ -286,7 +292,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => toggleSection('notifications')}
-            className="hover:bg-subtle"
+            className="hover:bg-subtle settings-row"
             style={{
               width: '100%',
               display: 'flex',
@@ -383,7 +389,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => toggleSection('marketing')}
-            className="hover:bg-subtle"
+            className="hover:bg-subtle settings-row"
             style={{
               width: '100%',
               display: 'flex',
@@ -457,7 +463,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => toggleSection('privacy')}
-            className="hover:bg-subtle"
+            className="hover:bg-subtle settings-row"
             style={{
               width: '100%',
               display: 'flex',
@@ -602,7 +608,7 @@ export default function SettingsPage() {
               key={row.title}
               type="button"
               onClick={() => showToast(COMING_SOON)}
-              className="hover:bg-subtle"
+              className="hover:bg-subtle settings-row"
               style={{
                 width: '100%',
                 display: 'flex',
@@ -710,7 +716,7 @@ export default function SettingsPage() {
           onClick={() => {
             window.location.href = 'mailto:support@leanin.org'
           }}
-          className="hover:bg-subtle"
+          className="hover:bg-subtle settings-row"
           style={{
             width: '100%',
             display: 'flex',

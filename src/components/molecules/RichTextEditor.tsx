@@ -101,6 +101,7 @@ function MenuBar({ editor }: { editor: Editor | null }) {
           aria-pressed={tool.isActive}
           onMouseEnter={(event) => handleMouseEnter(event, tool.isActive)}
           onMouseLeave={(event) => handleMouseLeave(event, tool.isActive)}
+          className="rich-text-tool"
           style={{
             width: '28px',
             height: '28px',

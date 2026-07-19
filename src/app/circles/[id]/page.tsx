@@ -290,6 +290,7 @@ export default function CircleDetailPage() {
         <button
           type="button"
           onClick={() => router.push('/circles')}
+          className="btn-ghost"
           style={{
             marginTop: '16px',
             color: 'var(--color-brand)',
@@ -328,6 +329,7 @@ export default function CircleDetailPage() {
         type="button"
         onClick={() => router.push('/circles')}
         aria-label="Back to Circles"
+        className="btn-ghost"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -462,6 +464,7 @@ export default function CircleDetailPage() {
             onClick={() => setActiveTab(tab)}
             role="tab"
             aria-selected={activeTab === tab}
+            className="tab-item"
             style={{
               padding: '10px 16px',
               fontSize: '14px',
@@ -560,6 +563,7 @@ export default function CircleDetailPage() {
                 }}
                 disabled={!postInput.trim() || !user}
                 aria-label="Post to circle"
+                className="btn-primary"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -665,6 +669,7 @@ export default function CircleDetailPage() {
           {circle.members.map((member) => (
             <div
               key={member.name}
+              className="member-item"
               style={{
                 background: 'var(--color-surface)',
                 border: '1px solid var(--color-border-default)',
@@ -831,6 +836,7 @@ export default function CircleDetailPage() {
                 type="button"
                 onClick={() => showToast('Opening ' + resource.title)}
                 aria-label={'Open ' + resource.title}
+                className="btn-secondary"
                 style={{
                   background: 'transparent',
                   border: '1px solid var(--color-border-default)',

@@ -272,6 +272,7 @@ export default function MessagesPage() {
             ref={newMessageTriggerRef}
             aria-label="New message"
             onClick={() => setShowNewMessage(true)}
+            className="icon-btn"
             style={{
               minWidth: '44px',
               minHeight: '44px',
@@ -369,6 +370,7 @@ export default function MessagesPage() {
                   setSelectedId(conv.id)
                 }
               }}
+              className={`conv-item${selectedId === conv.id ? ' is-selected' : ''}`}
               style={{
                 display: 'flex',
                 gap: '10px',
@@ -599,6 +601,7 @@ export default function MessagesPage() {
                   type="button"
                   aria-label="Close conversation starters"
                   onClick={() => setShowStarters(false)}
+                  className="icon-btn"
                   style={{
                     background: 'transparent',
                     border: 'none',
@@ -637,6 +640,7 @@ export default function MessagesPage() {
                       key={starter}
                       type="button"
                       onClick={() => handleStarterClick(starter)}
+                      className="ai-suggestion-chip"
                       style={{
                         textAlign: 'left',
                         background: 'var(--color-background)',
@@ -801,6 +805,7 @@ export default function MessagesPage() {
                 aria-label="Write a message"
                 placeholder="Write a message..."
                 rows={1}
+                className="input-field"
                 style={{
                   flex: 1,
                   border: 'none',
@@ -819,6 +824,7 @@ export default function MessagesPage() {
               aria-label="Send message"
               onClick={handleSendMessage}
               disabled={!messageInput.trim()}
+              className="btn-primary"
               style={{
                 width: '38px',
                 height: '38px',
@@ -934,6 +940,7 @@ export default function MessagesPage() {
                 type="button"
                 aria-label="Close new message dialog"
                 onClick={closeNewMessageModal}
+                className="icon-btn"
                 style={{
                   background: 'transparent',
                   border: 'none',

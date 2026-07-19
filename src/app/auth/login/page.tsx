@@ -252,6 +252,7 @@ function LoginForm() {
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="you@example.com"
                 autoComplete="email"
+                className="input-field"
                 style={{
                   width: '100%',
                   padding: '10px 12px',
@@ -292,6 +293,7 @@ function LoginForm() {
                   placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'}
                   autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                   minLength={mode === 'signup' ? 8 : undefined}
+                  className="input-field"
                   style={{
                     width: '100%',
                     padding: '10px 40px 10px 12px',
@@ -309,6 +311,7 @@ function LoginForm() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="icon-btn"
                   style={{
                     position: 'absolute',
                     right: '10px',
@@ -334,6 +337,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={isLoading}
+              className="btn-primary"
               style={{
                 width: '100%',
                 padding: '11px',
@@ -378,6 +382,7 @@ function LoginForm() {
                 setError('')
                 setSuccessMessage('')
               }}
+              className="link-interactive"
               style={{
                 background: 'none',
                 border: 'none',

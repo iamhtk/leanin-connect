@@ -63,7 +63,7 @@ export function TrendingTopics() {
                 handleTopicClick(item.topic)
               }
             }}
-            className="group"
+            className="group link-interactive"
             style={{
               display: 'flex',
               justifyContent: 'space-between',

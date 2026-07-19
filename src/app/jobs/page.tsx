@@ -100,6 +100,7 @@ function SalaryCoachModal({ job, onClose }: SalaryCoachModalProps) {
             type="button"
             onClick={onClose}
             aria-label="Close salary coach"
+            className="icon-btn"
             style={{
               background: 'transparent',
               border: 'none',
@@ -219,6 +220,7 @@ function SalaryCoachModal({ job, onClose }: SalaryCoachModalProps) {
             href={job.url}
             target="_blank"
             rel="noopener noreferrer"
+            className="btn-primary"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -238,6 +240,7 @@ function SalaryCoachModal({ job, onClose }: SalaryCoachModalProps) {
           <button
             type="button"
             onClick={onClose}
+            className="btn-ghost"
             style={{
               background: 'transparent',
               border: '1px solid var(--color-border-default)',
@@ -363,6 +366,7 @@ export default function JobsPage() {
               placeholder="Search roles or companies..."
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
+              className="input-field"
               style={{
                 flex: 1,
                 border: 'none',
@@ -540,7 +544,7 @@ function JobCard({ job, onApply }: JobCardProps) {
 
   return (
     <div
-      className="hover:[border-color:var(--color-border-strong)]"
+      className="hover:[border-color:var(--color-border-strong)] job-card"
       style={{
         background: 'var(--color-surface)',
         border: job.is_ai_match
@@ -651,6 +655,7 @@ function JobCard({ job, onApply }: JobCardProps) {
         <button
           type="button"
           onClick={onApply}
+          className="btn-primary"
           style={{
             display: 'inline-flex',
             alignItems: 'center',

@@ -252,6 +252,7 @@ export default function GroupsPage() {
                     <button
                       type="button"
                       onClick={(event) => handleJoinToggle(group, event)}
+                      className="btn-follow"
                       style={
                         isJoined
                           ? {

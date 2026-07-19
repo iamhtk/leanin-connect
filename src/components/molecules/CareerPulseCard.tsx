@@ -148,7 +148,7 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
               key={question}
               type="button"
               onClick={() => handleQuestionClick(question)}
-              className="hover:text-[var(--color-brand)]"
+              className="hover:text-[var(--color-brand)] link-interactive"
               style={{
                 fontSize: '12px',
                 color: 'var(--color-text-default)',

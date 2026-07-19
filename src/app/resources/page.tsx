@@ -300,6 +300,7 @@ export default function ResourcesPage() {
                 key={tab.value}
                 type="button"
                 onClick={() => setActiveTab(tab.value)}
+                className="pill-filter"
                 style={{
                   padding: '6px 14px',
                   borderRadius: '9999px',
@@ -358,7 +359,7 @@ export default function ResourcesPage() {
                     router.push('/resources/' + resource.id)
                   }
                 }}
-                className="card-hover"
+                className="card-hover resource-card"
                 style={{
                   background: 'var(--color-surface)',
                   border: '1px solid var(--color-border-default)',

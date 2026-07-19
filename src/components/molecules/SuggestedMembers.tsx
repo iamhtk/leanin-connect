@@ -106,7 +106,7 @@ export function SuggestedMembers() {
                   router.push('/directory')
                 }
               }}
-              className="hover:bg-subtle"
+              className="hover:bg-subtle member-item"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -135,7 +135,7 @@ export function SuggestedMembers() {
               <button
                 type="button"
                 onClick={(event) => toggleFollow(member, event)}
-                className="hover:[border-color:var(--color-brand)] hover:[color:var(--color-brand)]"
+                className="hover:[border-color:var(--color-brand)] hover:[color:var(--color-brand)] btn-follow"
                 style={{
                   backgroundColor: isFollowing ? 'var(--color-brand-subtle)' : 'transparent',
                   color: isFollowing ? 'var(--color-brand)' : 'var(--color-text-secondary)',

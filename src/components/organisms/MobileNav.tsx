@@ -25,6 +25,7 @@ export function MobileNav() {
             href={item.href}
             aria-label={item.label}
             aria-current={isActive ? 'page' : undefined}
+            className="mobile-nav-item"
             style={{
               flex: 1,
               display: 'flex',

@@ -330,6 +330,7 @@ export default function NetworksPage() {
                     <button
                       type="button"
                       onClick={(event) => handleRequestClick(network, event)}
+                      className="btn-follow"
                       style={
                         isRequested
                           ? {

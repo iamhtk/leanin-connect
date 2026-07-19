@@ -223,7 +223,7 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
           aria-label={'Like, ' + localLikesCount + ' likes'}
           aria-pressed={isLiked}
           disabled={!user || isLiking}
-          className="hover:text-[var(--color-text-default)]"
+          className="hover:text-[var(--color-text-default)] action-btn"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -251,7 +251,7 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
         <button
           type="button"
           aria-label={'Reply, ' + post.replies_count + ' replies'}
-          className="hover:text-[var(--color-text-default)]"
+          className="hover:text-[var(--color-text-default)] action-btn"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -279,6 +279,7 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
           }}
           aria-label={isSaved ? 'Remove bookmark' : 'Bookmark post'}
           aria-pressed={isSaved}
+          className="action-btn"
           style={{
             display: 'flex',
             alignItems: 'center',

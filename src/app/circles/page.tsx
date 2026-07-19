@@ -212,6 +212,7 @@ export default function CirclesPage() {
             type="button"
             ref={triggerRef}
             onClick={() => setIsOpen(true)}
+            className="btn-primary"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -245,6 +246,7 @@ export default function CirclesPage() {
                 key={tab.value}
                 type="button"
                 onClick={() => setActiveTab(tab.value)}
+                className="tab-item"
                 style={{
                   padding: '6px 14px',
                   borderRadius: '9999px',
@@ -348,6 +350,7 @@ export default function CirclesPage() {
                           router.push('/circles/' + circle.id)
                         }
                       }}
+                      className="rec-card"
                       style={{
                         width: '260px',
                         minWidth: '260px',
@@ -404,6 +407,7 @@ export default function CirclesPage() {
                       <button
                         type="button"
                         onClick={(event) => handleJoinClick(circle, event)}
+                        className="btn-secondary"
                         style={{
                           marginTop: '10px',
                           background: isLeading || isJoined ? 'var(--color-brand-subtle)' : 'var(--color-brand)',
@@ -529,6 +533,7 @@ export default function CirclesPage() {
                     <button
                       type="button"
                       onClick={(event) => handleJoinClick(circle, event)}
+                      className="btn-secondary"
                       style={
                         isLeading
                           ? {
@@ -616,6 +621,7 @@ export default function CirclesPage() {
                 type="button"
                 aria-label="Close create circle dialog"
                 onClick={closeModal}
+                className="icon-btn"
                 style={{
                   background: 'none',
                   border: 'none',
@@ -638,6 +644,7 @@ export default function CirclesPage() {
               placeholder="Circle name"
               value={circleName}
               onChange={(event) => setCircleName(event.target.value)}
+              className="input-field"
               style={{
                 width: '100%',
                 marginTop: '16px',
@@ -658,6 +665,7 @@ export default function CirclesPage() {
               value={circleAbout}
               onChange={(event) => setCircleAbout(event.target.value)}
               rows={4}
+              className="input-field"
               style={{
                 width: '100%',
                 marginTop: '12px',

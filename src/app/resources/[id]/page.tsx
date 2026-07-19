@@ -276,6 +276,7 @@ export default function ResourceDetailPage() {
           Resource not found.
         </p>
         <button onClick={() => router.push('/resources')}
+          className="btn-ghost"
           style={{
             marginTop:'16px',color:'var(--color-brand)',
             background:'none',border:'none',cursor:'pointer',
@@ -294,6 +295,7 @@ export default function ResourceDetailPage() {
       <button
         onClick={() => router.push('/resources')}
         aria-label="Back to Resources"
+        className="btn-ghost"
         style={{
           display:'flex',alignItems:'center',gap:'6px',
           background:'none',border:'none',cursor:'pointer',
@@ -365,6 +367,7 @@ export default function ResourceDetailPage() {
           onClick={generateSummary}
           disabled={isLoadingSummary}
           aria-label="Generate AI summary of key takeaways"
+          className="btn-secondary"
           style={{
             display:'flex',alignItems:'center',gap:'8px',
             background:'var(--color-brand-subtle)',

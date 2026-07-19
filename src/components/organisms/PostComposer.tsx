@@ -187,7 +187,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
             setIsOpen(true)
           }
         }}
-        className="hover:[border-color:var(--color-border-strong)]"
+        className="hover:[border-color:var(--color-border-strong)] composer-trigger"
         style={{
           display: 'flex',
           gap: '10px',
@@ -259,6 +259,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                   type="button"
                   onClick={closeModal}
                   aria-label="Close post composer"
+                  className="icon-btn"
                   style={{
                     background: 'none',
                     border: 'none',
@@ -389,6 +390,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                       key={tag.value}
                       type="button"
                       onClick={() => setSelectedTopic(tag.value)}
+                      className="pill-filter"
                       style={{
                         backgroundColor: isSelected ? 'var(--color-brand)' : 'var(--color-subtle)',
                         color: isSelected
@@ -417,6 +419,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                 <button
                   type="button"
                   onClick={() => setIsVoiceCoachOpen((previous) => !previous)}
+                  className="btn-secondary"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -436,6 +439,7 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSubmitDisabled}
+                  className="btn-primary"
                   style={{
                     backgroundColor: 'var(--color-brand)',
                     color: 'var(--color-text-inverse)',

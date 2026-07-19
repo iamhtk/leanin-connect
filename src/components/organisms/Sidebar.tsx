@@ -90,7 +90,7 @@ function NavLink({ item, isActive, collapsed }: NavLinkProps) {
     <Link
       href={item.href}
       style={linkStyle}
-      className="hover:bg-muted"
+      className="hover:bg-muted nav-item"
       aria-current={isActive ? 'page' : undefined}
       title={collapsed ? item.label : undefined}
       aria-label={item.label}
@@ -189,7 +189,7 @@ export function Sidebar() {
           onClick={toggleCollapsed}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className="hover:bg-muted"
+          className="hover:bg-muted sidebar-toggle"
           style={{
             width: '28px',
             height: '28px',
