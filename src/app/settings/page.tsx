@@ -62,8 +62,9 @@ function ToggleSwitch({ checked, onChange }: ToggleSwitchProps) {
           width: '16px',
           height: '16px',
           borderRadius: '9999px',
-          background: 'white',
+          background: 'var(--color-text-inverse)',
           transition: 'left 0.12s',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
         }}
       />
     </button>

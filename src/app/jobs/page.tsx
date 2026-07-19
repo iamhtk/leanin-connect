@@ -416,7 +416,7 @@ export default function JobsPage() {
               }
               style={{
                 backgroundColor: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
+                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
                 border: 'none',
                 outline: 'none',
                 fontSize: '14px',
@@ -459,7 +459,7 @@ export default function JobsPage() {
               }
               style={{
                 backgroundColor: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
+                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
                 border: 'none',
                 outline: 'none',
                 fontSize: '14px',

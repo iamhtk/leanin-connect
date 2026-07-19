@@ -296,7 +296,7 @@ export default function ResourcesPage() {
                 fontFamily: 'inherit',
                 border: isActive ? 'none' : '1px solid var(--color-border-default)',
                 background: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
+                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
               }}
             >
               {tab.label}
@@ -351,7 +351,7 @@ export default function ResourcesPage() {
                       position: 'absolute',
                       top: '10px',
                       left: '10px',
-                      background: 'white',
+                      background: 'var(--color-surface)',
                       borderRadius: '9999px',
                       padding: '4px 8px',
                       fontSize: '10px',
@@ -368,7 +368,7 @@ export default function ResourcesPage() {
                         position: 'absolute',
                         top: '10px',
                         right: '36px',
-                        background: 'white',
+                        background: 'var(--color-surface)',
                         borderRadius: '9999px',
                         padding: '4px 8px',
                         fontSize: '10px',

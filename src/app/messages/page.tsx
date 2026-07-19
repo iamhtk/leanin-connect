@@ -799,7 +799,7 @@ export default function MessagesPage() {
           <div
             onClick={(event) => event.stopPropagation()}
             style={{
-              background: 'white',
+              background: 'var(--color-surface)',
               width: '400px',
               borderRadius: '16px',
               padding: '24px',

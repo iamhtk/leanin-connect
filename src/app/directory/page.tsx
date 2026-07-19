@@ -292,7 +292,7 @@ export default function DirectoryPage() {
                 fontFamily: 'inherit',
                 border: isActive ? 'none' : '1px solid var(--color-border-default)',
                 background: isActive ? 'var(--color-text-default)' : 'transparent',
-                color: isActive ? 'var(--color-text-inverse)' : 'var(--color-text-secondary)',
+                color: isActive ? 'var(--color-background)' : 'var(--color-text-secondary)',
               }}
             >
               {tab.label}
@@ -405,7 +405,7 @@ export default function DirectoryPage() {
           <div
             onClick={(event) => event.stopPropagation()}
             style={{
-              background: 'white',
+              background: 'var(--color-surface)',
               width: '440px',
               borderRadius: '16px',
               padding: '24px',
