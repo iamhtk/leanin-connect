@@ -12,6 +12,7 @@ import {
   BookOpen,
   Briefcase,
   Circle,
+  Contact,
 } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
 
@@ -19,7 +20,6 @@ interface NavItem {
   label: string
   href: string
   icon: React.ElementType
-  external?: boolean
 }
 
 const NAV_SECTIONS = [
@@ -32,9 +32,10 @@ const NAV_SECTIONS = [
   {
     title: 'COMMUNITY',
     items: [
-      { label: 'Circles', href: 'https://connect.leanin.org/circles', icon: Circle, external: true },
-      { label: 'Networks', href: 'https://connect.leanin.org/networks', icon: Network, external: true },
-      { label: 'Groups', href: 'https://connect.leanin.org/groups', icon: Users, external: true },
+      { label: 'Circles', href: '/circles', icon: Circle },
+      { label: 'Networks', href: '/networks', icon: Network },
+      { label: 'Groups', href: '/groups', icon: Users },
+      { label: 'Directory', href: '/directory', icon: Contact },
     ] as NavItem[],
   },
   {
@@ -47,13 +48,13 @@ const NAV_SECTIONS = [
     title: 'CONNECT',
     items: [
       { label: 'Messages', href: '/messages', icon: MessageSquare },
-      { label: 'Events', href: 'https://connect.leanin.org/events', icon: Calendar, external: true },
+      { label: 'Events', href: '/events', icon: Calendar },
     ] as NavItem[],
   },
   {
     title: 'LEARN',
     items: [
-      { label: 'Resources', href: 'https://connect.leanin.org/resources', icon: BookOpen, external: true },
+      { label: 'Resources', href: '/resources', icon: BookOpen },
     ] as NavItem[],
   },
 ]
@@ -82,13 +83,7 @@ function NavLink({ item, isActive }: NavLinkProps) {
   }
 
   return (
-    <Link
-      href={item.href}
-      style={linkStyle}
-      className="hover:bg-muted"
-      target={item.external ? '_blank' : undefined}
-      rel={item.external ? 'noopener noreferrer' : undefined}
-    >
+    <Link href={item.href} style={linkStyle} className="hover:bg-muted">
       <Icon size={16} strokeWidth={1.5} color={isActive ? 'var(--color-brand)' : 'var(--color-text-secondary)'} />
       <span>{item.label}</span>
     </Link>
