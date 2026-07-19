@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lean In Connect
 
-## Getting Started
+A full-stack redesign of Lean In Connect built as a Design Engineer assessment for Sandberg Goldberg Bernthal Family Foundation.
 
-First, run the development server:
+Live: https://leanin-connect.vercel.app/feed
+Built by: Hrithik Sanyal
+Stack: Next.js 14, TypeScript, Tailwind CSS v4, Supabase, Anthropic Claude, Vercel
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What I Built
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Three fully functional features and four AI integrations built in 3 days.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Feed
+A redesigned community feed with real data persistence. Posts are stored in Supabase PostgreSQL and fetched via a REST API built with Next.js Route Handlers. The feed supports two levels of filtering: scope (All, Your Network, Your Circle, Saved) and topic (Negotiation, Promotions, Bias at Work, and five more). Bookmarked posts persist across sessions via localStorage.
 
-## Learn More
+### Opportunities
+A curated job board featuring roles at companies aligned with Lean In's mission. Includes search, job type filtering, and category filtering. AI surfaces the two best-fit roles for the current user profile.
 
-To learn more about Next.js, take a look at the following resources:
+### Messages
+A full messaging experience with conversation list, live chat thread, and AI-powered conversation starters. Messages receive real AI replies from Claude, role-playing as the conversation participant.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Four AI Features
 
-## Deploy on Vercel
+### AI Career Pulse (Agentic — 3 sequential agents)
+Runs when the feed loads. Agent 1 detects the dominant career theme from recent post tags. Agent 2 matches that theme to a real Lean In research statistic from Women in the Workplace data. Agent 3 synthesizes an insight paragraph and three discussion questions. The result appears in the right sidebar. Each session produces different content based on what the community is discussing.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### AI Voice Coach (Streaming)
+Inside the post composer, the Voice Coach transforms rough notes into a polished community post. Claude streams the response character by character into the textarea using the Anthropic streaming API, so the user watches the draft appear in real time.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### AI Job Match
+When the Jobs page loads, Claude analyzes the user profile against all listings and identifies the two strongest matches. Matched listings surface at the top with a specific one-sentence reason for the match.
+
+### AI Conversation Starter
+In Messages, clicking AI Conversation Starter generates three personalized openers based on the recipient's name, role, and company. One click pre-fills the message composer.
+
+### AI Assistant
+A persistent assistant panel opened via the Sparkles icon in the topbar provides platform navigation help and answers questions about Lean In's mission and features.
+
+---
+
+## Design System
+
+Visual language based on exact CSS values extracted from the live Lean In Connect platform via browser inspection, then extended with a three-tier token architecture.
+
+tokens/primitives.ts — Raw values. No semantic meaning.
+tokens/semantic.ts — Purpose-named. References primitives only.
+tokens/mapped.ts — Component context. References semantic only.
+
+Tailwind CSS v4 is configured via CSS custom properties in globals.css. Every class used in components traces back through the token chain. No hardcoded hex values exist in component files.
+
+Components follow atomic design:
+- atoms/ — Avatar, Tag
+- molecules/ — PostCard, TopicFilter, CareerPulseCard
+- organisms/ — Sidebar, Topbar, FeedList, PostComposer
+
+---
+
+## Architecture
+
+Browser calls Next.js App Router (React + TypeScript) which calls API Routes (Node.js):
+
+- /api/posts — GET + POST, reads and writes to Supabase
+- /api/ai/career-pulse — 3-agent sequential Claude chain
+- /api/ai/voice-coach — Streaming Claude response
+- /api/ai/job-match — Profile to listing matching
+- /api/ai/conversation-starter — Personalized openers
+- /api/ai/chat-reply — Live AI chat replies
+- /api/ai/assistant — Platform navigation assistant
+
+What is real: Posts table in Supabase. All AI features call the live Anthropic API. All buttons and interactions are functional.
+
+What is mocked: Job listings, conversations, member directory, circles, networks, groups, events, resources. All mocked data lives in typed TypeScript files in src/data/.
+
+---
+
+## What I Would Build Next
+
+Real authentication via Supabase Auth. A social graph so Your Network and Your Circle feeds show real connections. Real-time notifications via Supabase Realtime. A job board API connected to a curated partner employer feed. The AI Voice Coach would gain the ability to suggest which Circle or topic a post belongs to based on its content.
+
+---
+
+## Running Locally
+
+Clone the repo and install dependencies with npm install.
+
+Create .env.local with these four values:
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+ANTHROPIC_API_KEY
+
+Run npm run dev and open http://localhost:3000
