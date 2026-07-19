@@ -17,6 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <div
           style={{
             display: 'flex',
@@ -28,7 +31,9 @@ export default function RootLayout({
           <Sidebar />
           <div className="flex flex-col flex-1 overflow-hidden">
             <Topbar />
-            <main className="flex-1 overflow-y-auto">{children}</main>
+            <div id="main-content" className="flex-1 overflow-y-auto">
+              {children}
+            </div>
           </div>
           <MobileNav />
         </div>

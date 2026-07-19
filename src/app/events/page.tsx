@@ -284,6 +284,7 @@ export default function EventsPage() {
           }}
         >
           <div
+            aria-hidden="true"
             style={{
               width: '64px',
               height: '64px',
@@ -365,6 +366,7 @@ export default function EventsPage() {
           }}
         >
           <div
+            aria-hidden="true"
             style={{
               width: '64px',
               height: '64px',
@@ -418,6 +420,7 @@ export default function EventsPage() {
           }}
         >
           <div
+            aria-hidden="true"
             style={{
               width: '64px',
               height: '64px',
@@ -596,7 +599,11 @@ export default function EventsPage() {
               </button>
             </div>
 
+            <label htmlFor="event-title" className="sr-only">
+              Event title
+            </label>
             <input
+              id="event-title"
               type="text"
               placeholder="Event title"
               value={proposeTitle}
@@ -615,7 +622,11 @@ export default function EventsPage() {
               }}
             />
 
+            <label htmlFor="event-date" className="sr-only">
+              Date and time
+            </label>
             <input
+              id="event-date"
               type="text"
               placeholder="Date and time"
               value={proposeDateTime}
@@ -634,7 +645,11 @@ export default function EventsPage() {
               }}
             />
 
+            <label htmlFor="event-type" className="sr-only">
+              Event format
+            </label>
             <select
+              id="event-type"
               value={proposeFormat}
               onChange={(event) => setProposeFormat(event.target.value as EventFormat)}
               style={{
@@ -655,7 +670,11 @@ export default function EventsPage() {
               <option value="In person">In person</option>
             </select>
 
+            <label htmlFor="event-description" className="sr-only">
+              Event description
+            </label>
             <textarea
+              id="event-description"
               placeholder="Description"
               value={proposeDescription}
               onChange={(event) => setProposeDescription(event.target.value)}

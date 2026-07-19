@@ -158,11 +158,12 @@ export default function MessagesPage() {
   }
 
   return (
-    <div
+    <main
+      aria-label="Messages"
       className="messages-layout"
       data-selected={selectedId ? 'true' : 'false'}
     >
-      <div className="messages-left-panel">
+      <div className="messages-left-panel" aria-label="Conversation list">
         <div
           style={{
             padding: '16px',
@@ -268,6 +269,11 @@ export default function MessagesPage() {
               key={conv.id}
               role="button"
               tabIndex={0}
+              aria-label={
+                conv.unread_count > 0
+                  ? `Conversation with ${conv.participant_name}, ${conv.unread_count} unread messages`
+                  : `Conversation with ${conv.participant_name}`
+              }
               onClick={() => setSelectedId(conv.id)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -387,7 +393,11 @@ export default function MessagesPage() {
       </div>
 
       {selectedConversation ? (
-        <div className="messages-right-panel">
+        <div
+          className="messages-right-panel"
+          aria-label={`Chat with ${selectedConversation.participant_name}`}
+          aria-live="polite"
+        >
           <div
             style={{
               padding: '12px 20px',
@@ -446,6 +456,7 @@ export default function MessagesPage() {
             </div>
             <button
               type="button"
+              aria-label="Get AI suggested conversation openers"
               onClick={fetchStarters}
               style={{
                 display: 'flex',
@@ -688,6 +699,7 @@ export default function MessagesPage() {
               <textarea
                 value={messageInput}
                 onChange={(event) => setMessageInput(event.target.value)}
+                aria-label={`Message to ${selectedConversation.participant_name}`}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' && !event.shiftKey) {
                     event.preventDefault()
@@ -711,6 +723,8 @@ export default function MessagesPage() {
             </div>
             <button
               type="button"
+              aria-label="Send message"
+              aria-disabled={!messageInput.trim()}
               onClick={handleSendMessage}
               disabled={!messageInput.trim()}
               style={{
@@ -735,6 +749,8 @@ export default function MessagesPage() {
       ) : (
         <div
           className="messages-right-panel"
+          aria-label="Chat with member"
+          aria-live="polite"
           style={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -924,6 +940,6 @@ export default function MessagesPage() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   )
 }

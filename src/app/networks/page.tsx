@@ -91,7 +91,7 @@ export default function NetworksPage() {
   }
 
   return (
-    <div style={{ padding: '24px 32px 48px 32px' }}>
+    <main aria-label="Networks" style={{ padding: '24px 32px 48px 32px' }}>
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Networks</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -113,9 +113,13 @@ export default function NetworksPage() {
             height: '40px',
           }}
         >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+          <label htmlFor="networks-search" className="sr-only">
+            Search Networks
+          </label>
           <input
-            type="text"
+            id="networks-search"
+            type="search"
             placeholder="Search Networks..."
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
@@ -173,7 +177,7 @@ export default function NetworksPage() {
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px' }}>
+      <div role="tablist" aria-label="Network scope" style={{ display: 'flex', gap: '8px' }}>
         {(
           [
             { label: 'My Networks', value: 'my' },
@@ -185,6 +189,8 @@ export default function NetworksPage() {
             <button
               key={tab.value}
               type="button"
+              role="tab"
+              aria-selected={isActive}
               onClick={() => setActiveTab(tab.value)}
               style={{
                 padding: '6px 14px',
@@ -239,6 +245,7 @@ export default function NetworksPage() {
         </div>
       ) : (
         <div
+          role="list"
           style={{
             display: 'grid',
             gridTemplateColumns: 'var(--grid-cols-2)',
@@ -252,6 +259,7 @@ export default function NetworksPage() {
             return (
               <div
                 key={network.id}
+                role="listitem"
                 className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
                 style={{
                   background: 'var(--color-surface)',
@@ -271,6 +279,7 @@ export default function NetworksPage() {
                   }}
                 >
                   <div
+                    aria-hidden="true"
                     style={{
                       position: 'absolute',
                       inset: 0,
@@ -278,6 +287,7 @@ export default function NetworksPage() {
                     }}
                   />
                   <span
+                    aria-hidden="true"
                     style={{
                       position: 'absolute',
                       bottom: '12px',
@@ -324,6 +334,11 @@ export default function NetworksPage() {
                     </span>
                     <button
                       type="button"
+                      aria-label={
+                        isRequested
+                          ? `Membership requested for ${network.name}`
+                          : `Request to join ${network.name}`
+                      }
                       onClick={(event) => handleRequestClick(network, event)}
                       style={
                         isRequested
@@ -364,6 +379,6 @@ export default function NetworksPage() {
           })}
         </div>
       )}
-    </div>
+    </main>
   )
 }

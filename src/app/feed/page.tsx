@@ -205,7 +205,9 @@ function FeedPageContent() {
             <SkeletonCard />
           </div>
         ) : (
-          <FeedList posts={filteredPosts} scopeTab={scopeTab} onSave={handleSavePost} />
+          <div aria-live="polite" aria-relevant="additions">
+            <FeedList posts={filteredPosts} scopeTab={scopeTab} onSave={handleSavePost} />
+          </div>
         )}
       </div>
 

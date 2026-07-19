@@ -42,7 +42,8 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
   }
 
   return (
-    <motion.div
+    <motion.article
+      aria-label={`Post by ${post.author_name}`}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut', delay: index * 0.06 }}
@@ -105,7 +106,10 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
           borderTop: '1px solid var(--color-border-default)',
         }}
       >
-        <span
+        <button
+          type="button"
+          aria-label={`${post.likes_count} likes`}
+          aria-pressed={false}
           className="hover:text-[var(--color-text-default)]"
           style={{
             display: 'flex',
@@ -114,12 +118,18 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
             fontSize: '13px',
             color: 'var(--color-text-muted)',
             cursor: 'pointer',
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            fontFamily: 'inherit',
           }}
         >
           <Heart size={15} />
           {post.likes_count}
-        </span>
-        <span
+        </button>
+        <button
+          type="button"
+          aria-label={`${post.replies_count} replies`}
           className="hover:text-[var(--color-text-default)]"
           style={{
             display: 'flex',
@@ -128,13 +138,19 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
             fontSize: '13px',
             color: 'var(--color-text-muted)',
             cursor: 'pointer',
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            fontFamily: 'inherit',
           }}
         >
           <MessageCircle size={15} />
           {post.replies_count}
-        </span>
+        </button>
         <button
           type="button"
+          aria-label={isSaved ? 'Remove bookmark' : 'Save post'}
+          aria-pressed={isSaved}
           onClick={(event) => {
             event.stopPropagation()
             handleBookmarkClick()
@@ -159,6 +175,6 @@ export function PostCard({ post, index, onSave }: PostCardProps) {
           />
         </button>
       </div>
-    </motion.div>
+    </motion.article>
   )
 }

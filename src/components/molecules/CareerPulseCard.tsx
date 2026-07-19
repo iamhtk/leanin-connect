@@ -25,7 +25,7 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
 
   if (!data) {
     return (
-      <div style={CONTAINER_STYLE}>
+      <div style={CONTAINER_STYLE} aria-live="polite" aria-busy="true">
         <p
           style={{
             fontSize: '11px',
@@ -49,7 +49,14 @@ export function CareerPulseCard({ data }: CareerPulseCardProps) {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} style={CONTAINER_STYLE}>
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      style={CONTAINER_STYLE}
+      aria-live="polite"
+      aria-busy="false"
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
         <p
           style={{

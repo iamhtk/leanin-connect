@@ -2,10 +2,31 @@
 
 @import "tailwindcss";
 
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  background: var(--color-brand);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 0 0 8px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 @theme {
   /* Fonts - matching their system */
   --font-sans: "DM Sans", "Helvetica Neue", Arial, sans-serif;
   --font-serif: "Newsreader", Georgia, serif;
+
+  /* All colors verified against WCAG 2.1 AA 4.5:1 contrast ratio */
 
   /* === COLORS: matching their oklch values converted to hex === */
 
@@ -22,8 +43,8 @@
   --color-text-default: #2B2118;
   /* Muted foreground - their oklch(.5 .012 45) */
   --color-text-secondary: #7A6E65;
-  /* Further muted */
-  --color-text-muted: #9C9089;
+  /* Further muted — darkened for WCAG 2.1 AA 4.5:1 on white (oklch(.52 .012 45)) */
+  --color-text-muted: #6F655D;
   --color-text-inverse: #FFFFFF;
   --color-text-brand: #7B2335;
 
@@ -248,6 +269,56 @@ button {
   font-family: inherit;
 }
 
+/* WCAG 2.1 AA Focus Indicators */
+*:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default outline only when focus-visible is shown */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Enhanced focus for buttons */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role='button']:focus-visible,
+[role='tab']:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @keyframes pulse {
   0%,
   100% {
@@ -343,6 +414,34 @@ button {
   display: none;
 }
 
+.ai-fab {
+  display: none;
+}
+
+.ai-assistant-handle {
+  display: none;
+}
+
+@keyframes ai-sheet-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ai-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Feed layout responsive */
 .feed-layout {
   display: flex;
@@ -392,7 +491,8 @@ button {
 
   /* Add bottom padding to main content on mobile
      so content is not hidden behind mobile nav */
-  main {
+  main,
+  #main-content {
     padding-bottom: 60px;
   }
 
@@ -406,6 +506,55 @@ button {
 
   .search-mobile {
     display: flex !important;
+  }
+
+  .ai-fab {
+    display: flex !important;
+  }
+
+  /* iOS-style AI assistant card on mobile */
+  .ai-assistant-overlay {
+    background: rgba(43, 33, 24, 0.4) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: ai-overlay-in 0.2s ease-out;
+    z-index: 110 !important;
+  }
+
+  .ai-assistant-panel {
+    top: auto !important;
+    right: 12px !important;
+    left: 12px !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    height: min(88svh, 720px) !important;
+    max-height: calc(100svh - 24px - env(safe-area-inset-bottom)) !important;
+    border: 1px solid var(--color-border-default) !important;
+    border-left: 1px solid var(--color-border-default) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 12px 40px rgba(43, 33, 24, 0.18) !important;
+    overflow: hidden;
+    animation: ai-sheet-up 0.28s cubic-bezier(0.05, 0.7, 0.1, 1);
+    z-index: 120 !important;
+  }
+
+  .ai-assistant-handle {
+    display: flex !important;
+    justify-content: center;
+    padding: 10px 0 2px;
+    flex-shrink: 0;
+  }
+
+  .ai-assistant-handle span {
+    width: 36px;
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--color-border-strong);
+  }
+
+  .ai-assistant-header {
+    padding-top: 8px !important;
+    border-bottom: none !important;
   }
 
   .mobile-back-btn {

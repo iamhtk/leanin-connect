@@ -226,9 +226,13 @@ export default function ResourcesPage() {
             height: '40px',
           }}
         >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+          <label htmlFor="resources-search" className="sr-only">
+            Search resources
+          </label>
           <input
-            type="text"
+            id="resources-search"
+            type="search"
             placeholder="Search resources..."
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
@@ -336,6 +340,8 @@ export default function ResourcesPage() {
             return (
               <div
                 key={resource.id}
+                role="article"
+                aria-label={`${resource.title}, ${resource.type} by ${resource.author}`}
                 onClick={() => showToast('Opening ' + resource.title + '...')}
                 style={{
                   background: 'var(--color-surface)',
@@ -346,7 +352,7 @@ export default function ResourcesPage() {
                   cursor: 'pointer',
                 }}
               >
-                <div style={{ height: '100px', background: resource.color, position: 'relative' }}>
+                <div aria-hidden="true" style={{ height: '100px', background: resource.color, position: 'relative' }}>
                   <span
                     style={{
                       position: 'absolute',
@@ -382,6 +388,7 @@ export default function ResourcesPage() {
                   )}
                   <button
                     type="button"
+                    aria-label={isSaved ? `Remove ${resource.title} from library` : `Save ${resource.title} to library`}
                     onClick={(event) => toggleSaved(resource, event)}
                     style={{
                       position: 'absolute',

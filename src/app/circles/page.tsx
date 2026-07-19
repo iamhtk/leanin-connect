@@ -109,7 +109,7 @@ export default function CirclesPage() {
   }
 
   return (
-    <div style={{ padding: '24px 32px 48px 32px' }}>
+    <main aria-label="Circles" style={{ padding: '24px 32px 48px 32px' }}>
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Circles</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -131,9 +131,13 @@ export default function CirclesPage() {
             height: '40px',
           }}
         >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+          <label htmlFor="circles-search" className="sr-only">
+            Search Circles
+          </label>
           <input
-            type="text"
+            id="circles-search"
+            type="search"
             placeholder="Search Circles..."
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
@@ -191,7 +195,7 @@ export default function CirclesPage() {
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px' }}>
+      <div role="tablist" aria-label="Circle scope" style={{ display: 'flex', gap: '8px' }}>
         {(
           [
             { label: 'My Circles', value: 'my' },
@@ -203,6 +207,8 @@ export default function CirclesPage() {
             <button
               key={tab.value}
               type="button"
+              role="tab"
+              aria-selected={isActive}
               onClick={() => setActiveTab(tab.value)}
               style={{
                 padding: '6px 14px',
@@ -260,6 +266,7 @@ export default function CirclesPage() {
         </div>
       ) : (
         <div
+          role="list"
           style={{
             display: 'grid',
             gridTemplateColumns: 'var(--grid-cols-2)',
@@ -274,6 +281,7 @@ export default function CirclesPage() {
             return (
               <div
                 key={circle.id}
+                role="listitem"
                 className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
                 style={{
                   background: 'var(--color-surface)',
@@ -293,6 +301,7 @@ export default function CirclesPage() {
                   }}
                 >
                   <div
+                    aria-hidden="true"
                     style={{
                       position: 'absolute',
                       inset: 0,
@@ -370,6 +379,13 @@ export default function CirclesPage() {
                     </div>
                     <button
                       type="button"
+                      aria-label={
+                        isLeading
+                          ? `You are leading ${circle.name}`
+                          : isJoined
+                            ? `Joined ${circle.name}`
+                            : `Join ${circle.name}`
+                      }
                       onClick={(event) => handleJoinClick(circle, event)}
                       style={
                         isLeading
@@ -543,6 +559,6 @@ export default function CirclesPage() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   )
 }

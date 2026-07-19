@@ -10,25 +10,31 @@ export interface TopicFilterProps {
 
 export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '4px',
-        overflowX: 'auto',
-        paddingBottom: '12px',
-        scrollbarWidth: 'none',
-      }}
-      className="[&::-webkit-scrollbar]:hidden"
-    >
-      {TOPIC_TAGS.map((tag) => {
-        const isActive = tag.value === selectedTag
+    <nav aria-label="Filter by topic">
+      <div
+        role="tablist"
+        aria-label="Topic filters"
+        style={{
+          display: 'flex',
+          gap: '4px',
+          overflowX: 'auto',
+          paddingBottom: '12px',
+          scrollbarWidth: 'none',
+        }}
+        className="[&::-webkit-scrollbar]:hidden"
+      >
+        {TOPIC_TAGS.map((tag) => {
+          const isActive = tag.value === selectedTag
 
-        return (
-          <motion.button
-            key={tag.value}
-            type="button"
-            whileTap={{ scale: 0.97 }}
-            onClick={() => onTagChange(tag.value)}
+          return (
+            <motion.button
+              key={tag.value}
+              type="button"
+              role="tab"
+              aria-selected={selectedTag === tag.value}
+              aria-label={`Filter by ${tag.label}`}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => onTagChange(tag.value)}
             className={
               isActive
                 ? undefined
@@ -49,9 +55,10 @@ export function TopicFilter({ selectedTag, onTagChange }: TopicFilterProps) {
             }}
           >
             {tag.label}
-          </motion.button>
-        )
-      })}
-    </div>
+            </motion.button>
+          )
+        })}
+      </div>
+    </nav>
   )
 }

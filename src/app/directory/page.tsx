@@ -183,7 +183,7 @@ export default function DirectoryPage() {
   }
 
   return (
-    <div style={{ padding: '24px 32px 48px 32px' }}>
+    <main aria-label="Member directory" style={{ padding: '24px 32px 48px 32px' }}>
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: '600', color: 'var(--color-text-default)' }}>Directory</h1>
         <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginTop: '4px' }}>
@@ -205,9 +205,13 @@ export default function DirectoryPage() {
             height: '40px',
           }}
         >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+          <label htmlFor="directory-search" className="sr-only">
+            Search members
+          </label>
           <input
-            type="text"
+            id="directory-search"
+            type="search"
             placeholder="Search members..."
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
@@ -298,6 +302,7 @@ export default function DirectoryPage() {
       </div>
 
       <div
+        role="list"
         style={{
           display: 'grid',
           gridTemplateColumns: 'var(--grid-cols-3)',
@@ -310,6 +315,8 @@ export default function DirectoryPage() {
           return (
             <div
               key={member.id}
+              role="listitem"
+              aria-label={`${member.name}, ${member.role} at ${member.company}`}
               className="hover:[border-color:var(--color-border-strong)] hover:-translate-y-px"
               style={{
                 background: 'var(--color-surface)',
@@ -365,6 +372,8 @@ export default function DirectoryPage() {
               </div>
               <button
                 type="button"
+                aria-label={isConnected ? `Connected with ${member.name}` : `Connect with ${member.name}`}
+                aria-pressed={isConnected}
                 onClick={(event) => {
                   event.stopPropagation()
                   toggleConnect(member)
@@ -512,6 +521,6 @@ export default function DirectoryPage() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   )
 }

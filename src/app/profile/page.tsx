@@ -56,8 +56,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div>
+    <main aria-label="Hrithik Sanyal's profile">
       <div
+        aria-hidden="true"
         style={{
           height: '140px',
           background: 'linear-gradient(135deg, oklch(.90 .025 17) 0%, oklch(.95 .018 17) 100%)',
@@ -82,19 +83,31 @@ export default function ProfilePage() {
           <div>
             {isEditing ? (
               <>
+                <label htmlFor="profile-name" className="sr-only">
+                  Name
+                </label>
                 <input
+                  id="profile-name"
                   value={draftName}
                   onChange={(event) => setDraftName(event.target.value)}
                   style={{ ...inputStyle, fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}
                 />
+                <label htmlFor="profile-role" className="sr-only">
+                  Job title
+                </label>
                 <input
+                  id="profile-role"
                   value={draftTitle}
                   onChange={(event) => setDraftTitle(event.target.value)}
                   style={{ ...inputStyle, fontSize: '14px', marginTop: '2px' }}
                 />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                  <Globe size={13} />
+                  <Globe size={13} aria-hidden="true" />
+                  <label htmlFor="profile-location" className="sr-only">
+                    Location
+                  </label>
                   <input
+                    id="profile-location"
                     value={draftLocation}
                     onChange={(event) => setDraftLocation(event.target.value)}
                     style={{ ...inputStyle, fontSize: '13px' }}
@@ -193,6 +206,8 @@ export default function ProfilePage() {
           ) : (
             <button
               type="button"
+              aria-label="Edit your profile"
+              aria-expanded={isEditing}
               onClick={startEditing}
               style={{
                 display: 'flex',
@@ -300,6 +315,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

@@ -71,7 +71,7 @@ export default function JobsPage() {
   })
 
   return (
-    <div className="jobs-page" style={{ padding: '24px 32px 48px 32px' }}>
+    <main aria-label="Job opportunities" className="jobs-page" style={{ padding: '24px 32px 48px 32px' }}>
       <div style={{ marginBottom: '24px' }}>
         <h1
           style={{
@@ -116,9 +116,13 @@ export default function JobsPage() {
             whiteSpace: 'nowrap',
           }}
         >
-          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+          <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} aria-hidden="true" />
+          <label htmlFor="jobs-search" className="sr-only">
+            Search roles or companies
+          </label>
           <input
-            type="text"
+            id="jobs-search"
+            type="search"
             placeholder="Search roles or companies..."
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
@@ -172,6 +176,7 @@ export default function JobsPage() {
           marginBottom: '8px',
         }}
       >
+        <div role="group" aria-label="Filter by job type" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         {JOB_TYPES.map((type) => {
           const isActive = selectedType === type.value
 
@@ -203,8 +208,10 @@ export default function JobsPage() {
             </button>
           )
         })}
+        </div>
 
         <div
+          aria-hidden="true"
           style={{
             width: '1px',
             height: '16px',
@@ -215,6 +222,7 @@ export default function JobsPage() {
           }}
         />
 
+        <div role="group" aria-label="Filter by category" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         {CATEGORIES.map((category) => {
           const isActive = selectedCategory === category
 
@@ -246,6 +254,7 @@ export default function JobsPage() {
             </button>
           )
         })}
+        </div>
       </div>
 
       {isMatchLoading && (
@@ -285,7 +294,7 @@ export default function JobsPage() {
           <JobCard key={job.id} job={job} />
         ))}
       </div>
-    </div>
+    </main>
   )
 }
 
@@ -299,6 +308,8 @@ function JobCard({ job }: JobCardProps) {
 
   return (
     <div
+      role="article"
+      aria-label={`${job.role} at ${job.company}`}
       style={{
         background: 'var(--color-surface)',
         border: job.is_ai_match
@@ -384,6 +395,7 @@ function JobCard({ job }: JobCardProps) {
           href={job.url}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`Apply for ${job.role} at ${job.company}, opens in new tab`}
           style={{
             display: 'inline-flex',
             alignItems: 'center',

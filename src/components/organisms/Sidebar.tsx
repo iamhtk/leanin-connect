@@ -83,7 +83,12 @@ function NavLink({ item, isActive }: NavLinkProps) {
   }
 
   return (
-    <Link href={item.href} style={linkStyle} className="hover:bg-muted">
+    <Link
+      href={item.href}
+      style={linkStyle}
+      className="hover:bg-muted"
+      aria-current={isActive ? 'page' : undefined}
+    >
       <Icon size={16} strokeWidth={1.5} color={isActive ? 'var(--color-brand)' : 'var(--color-text-secondary)'} />
       <span>{item.label}</span>
     </Link>
@@ -114,9 +119,14 @@ export function Sidebar() {
         </span>
       </div>
 
-      <nav style={{ display: 'flex', flexDirection: 'column' }}>
+      <nav aria-label="Main navigation" style={{ display: 'flex', flexDirection: 'column' }}>
         {NAV_SECTIONS.map((section, index) => (
-          <div key={section.title} style={{ marginTop: index === 0 ? 0 : '16px' }}>
+          <div
+            key={section.title}
+            role="group"
+            aria-label={section.title}
+            style={{ marginTop: index === 0 ? 0 : '16px' }}
+          >
             <p
               style={{
                 fontSize: '11px',
@@ -144,6 +154,7 @@ export function Sidebar() {
       </nav>
 
       <div
+        aria-label="User profile, Hrithik Sanyal, Design Engineer"
         style={{
           marginTop: 'auto',
           padding: '12px 8px',

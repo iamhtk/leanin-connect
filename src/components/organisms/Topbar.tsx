@@ -29,6 +29,8 @@ export function Topbar() {
 
   return (
     <header
+      role="banner"
+      aria-label="Site header"
       style={{
         height: '52px',
         backgroundColor: 'var(--color-surface)',
@@ -73,8 +75,14 @@ export function Topbar() {
         }}
       >
         <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+        <label htmlFor="global-search" className="sr-only">
+          Search Lean In Connect
+        </label>
         <input
-          type="text"
+          id="global-search"
+          type="search"
+          role="searchbox"
+          aria-label="Search topics, members, Circles and more"
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
           onKeyDown={(event) => {
@@ -139,6 +147,7 @@ export function Topbar() {
 
         <button
           type="button"
+          aria-label="Open AI Assistant"
           onClick={() => setShowAssistant(true)}
           style={{
             width: '32px',
@@ -159,6 +168,9 @@ export function Topbar() {
 
         <button
           type="button"
+          aria-label="Notifications"
+          aria-haspopup="true"
+          aria-expanded={showNotifications}
           onClick={() => {
             setShowNotifications((previous) => !previous)
             setShowProfileMenu(false)
@@ -182,6 +194,9 @@ export function Topbar() {
 
         <button
           type="button"
+          aria-label="User menu, Hrithik Sanyal"
+          aria-haspopup="true"
+          aria-expanded={showProfileMenu}
           onClick={() => {
             setShowProfileMenu((previous) => !previous)
             setShowNotifications(false)
@@ -207,6 +222,8 @@ export function Topbar() {
 
         {showNotifications && (
           <div
+            role="dialog"
+            aria-label="Notifications panel"
             style={{
               position: 'absolute',
               top: '44px',
@@ -302,6 +319,7 @@ export function Topbar() {
 
         {showProfileMenu && (
           <div
+            role="menu"
             style={{
               position: 'absolute',
               top: '44px',
@@ -318,6 +336,7 @@ export function Topbar() {
           >
             <button
               type="button"
+              role="menuitem"
               onClick={() => {
                 setShowProfileMenu(false)
                 router.push('/profile')
@@ -344,6 +363,7 @@ export function Topbar() {
             </button>
             <button
               type="button"
+              role="menuitem"
               onClick={() => {
                 setShowProfileMenu(false)
                 router.push('/settings')
@@ -377,6 +397,7 @@ export function Topbar() {
             />
             <button
               type="button"
+              role="menuitem"
               onClick={() => {
                 setShowProfileMenu(false)
                 showToast('Signed out')
@@ -404,6 +425,33 @@ export function Topbar() {
           </div>
         )}
       </div>
+
+      {!showAssistant && (
+        <button
+          type="button"
+          className="ai-fab"
+          aria-label="Open AI Assistant"
+          onClick={() => setShowAssistant(true)}
+          style={{
+            position: 'fixed',
+            right: '16px',
+            bottom: 'calc(60px + env(safe-area-inset-bottom) + 16px)',
+            width: '52px',
+            height: '52px',
+            borderRadius: '9999px',
+            background: 'var(--color-brand)',
+            color: 'var(--color-text-inverse)',
+            border: 'none',
+            cursor: 'pointer',
+            zIndex: 90,
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: 'var(--shadow-modal)',
+          }}
+        >
+          <Sparkles size={22} />
+        </button>
+      )}
 
       <AIAssistant isOpen={showAssistant} onClose={() => setShowAssistant(false)} />
     </header>

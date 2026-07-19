@@ -17,6 +17,7 @@ export function MobileNav() {
 
   return (
     <nav
+      aria-label="Mobile navigation"
       style={{
         display: 'none',
         position: 'fixed',
@@ -38,6 +39,8 @@ export function MobileNav() {
           <Link
             key={item.href}
             href={item.href}
+            aria-current={isActive ? 'page' : undefined}
+            aria-label={item.label}
             style={{
               flex: 1,
               display: 'flex',

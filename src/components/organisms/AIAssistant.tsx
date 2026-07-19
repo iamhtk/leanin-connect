@@ -95,6 +95,7 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
   return (
     <>
       <div
+        className="ai-assistant-overlay"
         onClick={onClose}
         style={{
           position: 'fixed',
@@ -105,6 +106,11 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
       />
 
       <div
+        className="ai-assistant-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="AI Assistant"
+        aria-describedby="assistant-description"
         style={{
           position: 'fixed',
           top: 0,
@@ -119,7 +125,15 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
           boxShadow: 'var(--shadow-modal)',
         }}
       >
+        <span id="assistant-description" className="sr-only">
+          Chat with the AI assistant to navigate Lean In Connect, find resources, join Circles, and connect with the community
+        </span>
+        <div className="ai-assistant-handle" aria-hidden="true">
+          <span />
+        </div>
+
         <div
+          className="ai-assistant-header"
           style={{
             padding: '16px 20px',
             borderBottom: '1px solid var(--color-border-default)',
@@ -155,6 +169,7 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
           </div>
           <button
             type="button"
+            aria-label="Close AI Assistant"
             onClick={onClose}
             style={{
               width: '28px',
@@ -341,6 +356,7 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
             <input
               type="text"
               value={input}
+              aria-label="Message the assistant"
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -362,6 +378,8 @@ export function AIAssistant({ isOpen, onClose }: AIAssistantProps) {
           </div>
           <button
             type="button"
+            aria-label="Send message"
+            aria-disabled={!input.trim() || isLoading}
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading}
             style={{

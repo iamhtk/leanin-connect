@@ -11,7 +11,7 @@ export default function NotificationsPage() {
   const [activeTab, setActiveTab] = useState<NotificationsTab>('all')
 
   return (
-    <div style={{ padding: '24px 32px 48px 32px' }}>
+    <main aria-label="Notifications" aria-live="polite" aria-atomic="false" style={{ padding: '24px 32px 48px 32px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
         <div>
           <p
@@ -180,6 +180,6 @@ export default function NotificationsPage() {
           </button>
         </div>
       </div>
-    </div>
+    </main>
   )
 }
