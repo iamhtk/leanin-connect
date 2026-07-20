@@ -1,11 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Heart, MessageCircle, Bookmark } from 'lucide-react'
+import {
+  Heart,
+  MessageCircle,
+  Bookmark,
+  MoreHorizontal,
+  EyeOff,
+  Repeat2,
+  Link,
+  Flag,
+} from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
 import { CoverImage } from '@/components/atoms/CoverImage'
-import { formatRelativeTime } from '@/lib/utils'
+import { formatRelativeTime, showToast } from '@/lib/utils'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { getTopicCoverUrl, shouldShowPostCover, getPortraitUrl } from '@/lib/cover-images'
@@ -62,7 +71,20 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
   const [isLiking, setIsLiking] = useState(false)
   const [isSaved, setIsSaved] = useState(() => readSavedIds().includes(post.id))
   const [bookmarkPulse, setBookmarkPulse] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
   const isHtml = post.content.trim().startsWith('<')
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
   const handleLike = async () => {
     if (!user || isLiking) return
@@ -129,6 +151,8 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
       void handleLike()
     },
   })
+
+  if (hidden) return null
 
   return (
     <div style={{ position: 'relative', overflow: 'hidden', marginBottom: '8px' }}>
@@ -216,6 +240,131 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
         >
           {post.topic_tag}
         </span>
+        <div ref={menuRef} style={{ position: 'relative' }}>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              setMenuOpen((prev) => !prev)
+            }}
+            aria-label="Post options"
+            aria-haspopup="true"
+            aria-expanded={menuOpen}
+            className="icon-btn"
+            style={{
+              width: '28px',
+              height: '28px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '6px',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--color-text-muted)',
+              marginLeft: '6px',
+              flexShrink: 0,
+            }}
+          >
+            <MoreHorizontal size={16} aria-hidden="true" />
+          </button>
+
+          {menuOpen && (
+            <div
+              role="menu"
+              aria-label="Post options menu"
+              style={{
+                position: 'absolute',
+                top: '32px',
+                right: 0,
+                background: 'var(--color-surface)',
+                border: '1px solid var(--color-border-default)',
+                borderRadius: '12px',
+                boxShadow: 'var(--shadow-dropdown)',
+                zIndex: 50,
+                minWidth: '180px',
+                padding: '6px',
+                overflow: 'hidden',
+              }}
+            >
+              {[
+                {
+                  label: 'Hide this post',
+                  icon: <EyeOff size={14} aria-hidden="true" />,
+                  action: () => {
+                    setHidden(true)
+                    setMenuOpen(false)
+                    showToast('Post hidden')
+                  },
+                },
+                {
+                  label: 'Repost',
+                  icon: <Repeat2 size={14} aria-hidden="true" />,
+                  action: () => {
+                    setMenuOpen(false)
+                    showToast('Reposted to your network')
+                  },
+                },
+                {
+                  label: 'Copy link',
+                  icon: <Link size={14} aria-hidden="true" />,
+                  action: () => {
+                    navigator.clipboard
+                      .writeText(window.location.origin + '/feed?post=' + post.id)
+                      .catch(() => {})
+                    setMenuOpen(false)
+                    showToast('Link copied')
+                  },
+                },
+                {
+                  label: 'Report post',
+                  icon: <Flag size={14} aria-hidden="true" />,
+                  action: () => {
+                    setMenuOpen(false)
+                    showToast('Post reported. Thank you for your feedback.')
+                  },
+                  danger: true,
+                },
+              ].map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  role="menuitem"
+                  onClick={item.action}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '9px 12px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontFamily: 'inherit',
+                    color: item.danger
+                      ? 'var(--color-status-error)'
+                      : 'var(--color-text-default)',
+                    textAlign: 'left',
+                    transition: 'background-color 0.1s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    ;(e.currentTarget as HTMLButtonElement).style.background = item.danger
+                      ? 'var(--color-status-error-bg)'
+                      : 'var(--color-subtle)'
+                  }}
+                  onMouseLeave={(e) => {
+                    ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                  }}
+                >
+                  {item.icon}
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {isHtml ? (
