@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-000000?style=flat-square&logo=nextdotjs" />
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat-square&logo=typescript&logoColor=white" />
   <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Realtime-3FCF8E?style=flat-square&logo=supabase&logoColor=white" />
   <img alt="Anthropic" src="https://img.shields.io/badge/AI-Claude-D97757?style=flat-square&logo=anthropic&logoColor=white" />
@@ -42,6 +42,7 @@
 ## 🧭 Contents
 
 - [Stack](#-stack)
+- [Five-Minute Reviewer Path](#-five-minute-reviewer-path)
 - [What Is Real vs Mocked](#-what-is-real-vs-mocked)
 - [Pages](#-pages-15)
 - [Authentication](#-authentication)
@@ -50,15 +51,28 @@
 - [Frontend Engineering](#-frontend-engineering)
 - [Design System Architecture](#-design-system-architecture)
 - [Running Locally](#-running-locally)
+- [Tradeoffs and Next Steps](#-tradeoffs-and-next-steps)
 
 ---
 
 ## 🧰 Stack
 
-`Next.js 14` · `TypeScript` · `Tailwind CSS v4` · `Supabase` ·
+`Next.js 16` · `TypeScript` · `Tailwind CSS v4` · `Supabase` ·
 `Anthropic Claude` · `Framer Motion` · `Tiptap` · `shadcn/ui` · `Vercel`
 
 > Supabase powers authentication, PostgreSQL, Storage, and Realtime. Claude powers every AI workflow through server-only API routes.
+
+---
+
+## ⏱️ Five-Minute Reviewer Path
+
+1. Open the demo link — you are signed in automatically
+2. Go to Feed — create a post using AI Voice Coach and watch it stream
+3. Like a post — watch the notification bell badge appear in real time
+4. Open /circles/3 — post a message and watch it appear live in a second tab
+5. Go to /jobs — check AI Match badges, click Apply for the Salary Coach
+6. Press CMD+K from anywhere — explore the command palette
+7. Read the Architecture and Tradeoffs sections below for decisions
 
 ---
 
@@ -404,6 +418,42 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000). You will land on `/auth/login`; create an account to explore the app.
+
+---
+
+## ⚖️ Tradeoffs and Next Steps
+
+**Scope decision**
+I started with the core requested slice — Feed, Messages, and Jobs —
+then used the same reusable architecture to demonstrate how the
+experience scales across the broader Lean In Connect platform.
+The token system, component state classes, gesture hooks, and
+API patterns are all built to be composable, so each additional
+page required minimal incremental effort.
+
+**Testing**
+Because of the assessment timeframe I prioritized a complete
+functioning product with documented manual verification over
+an automated test suite. TESTING.md in the repo walks through
+every feature step by step.
+
+The first automated tests I would add:
+
+- Authentication flow and protected route tests
+- Post creation and server-side XSS sanitization tests
+- RLS ownership policy tests (user cannot modify another user's data)
+- Optimistic like rollback test (server failure reverts count)
+- Realtime notification delivery test across two sessions
+- Playwright end-to-end smoke flow covering the five-minute reviewer path
+
+**What I would build next with more time**
+- Real social graph: follows and circle_memberships tables so
+  Your Network and Your Circle tabs show actual connections
+- Rate limiting on AI routes using Upstash Redis to prevent
+  cost abuse in production
+- Full-text search using Postgres tsvector indexing instead of
+  sending a static list to Claude
+- Automated test suite covering the cases above
 
 ---
 
