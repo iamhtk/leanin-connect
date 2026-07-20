@@ -83,18 +83,54 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
   const [bookmarkPulse, setBookmarkPulse] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
+  const [menuPosition, setMenuPosition] = useState<{ top: number; right: number } | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
   const isHtml = post.content.trim().startsWith('<')
 
+  const updateMenuPosition = () => {
+    const button = menuButtonRef.current
+    if (!button) return
+    const rect = button.getBoundingClientRect()
+    setMenuPosition({
+      top: rect.bottom + 4,
+      right: Math.max(12, window.innerWidth - rect.right),
+    })
+  }
+
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    const handler = (e: MouseEvent | TouchEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false)
       }
     }
     document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    document.addEventListener('touchstart', handler)
+    return () => {
+      document.removeEventListener('mousedown', handler)
+      document.removeEventListener('touchstart', handler)
+    }
   }, [])
+
+  useEffect(() => {
+    if (!menuOpen) return
+
+    updateMenuPosition()
+
+    const handleReposition = () => {
+      updateMenuPosition()
+    }
+    const handleScroll = () => {
+      setMenuOpen(false)
+    }
+
+    window.addEventListener('resize', handleReposition)
+    window.addEventListener('scroll', handleScroll, true)
+    return () => {
+      window.removeEventListener('resize', handleReposition)
+      window.removeEventListener('scroll', handleScroll, true)
+    }
+  }, [menuOpen])
 
   const handleLike = async () => {
     if (!user || isLiking) return
@@ -265,12 +301,18 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
         >
           {post.topic_tag}
         </span>
-        <div ref={menuRef} style={{ position: 'relative' }}>
+        <div ref={menuRef} style={{ position: 'relative', zIndex: menuOpen ? 200 : 'auto' }}>
           <button
+            ref={menuButtonRef}
             type="button"
             onClick={(e) => {
               e.stopPropagation()
-              setMenuOpen((prev) => !prev)
+              if (menuOpen) {
+                setMenuOpen(false)
+                return
+              }
+              updateMenuPosition()
+              setMenuOpen(true)
             }}
             aria-label="Post options"
             aria-haspopup="true"
@@ -294,22 +336,26 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
             <MoreHorizontal size={16} aria-hidden="true" />
           </button>
 
-          {menuOpen && (
+          {menuOpen && menuPosition && (
             <div
               role="menu"
               aria-label="Post options menu"
               style={{
-                position: 'absolute',
-                top: '32px',
-                right: 0,
+                position: 'fixed',
+                top: menuPosition.top,
+                right: menuPosition.right,
+                left: 'auto',
                 background: 'var(--color-surface)',
                 border: '1px solid var(--color-border-default)',
                 borderRadius: '12px',
                 boxShadow: 'var(--shadow-dropdown)',
-                zIndex: 50,
+                zIndex: 300,
                 minWidth: '180px',
+                maxWidth: 'calc(100vw - 24px)',
                 padding: '6px',
                 overflow: 'hidden',
+                isolation: 'isolate',
+                transform: 'translateZ(0)',
               }}
             >
               {[
