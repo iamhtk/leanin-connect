@@ -34,11 +34,16 @@ export function Topbar() {
   const [showResults, setShowResults] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const rightSectionRef = useRef<HTMLDivElement>(null)
+  const notificationsRef = useRef<HTMLDivElement>(null)
+  const profileMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: Event) => {
       const target = event.target as Node
-      if (rightSectionRef.current && !rightSectionRef.current.contains(target)) {
+      const inRightSection = rightSectionRef.current?.contains(target)
+      const inNotifications = notificationsRef.current?.contains(target)
+      const inProfileMenu = profileMenuRef.current?.contains(target)
+      if (!inRightSection && !inNotifications && !inProfileMenu) {
         setShowNotifications(false)
         setShowProfileMenu(false)
       }
@@ -48,7 +53,11 @@ export function Topbar() {
     }
 
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
   }, [])
 
   const handleSearch = async () => {
@@ -474,17 +483,23 @@ export function Topbar() {
 
         {showNotifications && (
           <div
+            ref={notificationsRef}
+            className="topbar-dropdown topbar-dropdown--notifications"
             style={{
-              position: 'absolute',
-              top: '44px',
-              right: '60px',
-              width: '320px',
+              position: 'fixed',
+              top: '56px',
+              right: '12px',
+              left: 'auto',
+              width: 'min(320px, calc(100vw - 24px))',
+              maxWidth: 'calc(100vw - 24px)',
               background: 'var(--color-surface)',
               border: '1px solid var(--color-border-default)',
               borderRadius: '14px',
               boxShadow: 'var(--shadow-dropdown)',
-              zIndex: 100,
+              zIndex: 200,
               overflow: 'hidden',
+              isolation: 'isolate',
+              transform: 'translateZ(0)',
             }}
           >
             <div
@@ -526,7 +541,7 @@ export function Topbar() {
                 </p>
               </div>
             ) : (
-              <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
+              <div style={{ maxHeight: 'min(320px, calc(100vh - 140px))', overflowY: 'auto' }}>
                 {notifications.slice(0, 5).map((notification) => (
                   <div
                     key={notification.id}
@@ -619,18 +634,24 @@ export function Topbar() {
 
         {showProfileMenu && (
           <div
+            ref={profileMenuRef}
+            className="topbar-dropdown topbar-dropdown--profile"
             style={{
-              position: 'absolute',
-              top: '44px',
-              right: '0px',
-              width: '200px',
+              position: 'fixed',
+              top: '56px',
+              right: '12px',
+              left: 'auto',
+              width: 'min(200px, calc(100vw - 24px))',
+              maxWidth: 'calc(100vw - 24px)',
               background: 'var(--color-surface)',
               border: '1px solid var(--color-border-default)',
               borderRadius: '14px',
               boxShadow: 'var(--shadow-dropdown)',
-              zIndex: 100,
+              zIndex: 200,
               padding: '6px',
               overflow: 'hidden',
+              isolation: 'isolate',
+              transform: 'translateZ(0)',
             }}
           >
             <div

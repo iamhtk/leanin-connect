@@ -763,6 +763,11 @@ button {
     padding: 0 12px !important;
   }
 
+  .topbar-dropdown {
+    right: max(12px, env(safe-area-inset-right)) !important;
+    top: calc(52px + 4px) !important;
+  }
+
   .profile-layout {
     flex-direction: column;
     padding: 16px;
