@@ -110,6 +110,10 @@ export default function CirclesPage() {
     circle.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  const myCircles = MOCK_CIRCLES.filter((c) => joinedIds.has(c.id)).filter((circle) =>
+    circle.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   const closeModal = () => {
     setIsOpen(false)
     setCircleName('')
@@ -267,41 +271,193 @@ export default function CirclesPage() {
       </div>
 
       {activeTab === 'my' ? (
-        <div
-          style={{
-            marginTop: '48px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            gap: '8px',
-          }}
-        >
-          <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
-            You&apos;re not in any Circles yet.
-          </p>
-          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>
-            Browse all Circles to find one to join.
-          </p>
-          <button
-            type="button"
-            onClick={() => setActiveTab('all')}
+        myCircles.length === 0 ? (
+          <div
             style={{
-              marginTop: '8px',
-              background: 'var(--color-brand)',
-              color: 'white',
-              borderRadius: '9999px',
-              padding: '8px 20px',
-              fontSize: '13px',
-              fontWeight: '600',
-              border: 'none',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
+              marginTop: '48px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              gap: '8px',
             }}
           >
-            Browse all Circles
-          </button>
-        </div>
+            <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+              You&apos;re not in any Circles yet.
+            </p>
+            <p style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>
+              Browse all Circles to find one to join.
+            </p>
+            <button
+              type="button"
+              onClick={() => setActiveTab('all')}
+              style={{
+                marginTop: '8px',
+                background: 'var(--color-brand)',
+                color: 'white',
+                borderRadius: '9999px',
+                padding: '8px 20px',
+                fontSize: '13px',
+                fontWeight: '600',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              Browse all Circles
+            </button>
+          </div>
+        ) : (
+          <div className="page-grid-2" style={{ marginTop: '20px' }}>
+            {myCircles.map((circle) => {
+              const isJoined = joinedIds.has(circle.id)
+              const isLeading = circle.status === 'Leading'
+
+              return (
+                <div
+                  key={circle.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => router.push('/circles/' + circle.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      router.push('/circles/' + circle.id)
+                    }
+                  }}
+                  className="card-hover"
+                  style={{
+                    background: 'var(--color-surface)',
+                    border: '1px solid var(--color-border-default)',
+                    borderRadius: '14px',
+                    overflow: 'hidden',
+                    boxShadow: 'none',
+                  }}
+                >
+                  <div style={{ position: 'relative' }}>
+                    <CoverImage src={circle.cover_url} alt="" height={160} />
+                    <div style={{ position: 'absolute', inset: 0 }}>
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '10px',
+                          left: '10px',
+                          background: 'rgba(255,255,255,0.2)',
+                          color: 'white',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          letterSpacing: '0.08em',
+                          padding: '3px 8px',
+                          borderRadius: '9999px',
+                          textTransform: 'uppercase',
+                          backdropFilter: 'blur(4px)',
+                        }}
+                      >
+                        {circle.category}
+                      </span>
+                    </div>
+                  </div>
+                  <div style={{ padding: '16px' }}>
+                    <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+                      {circle.name}
+                    </p>
+                    <p
+                      style={{
+                        fontSize: '13px',
+                        color: 'var(--color-text-muted)',
+                        lineHeight: '1.5',
+                        marginTop: '6px',
+                        overflow: 'hidden',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                      }}
+                    >
+                      {circle.description}
+                    </p>
+                    <div
+                      style={{
+                        marginTop: '12px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          {[0, 1, 2].map((index) => (
+                            <div
+                              key={index}
+                              style={{
+                                marginLeft: index === 0 ? 0 : '-6px',
+                                zIndex: 3 - index,
+                                border: '1.5px solid var(--color-surface)',
+                                borderRadius: '9999px',
+                              }}
+                            >
+                              <PortraitImage
+                                src={getPortraitUrl(`${circle.name}-member-${index}`)}
+                                alt=""
+                                size={20}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                          {circle.members} {circle.members === 1 ? 'member' : 'members'}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(event) => handleJoinClick(circle, event)}
+                        className="btn-secondary"
+                        style={
+                          isLeading
+                            ? {
+                                background: 'var(--color-brand)',
+                                color: 'white',
+                                padding: '4px 14px',
+                                borderRadius: '9999px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontFamily: 'inherit',
+                              }
+                            : isJoined
+                              ? {
+                                  background: 'var(--color-brand-subtle)',
+                                  color: 'var(--color-brand)',
+                                  padding: '4px 14px',
+                                  borderRadius: '9999px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  fontFamily: 'inherit',
+                                }
+                              : {
+                                  background: 'var(--color-brand)',
+                                  color: 'white',
+                                  padding: '4px 14px',
+                                  borderRadius: '9999px',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  fontFamily: 'inherit',
+                                }
+                        }
+                      >
+                        {isLeading ? 'Leading' : isJoined ? 'Joined' : 'Join'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )
       ) : (
         <>
           {recommendations.length > 0 && (

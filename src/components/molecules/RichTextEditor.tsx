@@ -1,6 +1,6 @@
 'use client'
 
-import { type MouseEvent, type ReactNode } from 'react'
+import { type MouseEvent, type ReactNode, useEffect } from 'react'
 import { useEditor, EditorContent, type Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -148,6 +148,12 @@ export function RichTextEditor({
       },
     },
   })
+
+  useEffect(() => {
+    if (editor && content !== editor.getText() && content !== editor.getHTML()) {
+      editor.commands.setContent(content)
+    }
+  }, [content, editor])
 
   const charCount = editor?.storage.characterCount.characters() ?? 0
   const percentage = Math.round((charCount / maxLength) * 100)

@@ -1,14 +1,21 @@
 'use client'
 
-import type { CSSProperties } from 'react'
+import { useCallback, useEffect, useState, type CSSProperties } from 'react'
 import { motion } from 'framer-motion'
 import type { CareerPulseCard as CareerPulseData } from '@/lib/types'
 import { CoverImage } from '@/components/atoms/CoverImage'
 import { getTopicCoverUrl } from '@/lib/cover-images'
 
-export interface CareerPulseCardProps {
-  data: CareerPulseData | null
-}
+const CAREER_PULSE_TAGS = [
+  'Negotiation',
+  'Promotions',
+  'Bias at Work',
+  'Work-Life Balance',
+  'Career Pivots',
+  'Mentorship',
+  'Leadership',
+  'Early Career',
+]
 
 const CONTAINER_STYLE: CSSProperties = {
   backgroundColor: 'var(--color-surface)',
@@ -20,12 +27,80 @@ const CONTAINER_STYLE: CSSProperties = {
   overflow: 'hidden',
 }
 
-export function CareerPulseCard({ data }: CareerPulseCardProps) {
+export function CareerPulseCard() {
+  const [data, setData] = useState<CareerPulseData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasError, setHasError] = useState(false)
+
+  const fetchCareerPulse = useCallback(async () => {
+    setHasError(false)
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/ai/career-pulse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tags: CAREER_PULSE_TAGS }),
+      })
+      const result = (await response.json()) as { data?: CareerPulseData | null }
+      if (!response.ok || !result.data) {
+        setHasError(true)
+        setData(null)
+        return
+      }
+      setData(result.data)
+    } catch {
+      setHasError(true)
+      setIsLoading(false)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void fetchCareerPulse()
+  }, [fetchCareerPulse])
+
   const handleQuestionClick = (question: string) => {
     window.dispatchEvent(new CustomEvent('open-composer', { detail: { prefill: question } }))
   }
 
-  if (!data) {
+  if (hasError) {
+    return (
+      <div style={{ ...CONTAINER_STYLE }}>
+        <div
+          style={{
+            padding: '16px',
+            textAlign: 'center',
+            color: 'var(--color-text-muted)',
+            fontSize: '13px',
+            lineHeight: '1.5',
+          }}
+        >
+          <p style={{ marginBottom: '8px' }}>
+            Could not load Career Pulse right now.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              void fetchCareerPulse()
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--color-brand)',
+              cursor: 'pointer',
+              fontSize: '13px',
+              fontFamily: 'inherit',
+            }}
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (isLoading || !data) {
     return (
       <div
         aria-live="polite"

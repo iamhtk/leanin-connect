@@ -10,18 +10,7 @@ import { CareerPulseCard } from '@/components/molecules/CareerPulseCard'
 import { TrendingTopics } from '@/components/molecules/TrendingTopics'
 import { SuggestedMembers } from '@/components/molecules/SuggestedMembers'
 import { useSwipeTabs } from '@/hooks/useSwipeTabs'
-import type { Post, CareerPulseCard as CareerPulseData } from '@/lib/types'
-
-const CAREER_PULSE_TAGS = [
-  'Negotiation',
-  'Promotions',
-  'Bias at Work',
-  'Work-Life Balance',
-  'Career Pivots',
-  'Mentorship',
-  'Leadership',
-  'Early Career',
-]
+import type { Post } from '@/lib/types'
 
 const SCOPE_TABS = [
   { label: 'All', value: 'all' },
@@ -39,7 +28,6 @@ function FeedPageContent() {
   const [selectedTag, setSelectedTag] = useState('all')
   const [scopeTab, setScopeTab] = useState<ScopeTab>('all')
   const [savedPostIds, setSavedPostIds] = useState<string[]>([])
-  const [careerPulseData, setCareerPulseData] = useState<CareerPulseData | null>(null)
   const [addPost, setAddPost] = useState<((post: Post) => void) | null>(null)
 
   useEffect(() => {
@@ -56,24 +44,6 @@ function FeedPageContent() {
     } catch {
       // ignore localStorage errors
     }
-  }, [])
-
-  useEffect(() => {
-    const fetchCareerPulse = async () => {
-      try {
-        const response = await fetch('/api/ai/career-pulse', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tags: CAREER_PULSE_TAGS }),
-        })
-        const result = await response.json()
-        setCareerPulseData(result.data ?? null)
-      } catch {
-        // Keep null career pulse on failure
-      }
-    }
-
-    void fetchCareerPulse()
   }, [])
 
   const handlePostCreated = (post: Post) => {
@@ -168,7 +138,7 @@ function FeedPageContent() {
         </div>
 
         <div className="feed-right-column">
-          <CareerPulseCard data={careerPulseData} />
+          <CareerPulseCard />
           <TrendingTopics />
           <SuggestedMembers />
         </div>

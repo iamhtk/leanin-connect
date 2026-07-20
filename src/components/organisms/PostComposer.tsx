@@ -115,7 +115,6 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
       if (streamedText) {
         setEditorContent(streamedText)
         setHtmlContent(toEditorHtml(streamedText))
-        setEditorKey((previous) => previous + 1)
 
         const classifyResponse = await fetch('/api/ai/classify-topic', {
           method: 'POST',

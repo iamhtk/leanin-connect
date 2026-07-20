@@ -66,7 +66,17 @@ function readSavedIds(): string[] {
 export function PostCard({ post, onSave, onLike }: PostCardProps) {
   const { user } = useAuth()
   const supabase = createClient()
-  const [isLiked, setIsLiked] = useState(false)
+  const [isLiked, setIsLiked] = useState(() => {
+    if (typeof window === 'undefined') return false
+    try {
+      const liked = JSON.parse(
+        localStorage.getItem('lean_in_liked_posts') || '[]'
+      ) as unknown
+      return Array.isArray(liked) && liked.includes(post.id)
+    } catch {
+      return false
+    }
+  })
   const [localLikesCount, setLocalLikesCount] = useState(post.likes_count)
   const [isLiking, setIsLiking] = useState(false)
   const [isSaved, setIsSaved] = useState(() => readSavedIds().includes(post.id))
@@ -95,6 +105,21 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
     const optimisticCount = previousCount + (optimisticLiked ? 1 : -1)
     setIsLiked(optimisticLiked)
     setLocalLikesCount(optimisticCount)
+
+    try {
+      const liked = JSON.parse(
+        localStorage.getItem('lean_in_liked_posts') || '[]'
+      ) as unknown
+      const likedIds = Array.isArray(liked)
+        ? liked.filter((id): id is string => typeof id === 'string')
+        : []
+      const updated = optimisticLiked
+        ? [...likedIds, post.id]
+        : likedIds.filter((id) => id !== post.id)
+      localStorage.setItem('lean_in_liked_posts', JSON.stringify(updated))
+    } catch {
+      // ignore localStorage errors
+    }
 
     try {
       if (optimisticLiked) {

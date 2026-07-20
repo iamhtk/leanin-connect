@@ -54,7 +54,6 @@ export function useBottomSheetDismiss({
         ? 'none'
         : 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease',
       willChange: 'transform, opacity',
-      touchAction: 'none' as const,
     },
   }
 }

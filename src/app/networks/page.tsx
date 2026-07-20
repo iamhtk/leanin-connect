@@ -83,6 +83,10 @@ export default function NetworksPage() {
     network.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  const myNetworks = MOCK_NETWORKS.filter((n) => requestedIds.has(n.id)).filter((network) =>
+    network.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   const handleRequestClick = (network: (typeof MOCK_NETWORKS)[number], event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation()
 
@@ -219,38 +223,158 @@ export default function NetworksPage() {
       </div>
 
       {activeTab === 'my' ? (
-        <div
-          style={{
-            marginTop: '48px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            gap: '8px',
-          }}
-        >
-          <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
-            You haven&apos;t joined any Networks yet.
-          </p>
-          <button
-            type="button"
-            onClick={() => setActiveTab('all')}
+        myNetworks.length === 0 ? (
+          <div
             style={{
-              marginTop: '8px',
-              background: 'var(--color-brand)',
-              color: 'white',
-              borderRadius: '9999px',
-              padding: '8px 20px',
-              fontSize: '13px',
-              fontWeight: '600',
-              border: 'none',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
+              marginTop: '48px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              gap: '8px',
             }}
           >
-            Browse all Networks
-          </button>
-        </div>
+            <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+              You haven&apos;t joined any Networks yet.
+            </p>
+            <button
+              type="button"
+              onClick={() => setActiveTab('all')}
+              style={{
+                marginTop: '8px',
+                background: 'var(--color-brand)',
+                color: 'white',
+                borderRadius: '9999px',
+                padding: '8px 20px',
+                fontSize: '13px',
+                fontWeight: '600',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              Browse all Networks
+            </button>
+          </div>
+        ) : (
+          <div className="page-grid-2" style={{ marginTop: '20px' }}>
+            {myNetworks.map((network) => {
+              const isRequested = requestedIds.has(network.id)
+
+              return (
+                <div
+                  key={network.id}
+                  className="card-hover"
+                  style={{
+                    background: 'var(--color-surface)',
+                    border: '1px solid var(--color-border-default)',
+                    borderRadius: '14px',
+                    overflow: 'hidden',
+                    boxShadow: 'none',
+                  }}
+                >
+                  <div style={{ position: 'relative' }}>
+                    <CoverImage src={network.cover_url} alt="" height={160} />
+                    <div style={{ position: 'absolute', inset: 0 }}>
+                      <span
+                        style={{
+                          position: 'absolute',
+                          bottom: '12px',
+                          left: '16px',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          letterSpacing: '0.12em',
+                          color: 'rgba(255,255,255,0.9)',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        LEAN IN NETWORK
+                      </span>
+                    </div>
+                  </div>
+                  <div style={{ padding: '16px' }}>
+                    <p style={{ fontSize: '15px', fontWeight: '600', color: 'var(--color-text-default)' }}>
+                      {network.name}
+                    </p>
+                    <p
+                      style={{
+                        fontSize: '13px',
+                        color: 'var(--color-text-muted)',
+                        lineHeight: '1.5',
+                        marginTop: '6px',
+                        overflow: 'hidden',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                      }}
+                    >
+                      {network.description}
+                    </p>
+                    <div
+                      style={{
+                        marginTop: '12px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '12px',
+                          flexWrap: 'wrap',
+                          fontSize: '12px',
+                          color: 'var(--color-text-muted)',
+                        }}
+                      >
+                        <span>{network.members} members</span>
+                        <span>{network.circles} Circles</span>
+                        <span>{network.region}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(event) => handleRequestClick(network, event)}
+                        className="btn-follow"
+                        style={
+                          isRequested
+                            ? {
+                                background: 'var(--color-subtle)',
+                                border: 'none',
+                                borderRadius: '9999px',
+                                padding: '4px 14px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                color: 'var(--color-text-secondary)',
+                                cursor: 'pointer',
+                                fontFamily: 'inherit',
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0,
+                              }
+                            : {
+                                background: 'transparent',
+                                border: '1px solid var(--color-border-default)',
+                                borderRadius: '9999px',
+                                padding: '4px 14px',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                color: 'var(--color-text-default)',
+                                cursor: 'pointer',
+                                fontFamily: 'inherit',
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0,
+                              }
+                        }
+                      >
+                        {isRequested ? 'Requested' : 'Request to Join'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )
       ) : (
         <div className="page-grid-2" style={{ marginTop: '20px' }}>
           {filteredNetworks.map((network) => {
