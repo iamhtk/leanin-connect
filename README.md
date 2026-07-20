@@ -31,6 +31,20 @@
 
 ---
 
+## Try It Now
+
+**One-click demo (no sign-up required):**
+https://leanin-connect.vercel.app/demo
+You are signed in automatically. The README opens with a
+five-minute reviewer path to navigate the build efficiently.
+
+**Create your own account:**
+https://leanin-connect.vercel.app/auth/login
+
+**GitHub:** https://github.com/iamhtk/leanin-connect
+
+---
+
 ## ✨ At a Glance
 
 - **15 product pages** across community, career, messaging, and account experiences
