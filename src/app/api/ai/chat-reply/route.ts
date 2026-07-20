@@ -35,6 +35,15 @@ export async function POST(request: NextRequest) {
       apiKey: process.env.ANTHROPIC_API_KEY,
     })
 
+    const replyMoods = [
+      'Reply in a thoughtful and reflective mood.',
+      'Reply in an energetic and enthusiastic mood.',
+      'Reply in a warm and empathetic mood.',
+      'Reply in a practical and solution-focused mood.',
+      'Reply in a curious and question-asking mood.',
+    ]
+    const replyMood = replyMoods[Math.floor(Math.random() * replyMoods.length)]
+
     const historyMessages = (conversationHistory || [])
       .filter((msg) => msg.content !== '...')
       .slice(-6)
@@ -51,14 +60,15 @@ export async function POST(request: NextRequest) {
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 200,
+      temperature: 1,
       system: `You are ${participantName}, a ${participantRole} 
 at ${participantCompany}. You are a professional woman in the 
 Lean In community. Reply naturally as yourself — warm, direct, 
 and conversational. Keep replies to 1 to 3 sentences. 
-Never break character. Never say you are an AI.`,
+Never break character. Never say you are an AI. Vary your phrasing, structure, and angle every response. Never repeat the same wording twice.`,
       messages: [
         ...historyMessages,
-        { role: 'user' as const, content: userMessage },
+        { role: 'user' as const, content: `${userMessage}\nMood for this reply: ${replyMood}` },
       ],
     })
 

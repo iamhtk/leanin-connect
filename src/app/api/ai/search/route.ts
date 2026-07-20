@@ -17,7 +17,8 @@ export async function POST(request: NextRequest) {
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 400,
-      system: 'You are the search engine for Lean In Connect. Return only valid JSON.',
+      temperature: 1,
+      system: 'You are the search engine for Lean In Connect. Return only valid JSON. Vary your phrasing, structure, and angle every response. Never repeat the same wording twice. Vary how you describe and summarize results each time.',
       messages: [
         {
           role: 'user',

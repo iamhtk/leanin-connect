@@ -6,6 +6,15 @@ export async function POST() {
   try {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
+    const matchAngles = [
+      'Emphasize growth potential and learning opportunities.',
+      'Emphasize compensation and career advancement.',
+      'Emphasize mission alignment and team culture.',
+      'Emphasize technical skill development.',
+      'Emphasize work-life balance and flexibility.',
+    ]
+    const matchAngle = matchAngles[Math.floor(Math.random() * matchAngles.length)]
+
     const userProfile = {
       name: 'Hrithik Sanyal',
       role: 'Design Engineer',
@@ -30,9 +39,10 @@ export async function POST() {
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 300,
+      temperature: 1,
       system: `You are a career matching AI for Lean In, a platform 
 helping women advance their careers. Analyze job listings and match 
-them to a candidate profile. Return only valid JSON, nothing else.`,
+them to a candidate profile. Return only valid JSON, nothing else. Vary your phrasing, structure, and angle every response. Never repeat the same wording twice.`,
       messages: [
         {
           role: 'user',
@@ -54,7 +64,7 @@ Return a JSON object with this exact shape:
   ]
 }
 
-Pick exactly the 2 best matching jobs. Keep each reason under 12 words.`,
+Pick exactly the 2 best matching jobs. Keep each reason under 12 words.\nPerspective for this match: ${matchAngle}`,
         },
       ],
     })

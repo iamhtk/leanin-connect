@@ -7,10 +7,20 @@ export async function POST() {
       apiKey: process.env.ANTHROPIC_API_KEY,
     })
 
+    const recAngles = [
+      'Focus on career growth potential of each circle.',
+      'Focus on community and belonging.',
+      'Focus on skill building and learning.',
+      'Focus on networking and connections.',
+      'Focus on mentorship opportunities.',
+    ]
+    const recAngle = recAngles[Math.floor(Math.random() * recAngles.length)]
+
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 300,
-      system: 'You are a community matching assistant for Lean In. Return only valid JSON.',
+      temperature: 1,
+      system: 'You are a community matching assistant for Lean In. Return only valid JSON. Vary your phrasing, structure, and angle every response. Never repeat the same wording twice.',
       messages: [
         {
           role: 'user',
@@ -25,7 +35,7 @@ ID:4 Early-career professionals CAREER
 ID:5 The Latina Coalition LEADERSHIP
 ID:6 Mechanical Engineering Circle Delhi TECH
 
-Return: {"recommendations":[{"id":3,"reason":"under 12 words"},{"id":2,"reason":"under 12 words"},{"id":4,"reason":"under 12 words"}]}`,
+Return: {"recommendations":[{"id":3,"reason":"under 12 words"},{"id":2,"reason":"under 12 words"},{"id":4,"reason":"under 12 words"}]}\nRecommendation lens: ${recAngle}`,
         },
       ],
     })

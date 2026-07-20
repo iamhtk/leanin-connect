@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       model: 'claude-sonnet-4-6',
       max_tokens: 100,
       temperature: 1,
-      system: 'You are an analyst for Lean In, a platform helping women advance their careers.',
+      system: 'You are an analyst for Lean In, a platform helping women advance their careers. Vary your phrasing, structure, and angle every response. Never repeat the same wording twice.',
       messages: [
         {
           role: 'user',
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       max_tokens: 200,
       temperature: 1,
       system:
-        'You are a career coach for Lean In. Write warm, direct, empowering content for professional women. Never use em dashes. Keep it under 60 words.',
+        'You are a career coach for Lean In. Write warm, direct, empowering content for professional women. Never use em dashes. Keep it under 60 words. Vary your phrasing, structure, and angle every response. Never repeat the same wording twice.',
       messages: [
         {
           role: 'user',
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       max_tokens: 200,
       temperature: 1,
       system:
-        'You are an expert career coach for Lean In. Vary your tone and angle each response. Never repeat the same framing twice.',
+        'You are an expert career coach for Lean In. Vary your tone and angle each response. Never repeat the same framing twice. Vary your phrasing, structure, and angle every response. Never repeat the same wording twice.',
       messages: [
         {
           role: 'user',

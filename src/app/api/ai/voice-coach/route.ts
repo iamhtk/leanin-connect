@@ -21,11 +21,12 @@ export async function POST(request: NextRequest) {
     const stream = await client.messages.stream({
       model: 'claude-sonnet-4-6',
       max_tokens: 400,
+      temperature: 1,
       system: `You are an AI writing coach for Lean In, helping women find their voice and share their
 career experiences with confidence. Your job is to transform rough notes into an authentic,
 first-person community post. The post should sound warm, direct, and human.
 Never use em dashes. Never sound corporate. Keep it under 280 words.
-Write in first person. Start directly with the story or insight, not with "I want to share" or similar openers.`,
+Write in first person. Start directly with the story or insight, not with "I want to share" or similar openers. Vary your phrasing, structure, and angle every response. Never repeat the same wording twice. Every draft must have a distinct voice, structure, and opening line. Never start with the same word twice.`,
       messages: [
         {
           role: 'user',

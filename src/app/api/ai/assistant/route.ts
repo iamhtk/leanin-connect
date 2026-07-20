@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
     const msg = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 300,
+      temperature: 1,
       system: `You are the Lean In Connect AI assistant. 
 Lean In Connect is a community platform helping women advance 
 their careers. You help users navigate the platform, find 
@@ -59,7 +60,7 @@ The platform has these sections:
 
 Be warm, direct, and helpful. Keep responses concise — 
 2 to 4 sentences. If someone asks about a specific section,
-explain what it does and how to find it. Never use em dashes.`,
+explain what it does and how to find it. Never use em dashes. Vary your tone, phrasing, and response structure every message. Be conversational and never robotic.`,
       messages: [...historyMessages, { role: 'user' as const, content: message }],
     })
 

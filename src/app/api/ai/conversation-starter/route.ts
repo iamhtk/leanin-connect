@@ -20,14 +20,24 @@ export async function POST(request: NextRequest) {
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
+    const starterStyles = [
+      'Make the openers curious and question-led.',
+      'Make the openers warm and personal.',
+      'Make the openers bold and direct.',
+      'Make the openers focused on shared experience.',
+      'Make the openers witty and light.',
+    ]
+    const starterStyle = starterStyles[Math.floor(Math.random() * starterStyles.length)]
+
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 400,
+      temperature: 1,
       system: `You are a community facilitator for Lean In, helping 
 women connect with each other professionally. Generate warm, 
 authentic conversation starters that feel human and specific, 
 not generic. Never use em dashes. Keep each starter under 
-25 words. Return only valid JSON.`,
+25 words. Return only valid JSON. Vary your phrasing, structure, and angle every response. Never repeat the same wording twice.`,
       messages: [
         {
           role: 'user',
@@ -48,7 +58,7 @@ Return exactly this JSON shape:
 }
 
 Make each starter warm, specific to their role or company, 
-and focused on career connection or shared experience.`,
+and focused on career connection or shared experience.\nStyle for these openers: ${starterStyle}`,
         },
       ],
     })
