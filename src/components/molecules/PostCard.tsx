@@ -79,7 +79,8 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
     }
   })
   const [localLikesCount, setLocalLikesCount] = useState(post.likes_count)
-  const [isLiking, setIsLiking] = useState(false)
+  const likeInFlightRef = useRef(false)
+  const lastLikeTapRef = useRef(0)
   const [isSaved, setIsSaved] = useState(() => readSavedIds().includes(post.id))
   const [bookmarkPulse, setBookmarkPulse] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -153,13 +154,21 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
     }
   }, [menuOpen])
 
+  const triggerLike = () => {
+    const now = Date.now()
+    // Deduplicate touchend + click on iOS so the heart doesn't toggle twice
+    if (now - lastLikeTapRef.current < 400) return
+    lastLikeTapRef.current = now
+    void handleLike()
+  }
+
   const handleLike = async () => {
-    if (!user || isLiking) return
-    setIsLiking(true)
+    if (likeInFlightRef.current) return
 
     const optimisticLiked = !isLiked
-    const previousCount = localLikesCount
-    const optimisticCount = previousCount + (optimisticLiked ? 1 : -1)
+    const optimisticCount = Math.max(0, localLikesCount + (optimisticLiked ? 1 : -1))
+
+    // Local-first (same reliability as bookmark) so mobile taps always update UI
     setIsLiked(optimisticLiked)
     setLocalLikesCount(optimisticCount)
 
@@ -171,32 +180,35 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
         ? liked.filter((id): id is string => typeof id === 'string')
         : []
       const updated = optimisticLiked
-        ? [...likedIds, post.id]
+        ? likedIds.includes(post.id)
+          ? likedIds
+          : [...likedIds, post.id]
         : likedIds.filter((id) => id !== post.id)
       localStorage.setItem('lean_in_liked_posts', JSON.stringify(updated))
     } catch {
       // ignore localStorage errors
     }
 
+    onLike?.(post.id, optimisticLiked)
+
+    if (!user) return
+
+    likeInFlightRef.current = true
     try {
       if (optimisticLiked) {
-        const { error } = await supabase
+        await supabase
           .from('likes')
           .insert({ post_id: post.id, user_id: user.id })
-        if (error) throw error
       } else {
-        const { error } = await supabase
+        await supabase
           .from('likes')
           .delete()
           .match({ post_id: post.id, user_id: user.id })
-        if (error) throw error
       }
-      onLike?.(post.id, optimisticLiked)
     } catch {
-      setIsLiked(!optimisticLiked)
-      setLocalLikesCount(previousCount)
+      // Keep local like state; sync can retry later
     } finally {
-      setIsLiking(false)
+      likeInFlightRef.current = false
     }
   }
 
@@ -529,26 +541,26 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
         <button
           type="button"
           onClick={(event) => {
+            event.preventDefault()
             event.stopPropagation()
-            void handleLike()
+            triggerLike()
           }}
-          onPointerDown={(event) => {
+          onTouchEnd={(event) => {
+            // iOS Safari: ensure like toggles even when click is suppressed by parent swipe handlers
+            event.preventDefault()
             event.stopPropagation()
-          }}
-          onTouchStart={(event) => {
-            event.stopPropagation()
+            triggerLike()
           }}
           aria-label={'Like, ' + localLikesCount + ' likes'}
           aria-pressed={isLiked}
-          disabled={!user || isLiking}
-          className="hover:text-[var(--color-text-default)] action-btn"
+          className={'action-btn' + (isLiked ? ' is-liked' : '')}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '5px',
             fontSize: '13px',
             color: isLiked ? 'var(--color-brand)' : 'var(--color-text-muted)',
-            cursor: !user || isLiking ? 'not-allowed' : 'pointer',
+            cursor: 'pointer',
             background: 'transparent',
             border: 'none',
             padding: '8px',
@@ -556,18 +568,20 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
             minWidth: '44px',
             fontFamily: 'inherit',
             transition: 'color 0.12s',
-            opacity: !user ? 0.5 : 1,
             touchAction: 'manipulation',
             position: 'relative',
-            zIndex: 2,
+            zIndex: 5,
+            WebkitUserSelect: 'none',
+            userSelect: 'none',
           }}
         >
           <Heart
             size={15}
             fill={isLiked ? 'var(--color-brand)' : 'none'}
             aria-hidden="true"
+            style={{ pointerEvents: 'none' }}
           />
-          {localLikesCount}
+          <span style={{ pointerEvents: 'none' }}>{localLikesCount}</span>
         </button>
         <button
           type="button"

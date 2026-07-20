@@ -40,6 +40,16 @@ export function useSwipe(options: SwipeOptions = {}) {
   })
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
+    const target = e.target as HTMLElement | null
+    if (
+      target?.closest?.(
+        'button, a, input, textarea, select, label, [role="button"], [role="menuitem"], [role="link"]'
+      )
+    ) {
+      touchState.current.isSwiping = false
+      return
+    }
+
     const touch = e.touches[0]
     if (!touch) return
     touchState.current = {
