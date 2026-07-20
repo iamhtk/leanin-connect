@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 import {
   Heart,
@@ -84,7 +85,8 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [menuPosition, setMenuPosition] = useState<{ top: number; right: number } | null>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const [portalReady, setPortalReady] = useState(false)
+  const menuPanelRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const isHtml = post.content.trim().startsWith('<')
 
@@ -99,18 +101,28 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
   }
 
   useEffect(() => {
-    const handler = (e: MouseEvent | TouchEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handler)
-    document.addEventListener('touchstart', handler)
-    return () => {
-      document.removeEventListener('mousedown', handler)
-      document.removeEventListener('touchstart', handler)
-    }
+    setPortalReady(true)
   }, [])
+
+  useEffect(() => {
+    if (!menuOpen) return
+
+    const handler = (e: Event) => {
+      const target = e.target as Node
+      if (
+        menuButtonRef.current?.contains(target) ||
+        menuPanelRef.current?.contains(target)
+      ) {
+        return
+      }
+      setMenuOpen(false)
+    }
+
+    document.addEventListener('pointerdown', handler)
+    return () => {
+      document.removeEventListener('pointerdown', handler)
+    }
+  }, [menuOpen])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -120,13 +132,22 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
     const handleReposition = () => {
       updateMenuPosition()
     }
+
+    // Delay scroll-close so opening/layout doesn't instantly dismiss the menu
+    let scrollListening = false
+    const enableScrollClose = window.setTimeout(() => {
+      scrollListening = true
+    }, 150)
+
     const handleScroll = () => {
+      if (!scrollListening) return
       setMenuOpen(false)
     }
 
     window.addEventListener('resize', handleReposition)
     window.addEventListener('scroll', handleScroll, true)
     return () => {
+      window.clearTimeout(enableScrollClose)
       window.removeEventListener('resize', handleReposition)
       window.removeEventListener('scroll', handleScroll, true)
     }
@@ -301,7 +322,7 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
         >
           {post.topic_tag}
         </span>
-        <div ref={menuRef} style={{ position: 'relative', zIndex: menuOpen ? 200 : 'auto' }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
           <button
             ref={menuButtonRef}
             type="button"
@@ -336,105 +357,108 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
             <MoreHorizontal size={16} aria-hidden="true" />
           </button>
 
-          {menuOpen && menuPosition && (
-            <div
-              role="menu"
-              aria-label="Post options menu"
-              style={{
-                position: 'fixed',
-                top: menuPosition.top,
-                right: menuPosition.right,
-                left: 'auto',
-                background: 'var(--color-surface)',
-                border: '1px solid var(--color-border-default)',
-                borderRadius: '12px',
-                boxShadow: 'var(--shadow-dropdown)',
-                zIndex: 300,
-                minWidth: '180px',
-                maxWidth: 'calc(100vw - 24px)',
-                padding: '6px',
-                overflow: 'hidden',
-                isolation: 'isolate',
-                transform: 'translateZ(0)',
-              }}
-            >
-              {[
-                {
-                  label: 'Hide this post',
-                  icon: <EyeOff size={14} aria-hidden="true" />,
-                  action: () => {
-                    setHidden(true)
-                    setMenuOpen(false)
-                    showToast('Post hidden')
+          {portalReady &&
+            menuOpen &&
+            menuPosition &&
+            createPortal(
+              <div
+                ref={menuPanelRef}
+                role="menu"
+                aria-label="Post options menu"
+                style={{
+                  position: 'fixed',
+                  top: menuPosition.top,
+                  right: menuPosition.right,
+                  left: 'auto',
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border-default)',
+                  borderRadius: '12px',
+                  boxShadow: 'var(--shadow-dropdown)',
+                  zIndex: 9999,
+                  minWidth: '180px',
+                  maxWidth: 'calc(100vw - 24px)',
+                  padding: '6px',
+                  overflow: 'hidden',
+                }}
+              >
+                {[
+                  {
+                    label: 'Hide this post',
+                    icon: <EyeOff size={14} aria-hidden="true" />,
+                    action: () => {
+                      setHidden(true)
+                      setMenuOpen(false)
+                      showToast('Post hidden')
+                    },
                   },
-                },
-                {
-                  label: 'Repost',
-                  icon: <Repeat2 size={14} aria-hidden="true" />,
-                  action: () => {
-                    setMenuOpen(false)
-                    showToast('Reposted to your network')
+                  {
+                    label: 'Repost',
+                    icon: <Repeat2 size={14} aria-hidden="true" />,
+                    action: () => {
+                      setMenuOpen(false)
+                      showToast('Reposted to your network')
+                    },
                   },
-                },
-                {
-                  label: 'Copy link',
-                  icon: <Link size={14} aria-hidden="true" />,
-                  action: () => {
-                    navigator.clipboard
-                      .writeText(window.location.origin + '/feed?post=' + post.id)
-                      .catch(() => {})
-                    setMenuOpen(false)
-                    showToast('Link copied')
+                  {
+                    label: 'Copy link',
+                    icon: <Link size={14} aria-hidden="true" />,
+                    action: () => {
+                      navigator.clipboard
+                        .writeText(window.location.origin + '/feed?post=' + post.id)
+                        .catch(() => {})
+                      setMenuOpen(false)
+                      showToast('Link copied')
+                    },
                   },
-                },
-                {
-                  label: 'Report post',
-                  icon: <Flag size={14} aria-hidden="true" />,
-                  action: () => {
-                    setMenuOpen(false)
-                    showToast('Post reported. Thank you for your feedback.')
+                  {
+                    label: 'Report post',
+                    icon: <Flag size={14} aria-hidden="true" />,
+                    action: () => {
+                      setMenuOpen(false)
+                      showToast('Post reported. Thank you for your feedback.')
+                    },
+                    danger: true,
                   },
-                  danger: true,
-                },
-              ].map((item) => (
-                <button
-                  key={item.label}
-                  type="button"
-                  role="menuitem"
-                  onClick={item.action}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '9px 12px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontFamily: 'inherit',
-                    color: item.danger
-                      ? 'var(--color-status-error)'
-                      : 'var(--color-text-default)',
-                    textAlign: 'left',
-                    transition: 'background-color 0.1s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    ;(e.currentTarget as HTMLButtonElement).style.background = item.danger
-                      ? 'var(--color-status-error-bg)'
-                      : 'var(--color-subtle)'
-                  }}
-                  onMouseLeave={(e) => {
-                    ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
-                  }}
-                >
-                  {item.icon}
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          )}
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    role="menuitem"
+                    onClick={item.action}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '9px 12px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontFamily: 'inherit',
+                      color: item.danger
+                        ? 'var(--color-status-error)'
+                        : 'var(--color-text-default)',
+                      textAlign: 'left',
+                      transition: 'background-color 0.1s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      ;(e.currentTarget as HTMLButtonElement).style.background = item.danger
+                        ? 'var(--color-status-error-bg)'
+                        : 'var(--color-subtle)'
+                    }}
+                    onMouseLeave={(e) => {
+                      ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                    }}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </button>
+                ))}
+              </div>,
+              document.body
+            )}
         </div>
       </div>
 

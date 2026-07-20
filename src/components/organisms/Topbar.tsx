@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Bell, Sparkles, User, Settings, LogOut, Loader2, X, Moon, Sun } from 'lucide-react'
@@ -36,6 +37,11 @@ export function Topbar() {
   const rightSectionRef = useRef<HTMLDivElement>(null)
   const notificationsRef = useRef<HTMLDivElement>(null)
   const profileMenuRef = useRef<HTMLDivElement>(null)
+  const [portalReady, setPortalReady] = useState(false)
+
+  useEffect(() => {
+    setPortalReady(true)
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
@@ -52,11 +58,9 @@ export function Topbar() {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('touchstart', handleClickOutside)
+    document.addEventListener('pointerdown', handleClickOutside)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('touchstart', handleClickOutside)
+      document.removeEventListener('pointerdown', handleClickOutside)
     }
   }, [])
 
@@ -479,9 +483,11 @@ export function Topbar() {
             alt={profile?.full_name || 'Profile'}
           />
         </button>
+      </div>
 
-
-        {showNotifications && (
+      {portalReady &&
+        showNotifications &&
+        createPortal(
           <div
             ref={notificationsRef}
             className="topbar-dropdown topbar-dropdown--notifications"
@@ -496,10 +502,8 @@ export function Topbar() {
               border: '1px solid var(--color-border-default)',
               borderRadius: '14px',
               boxShadow: 'var(--shadow-dropdown)',
-              zIndex: 200,
+              zIndex: 9999,
               overflow: 'hidden',
-              isolation: 'isolate',
-              transform: 'translateZ(0)',
             }}
           >
             <div
@@ -629,10 +633,13 @@ export function Topbar() {
                 View all notifications →
               </button>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
 
-        {showProfileMenu && (
+      {portalReady &&
+        showProfileMenu &&
+        createPortal(
           <div
             ref={profileMenuRef}
             className="topbar-dropdown topbar-dropdown--profile"
@@ -647,11 +654,9 @@ export function Topbar() {
               border: '1px solid var(--color-border-default)',
               borderRadius: '14px',
               boxShadow: 'var(--shadow-dropdown)',
-              zIndex: 200,
+              zIndex: 9999,
               padding: '6px',
               overflow: 'hidden',
-              isolation: 'isolate',
-              transform: 'translateZ(0)',
             }}
           >
             <div
@@ -788,9 +793,9 @@ export function Topbar() {
                 Sign in
               </button>
             )}
-          </div>
+          </div>,
+          document.body
         )}
-      </div>
     </header>
   )
 }
