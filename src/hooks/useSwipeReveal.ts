@@ -25,6 +25,17 @@ export function useSwipeReveal({
 
   const onTouchStart = useCallback(
     (e: React.TouchEvent) => {
+      const target = e.target as HTMLElement | null
+      if (
+        target?.closest?.(
+          'button, a, input, textarea, select, label, [role="button"], [role="menuitem"], [role="link"]'
+        )
+      ) {
+        isDragging.current = false
+        lockAxis.current = null
+        return
+      }
+
       const touch = e.touches[0]
       if (!touch) return
       startX.current = touch.clientX
@@ -52,7 +63,10 @@ export function useSwipeReveal({
         } else return
       }
       if (lockAxis.current === 'v') return
-      e.preventDefault()
+      // Only prevent default once a real horizontal swipe is underway
+      if (Math.abs(dx) > 6) {
+        e.preventDefault()
+      }
       const newOffset = Math.min(0, Math.max(-revealWidth, startOffset.current + dx))
       setOffset(newOffset)
     },

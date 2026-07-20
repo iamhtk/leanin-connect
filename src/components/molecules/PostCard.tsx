@@ -335,6 +335,12 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
               updateMenuPosition()
               setMenuOpen(true)
             }}
+            onPointerDown={(e) => {
+              e.stopPropagation()
+            }}
+            onTouchStart={(e) => {
+              e.stopPropagation()
+            }}
             aria-label="Post options"
             aria-haspopup="true"
             aria-expanded={menuOpen}
@@ -352,6 +358,9 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
               color: 'var(--color-text-muted)',
               marginLeft: '6px',
               flexShrink: 0,
+              touchAction: 'manipulation',
+              position: 'relative',
+              zIndex: 2,
             }}
           >
             <MoreHorizontal size={16} aria-hidden="true" />
@@ -523,6 +532,12 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
             event.stopPropagation()
             void handleLike()
           }}
+          onPointerDown={(event) => {
+            event.stopPropagation()
+          }}
+          onTouchStart={(event) => {
+            event.stopPropagation()
+          }}
           aria-label={'Like, ' + localLikesCount + ' likes'}
           aria-pressed={isLiked}
           disabled={!user || isLiking}
@@ -537,11 +552,14 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
             background: 'transparent',
             border: 'none',
             padding: '8px',
-            minHeight: '36px',
-            minWidth: '36px',
+            minHeight: '44px',
+            minWidth: '44px',
             fontFamily: 'inherit',
             transition: 'color 0.12s',
             opacity: !user ? 0.5 : 1,
+            touchAction: 'manipulation',
+            position: 'relative',
+            zIndex: 2,
           }}
         >
           <Heart
@@ -580,6 +598,12 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
             event.stopPropagation()
             handleBookmark()
           }}
+          onPointerDown={(event) => {
+            event.stopPropagation()
+          }}
+          onTouchStart={(event) => {
+            event.stopPropagation()
+          }}
           aria-label={isSaved ? 'Remove bookmark' : 'Bookmark post'}
           aria-pressed={isSaved}
           className="action-btn"
@@ -593,10 +617,13 @@ export function PostCard({ post, onSave, onLike }: PostCardProps) {
             background: 'transparent',
             border: 'none',
             padding: '8px',
-            minHeight: '36px',
-            minWidth: '36px',
+            minHeight: '44px',
+            minWidth: '44px',
             fontFamily: 'inherit',
             transition: 'color 0.12s',
+            touchAction: 'manipulation',
+            position: 'relative',
+            zIndex: 2,
           }}
         >
           <Bookmark
