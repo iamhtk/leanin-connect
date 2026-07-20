@@ -13,6 +13,7 @@ function LoginForm() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -39,6 +40,12 @@ function LoginForm() {
     setError('')
     setSuccessMessage('')
 
+    if (mode === 'signup' && password.length < 8) {
+      setPasswordError('Password must be at least 8 characters')
+      setIsLoading(false)
+      return
+    }
+
     try {
       if (mode === 'signup') {
         const { error: signUpError } = await supabase.auth.signUp({
@@ -62,8 +69,28 @@ function LoginForm() {
         router.refresh()
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Something went wrong'
-      setError(message)
+      const msg = err instanceof Error ? err.message : ''
+      if (msg.toLowerCase().includes('rate limit') || msg.toLowerCase().includes('too many')) {
+        setError(
+          'Too many attempts. Please wait a few minutes and try again, or use the demo link.'
+        )
+      } else if (
+        msg.toLowerCase().includes('invalid email') ||
+        msg.toLowerCase().includes('unable to validate')
+      ) {
+        setError('Please enter a valid email address.')
+      } else if (msg.toLowerCase().includes('email not confirmed')) {
+        setError('Please check your email and click the confirmation link, then sign in.')
+      } else if (
+        msg.toLowerCase().includes('invalid login') ||
+        msg.toLowerCase().includes('invalid credentials')
+      ) {
+        setError('Incorrect email or password. Please try again.')
+      } else if (msg.toLowerCase().includes('user already registered')) {
+        setError('An account with this email already exists. Sign in instead.')
+      } else {
+        setError(msg || 'Something went wrong. Please try again.')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -289,7 +316,17 @@ function LoginForm() {
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  onChange={(event) => {
+                    setPassword(event.target.value)
+                    if (passwordError) setPasswordError('')
+                  }}
+                  onBlur={() => {
+                    if (mode === 'signup' && password.length > 0 && password.length < 8) {
+                      setPasswordError('Password must be at least 8 characters')
+                    } else {
+                      setPasswordError('')
+                    }
+                  }}
                   placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'}
                   autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                   minLength={mode === 'signup' ? 8 : undefined}
@@ -332,22 +369,40 @@ function LoginForm() {
                   )}
                 </button>
               </div>
+              {passwordError && (
+                <p
+                  style={{
+                    fontSize: '12px',
+                    color: 'var(--color-status-error)',
+                    marginTop: '6px',
+                    marginBottom: '0',
+                  }}
+                >
+                  {passwordError}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || (mode === 'signup' && password.length < 8)}
               className="btn-primary"
               style={{
                 width: '100%',
                 padding: '11px',
-                background: isLoading ? 'var(--color-brand-muted)' : 'var(--color-brand)',
+                background:
+                  isLoading || (mode === 'signup' && password.length < 8)
+                    ? 'oklch(.70 .08 17)'
+                    : 'oklch(.42 .13 17)',
                 color: 'var(--color-text-inverse)',
                 border: 'none',
                 borderRadius: '10px',
                 fontSize: '14px',
                 fontWeight: '600',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
+                cursor:
+                  isLoading || (mode === 'signup' && password.length < 8)
+                    ? 'not-allowed'
+                    : 'pointer',
                 fontFamily: 'inherit',
                 display: 'flex',
                 alignItems: 'center',
