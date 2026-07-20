@@ -189,7 +189,8 @@ function ConversationRow({
 
 export default function MessagesPage() {
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_CONVERSATIONS)
-  const [selectedId, setSelectedId] = useState<string | null>(MOCK_CONVERSATIONS[0].id)
+  // Mobile should open on the conversation list; desktop preselects below after mount
+  const [selectedId, setSelectedId] = useState<string | null>(null)
   const [messageInput, setMessageInput] = useState('')
   const [aiStarters, setAiStarters] = useState<string[]>([])
   const [isLoadingStarters, setIsLoadingStarters] = useState(false)
@@ -215,6 +216,19 @@ export default function MessagesPage() {
     onSwipeDown: () => setSelectedId(null),
     threshold: 60,
   })
+
+  useEffect(() => {
+    // Desktop (≥768px): keep existing behavior of opening the first conversation.
+    // Mobile: leave selectedId null so the inbox list is shown first.
+    const media = window.matchMedia('(min-width: 768px)')
+    const applyDesktopSelection = () => {
+      if (!media.matches) return
+      setSelectedId((current) => current ?? conversations[0]?.id ?? null)
+    }
+    applyDesktopSelection()
+    media.addEventListener('change', applyDesktopSelection)
+    return () => media.removeEventListener('change', applyDesktopSelection)
+  }, [conversations])
 
   useEffect(() => {
     try {
