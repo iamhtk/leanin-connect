@@ -20,18 +20,18 @@ function LoginForm() {
   const [fullName, setFullName] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-      if (session) {
-        router.push(redirectTo)
-      }
-    }
+  // useEffect(() => {
+  //   const checkSession = async () => {
+  //     const {
+  //       data: { session },
+  //     } = await supabase.auth.getSession()
+  //     if (session) {
+  //       router.push(redirectTo)
+  //     }
+  //   }
 
-    void checkSession()
-  }, [redirectTo, router, supabase.auth])
+  //   void checkSession()
+  // }, [redirectTo, router, supabase.auth])
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
