@@ -30,6 +30,7 @@ interface SalaryCoachModalProps {
 function SalaryCoachModal({ job, onClose }: SalaryCoachModalProps) {
   const [tips, setTips] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [hasError, setHasError] = useState(false)
 
   useEffect(() => {
     const fetchTips = async () => {
@@ -49,7 +50,7 @@ function SalaryCoachModal({ job, onClose }: SalaryCoachModalProps) {
           setTips(result.data)
         }
       } catch {
-        // Keep empty tips on failure
+        setHasError(true)
       } finally {
         setIsLoading(false)
       }
@@ -156,6 +157,19 @@ function SalaryCoachModal({ job, onClose }: SalaryCoachModalProps) {
               />
             ))}
           </div>
+        )}
+
+        {hasError && !isLoading && tips.length === 0 && (
+          <p
+            style={{
+              fontSize: '13px',
+              color: 'var(--color-text-muted)',
+              textAlign: 'center',
+              padding: '16px 0',
+            }}
+          >
+            Could not load tips right now. Try again in a moment.
+          </p>
         )}
 
         {!isLoading && tips.length > 0 && (

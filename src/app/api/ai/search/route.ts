@@ -5,6 +5,10 @@ export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as { query?: string }
 
+    if (!body.query || typeof body.query !== 'string') {
+      return NextResponse.json({ error: 'query is required' }, { status: 400 })
+    }
+
     const MAX_INPUT = 2000
     const inputs = Object.values(body).filter((v): v is string => typeof v === 'string')
     if (inputs.some((v) => v.length > MAX_INPUT)) {

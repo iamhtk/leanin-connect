@@ -9,6 +9,9 @@ interface HistoryMessage {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+    if (!body.userMessage || typeof body.userMessage !== 'string') {
+      return NextResponse.json({ error: 'message is required' }, { status: 400 })
+    }
     const {
       participantName,
       participantRole,

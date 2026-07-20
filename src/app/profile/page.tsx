@@ -36,6 +36,7 @@ export default function ProfilePage() {
   const [draftLocation, setDraftLocation] = useState(location)
   const [profileStrength, setProfileStrength] = useState<ProfileStrength | null>(null)
   const [isLoadingStrength, setIsLoadingStrength] = useState(true)
+  const [strengthError, setStrengthError] = useState(false)
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -53,7 +54,7 @@ export default function ProfilePage() {
           setProfileStrength(result.data)
         }
       } catch {
-        // Keep null strength on failure
+        setStrengthError(true)
       } finally {
         setIsLoadingStrength(false)
       }
@@ -434,26 +435,38 @@ export default function ProfilePage() {
               )}
             </div>
 
-            <div
-              style={{
-                height: '6px',
-                background: 'var(--color-muted)',
-                borderRadius: '9999px',
-                marginTop: '8px',
-                marginBottom: '12px',
-                overflow: 'hidden',
-              }}
-            >
+            {strengthError ? (
+              <p
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--color-text-muted)',
+                  padding: '8px 0',
+                }}
+              >
+                Could not load profile analysis right now.
+              </p>
+            ) : (
               <div
                 style={{
-                  width: `${profileStrength?.score ?? 0}%`,
-                  background: 'var(--color-brand)',
+                  height: '6px',
+                  background: 'var(--color-muted)',
                   borderRadius: '9999px',
-                  height: '100%',
-                  transition: 'width 0.6s ease',
+                  marginTop: '8px',
+                  marginBottom: '12px',
+                  overflow: 'hidden',
                 }}
-              />
-            </div>
+              >
+                <div
+                  style={{
+                    width: `${profileStrength?.score ?? 0}%`,
+                    background: 'var(--color-brand)',
+                    borderRadius: '9999px',
+                    height: '100%',
+                    transition: 'width 0.6s ease',
+                  }}
+                />
+              </div>
+            )}
 
             {isLoadingStrength && (
               <div>

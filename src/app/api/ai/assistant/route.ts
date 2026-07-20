@@ -9,6 +9,9 @@ interface HistoryEntry {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+    if (!body.message || typeof body.message !== 'string') {
+      return NextResponse.json({ error: 'message is required' }, { status: 400 })
+    }
     const { message, history } = body as {
       message: string
       history?: HistoryEntry[]
