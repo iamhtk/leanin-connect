@@ -4,11 +4,32 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
+const MAX_ATTEMPTS = 6
+const RETRY_DELAY_MS = 5000
+
+type DemoStatus = 'loading' | 'waking' | 'unreachable' | 'error'
+
+const isNetworkFailure = (error: { message?: string; status?: number } | null) => {
+  if (!error) return false
+  if (error.status !== undefined && error.status >= 500) return true
+  const message = error.message?.toLowerCase() ?? ''
+  return (
+    message.includes('failed to fetch') ||
+    message.includes('fetch failed') ||
+    message.includes('network') ||
+    message.includes('load failed')
+  )
+}
+
+const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
+
 export default function DemoPage() {
   const router = useRouter()
-  const [status, setStatus] = useState<'loading' | 'error'>('loading')
+  const [status, setStatus] = useState<DemoStatus>('loading')
 
   useEffect(() => {
+    let cancelled = false
+
     const signInDemo = async () => {
       const supabase = createClient()
 
@@ -20,25 +41,51 @@ export default function DemoPage() {
         return
       }
 
-      await supabase.auth.signOut()
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+        if (cancelled) return
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+        try {
+          await supabase.auth.signOut({ scope: 'local' })
+        } catch {
+          // A stale local session is not fatal; sign-in below replaces it.
+        }
 
-      if (error) {
-        setStatus('error')
-        return
+        const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+        if (!error) {
+          router.push('/feed')
+          router.refresh()
+          return
+        }
+
+        if (!isNetworkFailure(error)) {
+          setStatus('error')
+          return
+        }
+
+        if (attempt === MAX_ATTEMPTS) {
+          setStatus('unreachable')
+          return
+        }
+
+        setStatus('waking')
+        await wait(RETRY_DELAY_MS)
       }
-
-      router.push('/feed')
     }
 
     void signInDemo()
+
+    return () => {
+      cancelled = true
+    }
   }, [router])
 
-  if (status === 'error') {
+  if (status === 'error' || status === 'unreachable') {
+    const message =
+      status === 'unreachable'
+        ? 'The demo backend is not responding right now. Please try again in a minute.'
+        : 'Demo account unavailable. Please sign in directly.'
+
     return (
       <div
         style={{
@@ -60,10 +107,10 @@ export default function DemoPage() {
             marginBottom: '20px',
           }}
         >
-          Demo account unavailable. Please sign in directly.
+          {message}
         </p>
         <a
-          href="/auth/login"
+          href={status === 'unreachable' ? '/demo' : '/auth/login'}
           style={{
             background: '#7B2335',
             color: 'white',
@@ -75,7 +122,7 @@ export default function DemoPage() {
             fontFamily: 'inherit',
           }}
         >
-          Go to sign in
+          {status === 'unreachable' ? 'Try again' : 'Go to sign in'}
         </a>
       </div>
     )
@@ -113,7 +160,7 @@ export default function DemoPage() {
           fontWeight: '500',
         }}
       >
-        Preparing your demo...
+        {status === 'waking' ? 'Waking up the demo backend...' : 'Preparing your demo...'}
       </p>
       <style>{`
         @keyframes spin {
